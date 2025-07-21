@@ -83,7 +83,7 @@
                     <span>←</span>
                 </a>
                 <h2>Business Account</h2>
-                <div class="settings-btn" onclick="showSettings()">⚙️</div>
+                <!-- <div class="settings-btn" >⚙️</div> -->
             </div>
         </div>
 
@@ -218,34 +218,6 @@
                 </div>
             @endif
         </div>
-
-        <!-- Business Info Section -->
-        <div class="business-info-section">
-            <h3>Business Information</h3>
-            
-            <div class="info-card">
-                <div class="info-row">
-                    <span class="info-label">📍 Address</span>
-                    <span class="info-value">{{ $seller->address }}</span>
-                </div>
-                @if($seller->phone)
-                <div class="info-row">
-                    <span class="info-label">📞 Phone</span>
-                    <span class="info-value">{{ $seller->phone }}</span>
-                </div>
-                @endif
-                @if($seller->working_hours)
-                <div class="info-row">
-                    <span class="info-label">🕐 Hours</span>
-                    <span class="info-value">{{ $seller->working_hours }}</span>
-                </div>
-                @endif
-                <div class="info-row">
-                    <span class="info-label">📅 Member Since</span>
-                    <span class="info-value">{{ $seller->created_at->format('F Y') }}</span>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Transaction Detail Modal -->
@@ -366,50 +338,6 @@
         </div>
     </div>
 
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="settings-modal" style="display: none;">
-        <div class="modal-overlay" onclick="closeSettings()"></div>
-        <div class="settings-content">
-            <div class="settings-header">
-                <h3>⚙️ Account Settings</h3>
-                <button onclick="closeSettings()" class="modal-close">×</button>
-            </div>
-            
-            <div class="settings-body">
-                <button class="settings-option" onclick="editProfile()">
-                    <span class="option-icon">✏️</span>
-                    <span>Edit Business Profile</span>
-                    <span class="option-arrow">›</span>
-                </button>
-                
-                <button class="settings-option" onclick="changePassword()">
-                    <span class="option-icon">🔐</span>
-                    <span>Change Password</span>
-                    <span class="option-arrow">›</span>
-                </button>
-                
-                <button class="settings-option" onclick="manageQRCodes()">
-                    <span class="option-icon">📱</span>
-                    <span>Manage QR Codes</span>
-                    <span class="option-arrow">›</span>
-                </button>
-                
-                <button class="settings-option" onclick="viewAnalytics()">
-                    <span class="option-icon">📊</span>
-                    <span>View Analytics</span>
-                    <span class="option-arrow">›</span>
-                </button>
-                
-                <div class="settings-divider"></div>
-                
-                <button class="settings-option danger" onclick="showLogoutModal()">
-                    <span class="option-icon">🚪</span>
-                    <span>Logout</span>
-                    <span class="option-arrow">›</span>
-                </button>
-            </div>
-        </div>
-    </div>
 
     <style>
         /* Base styles */
@@ -443,8 +371,9 @@
         }
 
         .container {
+            margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
-            min-height: 50vh;
+            min-height: 100vh;
             position: relative;
             backdrop-filter: blur(10px);
             border-radius: 0;
@@ -459,7 +388,7 @@
                 margin: 20px auto;
                 border-radius: 25px;
                 box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-                /* min-height: calc(100vh - 40px); */
+                min-height: calc(100vh - 40px);
             }
         }
 
@@ -506,7 +435,7 @@
             font-size: 20px;
             font-weight: 600;
         }
-
+/* 
         .settings-btn {
             background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
@@ -518,12 +447,12 @@
             font-size: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-        }
-
+        } */
+/* 
         .settings-btn:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: rotate(90deg);
-        }
+        } */
 
         /* Business Profile Section */
         .business-profile-section {
@@ -814,54 +743,6 @@
             color: #2E8B57;
             text-decoration: none;
             font-weight: 600;
-        }
-
-        /* Business Info Section */
-        .business-info-section {
-            background: #fff;
-            padding: 20px;
-        }
-
-        .business-info-section h3 {
-            margin: 0 0 20px;
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .info-card {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding: 12px 0;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            font-size: 14px;
-            color: #666;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .info-value {
-            font-size: 14px;
-            color: #333;
-            font-weight: 600;
-            text-align: right;
-            max-width: 60%;
         }
 
         /* Modal Styles */
@@ -1318,12 +1199,70 @@
 
         // Settings options
         function editProfile() {
+            // Redirect to profile edit page
             window.location.href = '{{ route("seller.profile") }}';
         }
 
         function changePassword() {
-            alert('Change Password feature coming soon!');
+            // Close settings modal first
             closeSettings();
+            
+            // Show password change modal
+            const passwordModal = document.createElement('div');
+            passwordModal.innerHTML = `
+                <div id="passwordChangeModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px);" onclick="closePasswordModal()"></div>
+                    <div style="background: white; border-radius: 16px; width: 100%; max-width: 400px; position: relative; animation: modalSlideUp 0.3s ease;">
+                        <div style="background: linear-gradient(135deg, #2E8B57, #3CB371); color: white; padding: 20px; border-radius: 16px 16px 0 0; display: flex; align-items: center; justify-content: space-between;">
+                            <h3 style="margin: 0; font-size: 18px; font-weight: 600;">🔐 Change Password</h3>
+                            <button onclick="closePasswordModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 4px; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">×</button>
+                        </div>
+                        <form id="passwordChangeForm" onsubmit="handlePasswordChange(event)" style="padding: 20px;">
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 500;">Current Password</label>
+                                <input type="password" name="current_password" required style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;" onfocus="this.style.borderColor='#2E8B57'" onblur="this.style.borderColor='#e9ecef'">
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 500;">New Password</label>
+                                <input type="password" name="new_password" required minlength="8" style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;" onfocus="this.style.borderColor='#2E8B57'" onblur="this.style.borderColor='#e9ecef'">
+                                <small style="color: #666; font-size: 12px;">Minimum 8 characters</small>
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 500;">Confirm New Password</label>
+                                <input type="password" name="confirm_password" required style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;" onfocus="this.style.borderColor='#2E8B57'" onblur="this.style.borderColor='#e9ecef'">
+                            </div>
+                            <button type="submit" style="width: 100%; background: linear-gradient(135deg, #2E8B57, #3CB371); color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">Update Password</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(passwordModal);
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePasswordModal() {
+            const modal = document.getElementById('passwordChangeModal');
+            if (modal) {
+                modal.remove();
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function handlePasswordChange(event) {
+            event.preventDefault();
+            const form = event.target;
+            const newPassword = form.new_password.value;
+            const confirmPassword = form.confirm_password.value;
+            
+            if (newPassword !== confirmPassword) {
+                alert('New passwords do not match!');
+                return;
+            }
+            
+            // For now, show success message
+            // In production, you would send this to the server
+            alert('Password change feature will be implemented soon!');
+            closePasswordModal();
         }
 
         function manageQRCodes() {
@@ -1332,36 +1271,67 @@
         }
 
         function viewAnalytics() {
+            // Redirect to dashboard analytics
             window.location.href = '{{ route("dashboard") }}';
         }
 
+        // Update the logout function to use the existing modal
         function confirmLogout() {
             closeSettings();
-            // Use the logout modal from the main dashboard if it exists
-            if (typeof window.showLogoutModal === 'function') {
-                window.showLogoutModal();
+            // Use the logout modal that's already in the page
+            if (typeof showLogoutModal === 'function') {
+                showLogoutModal();
             } else {
-                // Fallback to creating a simple form submission
+                // Fallback
                 if (confirm('Are you sure you want to logout?')) {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = '{{ route("logout") }}';
-                    
-                    const token = document.createElement('input');
-                    token.type = 'hidden';
-                    token.name = '_token';
-                    token.value = '{{ csrf_token() }}';
-                    
-                    form.appendChild(token);
-                    document.body.appendChild(form);
-                    form.submit();
+                    document.getElementById('logoutForm').submit();
                 }
             }
         }
 
         // Download receipt
         function downloadReceipt() {
-            alert('Download feature coming soon! The receipt will be saved as a PDF.');
+            // Get transaction data from modal
+            const transactionData = {
+                type: document.getElementById('modalTransactionType').textContent,
+                points: document.getElementById('modalPointsAmount').textContent,
+                customer: document.getElementById('modalCustomerName').textContent,
+                item: document.getElementById('modalItemName').textContent,
+                units: document.getElementById('modalUnitsScanned').textContent,
+                datetime: document.getElementById('modalDateTime').textContent,
+                id: document.getElementById('modalTransactionId').textContent
+            };
+            
+            // Create a simple text receipt
+            const receipt = `
+GREEN CUP BUSINESS
+Transaction Receipt
+==================
+
+${transactionData.type}
+Points: ${transactionData.points}
+
+Customer: ${transactionData.customer}
+Item: ${transactionData.item}
+Units: ${transactionData.units}
+Date: ${transactionData.datetime}
+Transaction ID: ${transactionData.id}
+
+Thank you for promoting sustainability!
+            `;
+            
+            // Create blob and download
+            const blob = new Blob([receipt], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `GreenCup_Receipt_${transactionData.id}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            alert('Receipt downloaded successfully!');
         }
 
         // Filter transactions
@@ -1382,6 +1352,7 @@
             if (e.key === 'Escape') {
                 closeTransactionDetail();
                 closeSettings();
+                closePasswordModal();
             }
         });
 
