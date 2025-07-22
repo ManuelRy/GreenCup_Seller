@@ -63,6 +63,15 @@ class Seller extends Authenticatable
         return $this->hasMany(SellerRankHistory::class);
     }
 
+    /**
+     * Get the photos for the seller.
+     * THIS IS THE METHOD YOU WERE MISSING!
+     */
+    public function photos()
+    {
+        return $this->hasMany(SellerPhoto::class);
+    }
+
     // Rank methods
     public function getCurrentRank()
     {

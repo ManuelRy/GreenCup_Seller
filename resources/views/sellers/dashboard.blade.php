@@ -148,13 +148,13 @@
             <div style="font-size: 48px; margin-bottom: 20px;">📱</div>
             <h3 style="color: white; margin-bottom: 10px;">No Activity Yet</h3>
             <p style="font-size: 16px; margin-bottom: 30px;">Start scanning customer QR codes to track your green impact!</p>
-            <button onclick="alert('QR Scanner feature coming soon!')" style="background: white; color: #2E8B57; border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+            <button onclick="window.location.href='{{ route('seller.scanner') }}'" style="background: white; color: #2E8B57; border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
                 Open Scanner
             </button>
         </div>
         @endif
 
-        <div class="cash-flow-section">
+        <div class="cash-flow-section">`
             <div class="cash-flow-header">
                 <div class="cash-flow-title">
                     <span>⭐</span>
@@ -227,22 +227,24 @@
     </div>
 
     <!-- Services Grid -->
-    <div class="services-grid">
-        <a href="{{ route('seller.profile') ?? '#' }}" class="service-item">
-            <div class="service-icon">👤</div>
-            <div class="service-name">Account</div>
-        </a>
+<!-- Services Grid -->
+<div class="services-grid">
+    <a href="{{ route('seller.profile') ?? '#' }}" class="service-item">
+        <div class="service-icon">👤</div>
+        <div class="service-name">Account</div>
+    </a>
 
-        <a href="#" class="service-item" onclick="alert('Point Scanner feature coming soon!')">
-            <div class="service-icon">📱</div>
-            <div class="service-name">Point<br>Scanner</div>
-        </a>
+<a href="{{ route('seller.scanner') }}" class="service-item">
+        <div class="service-icon">📱</div>
+        <div class="service-name">Point<br>Scanner</div>
+    </a>
 
-        <a href="#" class="service-item" onclick="alert('Upload Product feature coming soon!')">
-            <div class="service-icon">📤</div>
-            <div class="service-name">Upload<br>Product</div>
-        </a>
-    </div>
+    <!-- ADD THIS NEW ITEM -->
+    <a href="{{ route('seller.photos') }}" class="service-item">
+        <div class="service-icon">📷</div>
+        <div class="service-name">Store<br>Gallery</div>
+    </a>
+</div>
     
     @if($totalTransactions == 0)
     <!-- Getting Started Guide for new sellers -->
@@ -280,27 +282,6 @@
     </div>
 </div>
 
-<!-- Style 2: Minimalist Modal (Alternative - uncomment to use) -->
-<!--
-<div id="logoutModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; opacity: 0; transition: opacity 0.3s ease;">
-    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 16px; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-width: 320px; width: 90%;">
-        <h4 style="color: #2c3e50; margin-bottom: 16px; font-size: 18px; font-weight: 600;">Confirm Logout</h4>
-        <p style="color: #6c757d; margin-bottom: 20px; font-size: 14px;">Are you sure you want to logout?</p>
-        
-        <form id="logoutForm" action="{{ route('logout') }}" method="POST">
-            @csrf
-            <div style="display: flex; gap: 12px;">
-                <button type="button" onclick="hideLogoutModal()" style="flex: 1; background: white; color: #6c757d; border: 1px solid #dee2e6; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
-                    Cancel
-                </button>
-                <button type="submit" style="flex: 1; background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
-                    Logout
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
--->
 
 <style>
 /* Additional dashboard-specific styles */

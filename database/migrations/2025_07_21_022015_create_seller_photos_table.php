@@ -11,9 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // First drop the existing table if it exists
+        Schema::dropIfExists('seller_photos');
+        
+        // Then recreate it with the correct structure
         Schema::create('seller_photos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('seller_id')->constrained()->cascadeOnDelete();
+            $table->string('photo_url', 512);
+            $table->string('caption')->nullable();
+            $table->string('category')->nullable()->default('store');
+            $table->boolean('is_featured')->default(false);
+            $table->integer('sort_order')->default(0);
             $table->timestamps();
+            
+            // Add indexes for better performance
+            $table->index('seller_id');
+            $table->index('is_featured');
+            $table->index('sort_order');
         });
     }
 
