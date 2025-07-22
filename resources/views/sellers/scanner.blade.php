@@ -4,10 +4,10 @@
     <div class="scanner-fullscreen">
         <!-- Video Background -->
         <video id="qr-video" autoplay muted playsinline></video>
-        
+
         <!-- Header -->
         <div class="scanner-header">
-            <h1 class="app-title">ABA Scan</h1>
+            <h1 class="app-title">Point Scan</h1>
             <a href="{{ route('dashboard') }}" class="close-btn">×</a>
         </div>
 
@@ -27,7 +27,7 @@
                 <div class="control-icon">⚡</div>
                 <div class="control-label">Flash</div>
             </button>
-            
+
             <button id="gallery-btn" class="control-button">
                 <div class="control-icon">📷</div>
                 <div class="control-label">Upload QR</div>
@@ -38,6 +38,8 @@
         <div class="scan-status" id="scan-status">
             <p>Position customer QR code within the frame</p>
         </div>
+</script>
+
 
         <!-- Success Modal - Consumer Details -->
         <div id="consumer-modal" class="success-modal" style="display: none;">
@@ -46,7 +48,7 @@
                     <h2>Customer Found!</h2>
                     <button onclick="closeConsumerModal()" class="modal-close">×</button>
                 </div>
-                
+
                 <div class="consumer-info" id="consumer-info">
                     <!-- Consumer details will be populated here -->
                 </div>
@@ -54,17 +56,17 @@
                 <!-- Award Points Section -->
                 <div class="award-section">
                     <h3>Add Items</h3>
-                    
+
                     <!-- Selected Items List -->
                     <div class="selected-items-container" id="selected-items-container">
                         <!-- Selected items will appear here -->
                     </div>
-                    
+
                     <!-- Add Item Button -->
                     <button onclick="showItemSelector()" class="add-item-btn">
                         <span>+</span> Add Item
                     </button>
-                    
+
                     <!-- Points Summary -->
                     <div class="points-summary-box">
                         <div class="summary-row">
@@ -80,7 +82,7 @@
                             <span id="total-points-preview">0 pts</span>
                         </div>
                     </div>
-                    
+
                     <div class="action-buttons">
                         <button onclick="closeConsumerModal()" class="btn-cancel">Cancel</button>
                         <button onclick="confirmAwardPoints()" class="btn-confirm" id="confirm-btn" disabled>
@@ -99,7 +101,7 @@
                     <h3>Select Item</h3>
                     <button onclick="closeItemSelector()" class="modal-close">×</button>
                 </div>
-                
+
                 <div class="items-grid" id="items-grid">
                     <!-- Items will be populated here -->
                 </div>
@@ -113,7 +115,7 @@
                     <div class="success-icon">🎉</div>
                     <div class="success-title">Points Awarded!</div>
                 </div>
-                
+
                 <div class="points-summary">
                     <div class="points-awarded" id="points-awarded">
                         <!-- Points details will be shown here -->
@@ -129,6 +131,7 @@
                         <span class="btn-icon">📱</span>
                         Scan Another
                     </button>
+
                 </div>
             </div>
         </div>
@@ -166,7 +169,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 50px 20px 20px;
-            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 70%, transparent 100%);
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 70%, transparent 100%);
         }
 
         .app-title {
@@ -174,7 +177,7 @@
             font-size: 24px;
             font-weight: 600;
             margin: 0;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
             letter-spacing: 2px;
         }
 
@@ -318,7 +321,7 @@
             font-size: 16px;
             font-weight: 400;
             margin: 0;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
         }
 
         /* Consumer Modal Styles */
@@ -344,7 +347,7 @@
             background: white;
             border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             animation: modalSlideUp 0.4s ease;
         }
 
@@ -430,7 +433,7 @@
             padding: 10px;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .stat-value {
@@ -476,7 +479,7 @@
             background: white;
             border-radius: 8px;
             margin-bottom: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             animation: slideIn 0.3s ease;
         }
 
@@ -650,7 +653,7 @@
             background: white;
             border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
         .item-selector-header {
@@ -717,7 +720,8 @@
             margin-top: 20px;
         }
 
-        .btn-cancel, .btn-confirm {
+        .btn-cancel,
+        .btn-confirm {
             flex: 1;
             padding: 14px 20px;
             border: none;
@@ -815,7 +819,8 @@
             gap: 15px;
         }
 
-        .btn-dashboard, .btn-scan-more {
+        .btn-dashboard,
+        .btn-scan-more {
             flex: 1;
             padding: 16px 20px;
             border: none;
@@ -864,6 +869,7 @@
                 transform: translateY(100px);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -875,6 +881,7 @@
                 transform: translateX(-20px);
                 opacity: 0;
             }
+
             to {
                 transform: translateX(0);
                 opacity: 1;
@@ -882,12 +889,18 @@
         }
 
         @keyframes bounce {
-            0%, 20%, 60%, 100% {
+
+            0%,
+            20%,
+            60%,
+            100% {
                 transform: translateY(0);
             }
+
             40% {
                 transform: translateY(-30px);
             }
+
             80% {
                 transform: translateY(-15px);
             }
@@ -948,7 +961,7 @@
         async function initializeScanner() {
             try {
                 updateStatus('Starting camera...');
-                
+
                 scanner = new QrScanner(video, result => handleScanResult(result), {
                     returnDetailedScanResult: true,
                     highlightScanRegion: false,
@@ -960,7 +973,7 @@
                 await scanner.start();
                 isScanning = true;
                 updateStatus('Position customer QR code within the frame');
-                
+
             } catch (error) {
                 console.error('Scanner initialization failed:', error);
                 updateStatus('Camera access denied. Please allow camera access.');
@@ -971,117 +984,141 @@
             statusEl.innerHTML = `<p>${message}</p>`;
         }
 
-        function handleScanResult(result) {
-            console.log('QR Code detected:', result.data);
-            
-            // Haptic feedback
-            if (navigator.vibrate) {
-                navigator.vibrate(100);
-            }
-            
-            // Stop scanning temporarily
-            if (scanner) {
-                scanner.stop();
-                isScanning = false;
-            }
-            
-            // Process consumer QR code
-            processConsumerQR(result.data);
+// REPLACE these two functions in your scanner.blade.php:
+
+function handleScanResult(result) {
+    console.log('QR Code detected:', result.data);
+
+    // 🔍 DEBUG: Show exactly what was scanned
+    alert('SCANNED QR CODE:\n' + result.data + '\n\nLength: ' + result.data.length);
+    
+    // Haptic feedback
+    if (navigator.vibrate) {
+        navigator.vibrate(100);
+    }
+
+    // Stop scanning temporarily
+    if (scanner) {
+        scanner.stop();
+        isScanning = false;
+    }
+
+    // Process consumer QR code
+    processConsumerQR(result.data);
+}
+
+async function processConsumerQR(data) {
+    try {
+        updateStatus('Processing customer QR code...');
+        console.log('Processing QR data:', data);
+
+        // 🔍 DEBUG: Log detailed info about what we're sending
+        console.log('=== QR DEBUG INFO ===');
+        console.log('Original data:', data);
+        console.log('Data type:', typeof data);
+        console.log('Data length:', data.length);
+        console.log('Contains http:', data.includes('http'));
+        console.log('Contains award-points:', data.includes('award-points'));
+        console.log('Matches GC pattern:', /GC_\d+_[A-F0-9]+/i.test(data));
+        console.log('=====================');
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        // Call API to get consumer details
+        const response = await fetch('/seller/qr/process-consumer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                qr_data: data
+            })
+        });
+
+        const result = await response.json();
+        console.log('API Response:', result);
+
+        // 🔍 DEBUG: Show backend response in alert
+        if (!result.success) {
+            alert('BACKEND ERROR:\n' + result.message + '\n\nQR Data Sent: ' + data);
         }
 
-        async function processConsumerQR(data) {
-            try {
-                updateStatus('Processing customer QR code...');
-                
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                
-                // Call API to get consumer details
-                const response = await fetch('/seller/qr/process-consumer', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        qr_data: data
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    currentConsumer = result.consumer;
-                    availableItems = result.items;
-                    showConsumerModal(result);
-                } else {
-                    updateStatus('Error: ' + result.message);
-                    setTimeout(() => {
-                        updateStatus('Position customer QR code within the frame');
-                        restartScanner();
-                    }, 3000);
-                }
-                
-            } catch (error) {
-                console.error('Error processing QR code:', error);
-                updateStatus('Network error. Please try again.');
-                setTimeout(() => {
-                    updateStatus('Position customer QR code within the frame');
-                    restartScanner();
-                }, 3000);
-            }
+        if (result.success) {
+            currentConsumer = result.consumer;
+            availableItems = result.items;
+            showConsumerModal(result);
+        } else {
+            updateStatus('Error: ' + result.message);
+            console.error('QR Processing Error:', result.message);
+            setTimeout(() => {
+                updateStatus('Position customer QR code within the frame');
+                restartScanner();
+            }, 3000);
         }
+
+    } catch (error) {
+        console.error('Error processing QR code:', error);
+        alert('NETWORK ERROR:\n' + error.message + '\n\nQR Data: ' + data);
+        updateStatus('Network error. Please try again.');
+        setTimeout(() => {
+            updateStatus('Position customer QR code within the frame');
+            restartScanner();
+        }, 3000);
+    }
+}
 
         function showConsumerModal(data) {
             const consumer = data.consumer;
-            
+
             // Update consumer info
             document.getElementById('consumer-info').innerHTML = `
-                <div class="consumer-details">
-                    <div class="consumer-avatar">
-                        ${consumer.full_name.charAt(0).toUpperCase()}
-                    </div>
-                    <div class="consumer-meta">
-                        <h3>${consumer.full_name}</h3>
-                        <p>${consumer.email}</p>
-                    </div>
-                </div>
-                <div class="consumer-stats">
-                    <div class="stat-item">
-                        <div class="stat-value">${consumer.total_points.toLocaleString()}</div>
-                        <div class="stat-label">Total Points</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">${consumer.transactions_count}</div>
-                        <div class="stat-label">Transactions</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">${consumer.member_since}</div>
-                        <div class="stat-label">Member Since</div>
-                    </div>
-                </div>
-            `;
-            
+                            <div class="consumer-details">
+                                <div class="consumer-avatar">
+                                    ${consumer.full_name.charAt(0).toUpperCase()}
+                                </div>
+                                <div class="consumer-meta">
+                                    <h3>${consumer.full_name}</h3>
+                                    <p>${consumer.email}</p>
+                                </div>
+                            </div>
+                            <div class="consumer-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">${consumer.total_points.toLocaleString()}</div>
+                                    <div class="stat-label">Total Points</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${consumer.transactions_count}</div>
+                                    <div class="stat-label">Transactions</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${consumer.member_since}</div>
+                                    <div class="stat-label">Member Since</div>
+                                </div>
+                            </div>
+                        `;
+
             // Reset selected items
             selectedItems = [];
             updateSelectedItemsDisplay();
             updateTotals();
-            
+
             // Show modal
             consumerModal.style.display = 'flex';
         }
 
         function showItemSelector() {
             const itemsGrid = document.getElementById('items-grid');
-            
+
             itemsGrid.innerHTML = availableItems.map(item => `
-                <div class="item-card" onclick="addItemToSelection(${item.id}, '${item.name}', ${item.points_per_unit})">
-                    <div class="item-icon">${getItemIcon(item.name)}</div>
-                    <div class="item-name">${item.name}</div>
-                    <div class="item-points">+${item.points_per_unit} pt</div>
-                </div>
-            `).join('');
-            
+                            <div class="item-card" onclick="addItemToSelection(${item.id}, '${item.name}', ${item.points_per_unit})">
+                                <div class="item-icon">${getItemIcon(item.name)}</div>
+                                <div class="item-name">${item.name}</div>
+                                <div class="item-points">+${item.points_per_unit} pt</div>
+                            </div>
+                        `).join('');
+
             itemSelectorModal.style.display = 'flex';
         }
 
@@ -1092,7 +1129,7 @@
         function addItemToSelection(itemId, itemName, pointsPerUnit) {
             // Check if item already exists
             const existingItem = selectedItems.find(item => item.id === itemId);
-            
+
             if (existingItem) {
                 // Increase quantity if less than 3
                 if (existingItem.quantity < 3) {
@@ -1109,7 +1146,7 @@
                     quantity: 1
                 });
             }
-            
+
             updateSelectedItemsDisplay();
             updateTotals();
             closeItemSelector();
@@ -1117,43 +1154,43 @@
 
         function updateSelectedItemsDisplay() {
             const container = document.getElementById('selected-items-container');
-            
+
             if (selectedItems.length === 0) {
                 container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📦</div>
-                        <p>No items selected yet</p>
-                    </div>
-                `;
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">📦</div>
+                                    <p>No items selected yet</p>
+                                </div>
+                            `;
                 return;
             }
-            
+
             container.innerHTML = selectedItems.map((item, index) => `
-                <div class="selected-item">
-                    <div class="item-info">
-                        <div class="item-icon">${getItemIcon(item.name)}</div>
-                        <div class="item-details">
-                            <div class="item-name">${item.name}</div>
-                            <div class="item-unit-points">${item.pointsPerUnit} pt each</div>
-                        </div>
-                    </div>
-                    <div class="quantity-controls">
-                        <button class="qty-btn" onclick="decreaseQuantity(${index})" ${item.quantity <= 1 ? 'disabled' : ''}>
-                            -
-                        </button>
-                        <span class="quantity-display">${item.quantity}</span>
-                        <button class="qty-btn" onclick="increaseQuantity(${index})" ${item.quantity >= 3 ? 'disabled' : ''}>
-                            +
-                        </button>
-                    </div>
-                    <div class="item-points">
-                        ${item.quantity * item.pointsPerUnit} pts
-                    </div>
-                    <button class="remove-item" onclick="removeItem(${index})">
-                        ×
-                    </button>
-                </div>
-            `).join('');
+                            <div class="selected-item">
+                                <div class="item-info">
+                                    <div class="item-icon">${getItemIcon(item.name)}</div>
+                                    <div class="item-details">
+                                        <div class="item-name">${item.name}</div>
+                                        <div class="item-unit-points">${item.pointsPerUnit} pt each</div>
+                                    </div>
+                                </div>
+                                <div class="quantity-controls">
+                                    <button class="qty-btn" onclick="decreaseQuantity(${index})" ${item.quantity <= 1 ? 'disabled' : ''}>
+                                        -
+                                    </button>
+                                    <span class="quantity-display">${item.quantity}</span>
+                                    <button class="qty-btn" onclick="increaseQuantity(${index})" ${item.quantity >= 3 ? 'disabled' : ''}>
+                                        +
+                                    </button>
+                                </div>
+                                <div class="item-points">
+                                    ${item.quantity * item.pointsPerUnit} pts
+                                </div>
+                                <button class="remove-item" onclick="removeItem(${index})">
+                                    ×
+                                </button>
+                            </div>
+                        `).join('');
         }
 
         function increaseQuantity(index) {
@@ -1182,11 +1219,11 @@
             const totalItems = selectedItems.length;
             const totalQuantity = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
             const totalPoints = selectedItems.reduce((sum, item) => sum + (item.quantity * item.pointsPerUnit), 0);
-            
+
             document.getElementById('total-items').textContent = totalItems;
             document.getElementById('total-quantity').textContent = totalQuantity;
             document.getElementById('total-points-preview').textContent = totalPoints + ' pts';
-            
+
             // Enable/disable confirm button
             document.getElementById('confirm-btn').disabled = totalItems === 0;
         }
@@ -1210,10 +1247,10 @@
                 alert('Please select at least one item');
                 return;
             }
-            
+
             try {
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                
+
                 const response = await fetch('/seller/qr/award-points', {
                     method: 'POST',
                     headers: {
@@ -1229,16 +1266,16 @@
                         }))
                     })
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.success) {
                     closeConsumerModal();
                     showSuccessModal(result);
                 } else {
                     alert('Error: ' + result.message);
                 }
-                
+
             } catch (error) {
                 console.error('Error awarding points:', error);
                 alert('Network error. Please try again.');
@@ -1247,18 +1284,18 @@
 
         function showSuccessModal(data) {
             document.getElementById('points-awarded').innerHTML = `
-                +${data.total_points_awarded} points
-                <div style="font-size: 16px; color: #6c757d; margin-top: 10px;">
-                    ${data.total_quantity} items scanned
-                </div>
-                <div style="font-size: 14px; color: #6c757d; margin-top: 5px;">
-                    Customer now has ${data.consumer_total_points.toLocaleString()} points
-                </div>
-                <div style="font-size: 14px; color: #28a745; margin-top: 10px; font-weight: 600;">
-                    Your rank points: +${data.total_points_awarded}
-                </div>
-            `;
-            
+                            +${data.total_points_awarded} points
+                            <div style="font-size: 16px; color: #6c757d; margin-top: 10px;">
+                                ${data.total_quantity} items scanned
+                            </div>
+                            <div style="font-size: 14px; color: #6c757d; margin-top: 5px;">
+                                Customer now has ${data.consumer_total_points.toLocaleString()} points
+                            </div>
+                            <div style="font-size: 14px; color: #28a745; margin-top: 10px; font-weight: 600;">
+                                Your rank points: +${data.total_points_awarded}
+                            </div>
+                        `;
+
             successModal.style.display = 'flex';
         }
 
@@ -1304,9 +1341,14 @@
             if (file) {
                 try {
                     updateStatus('Scanning image...');
+                    console.log('File selected:', file.name, file.type);
+
                     const result = await QrScanner.scanImage(file);
+                    console.log('QR Scanner result:', result);
+
                     handleScanResult({ data: result });
                 } catch (error) {
+                    console.error('QR scan error:', error);
                     updateStatus('No QR code found in image');
                     setTimeout(() => {
                         updateStatus('Position customer QR code within the frame');
@@ -1326,20 +1368,20 @@
         }
 
         // Handle page visibility changes
-        document.addEventListener('visibilitychange', function() {
+        document.addEventListener('visibilitychange', function () {
             if (document.hidden && scanner && isScanning) {
                 scanner.stop();
                 isScanning = false;
-            } else if (!document.hidden && scanner && !isScanning && 
-                       consumerModal.style.display === 'none' && 
-                       successModal.style.display === 'none' &&
-                       itemSelectorModal.style.display === 'none') {
+            } else if (!document.hidden && scanner && !isScanning &&
+                consumerModal.style.display === 'none' &&
+                successModal.style.display === 'none' &&
+                itemSelectorModal.style.display === 'none') {
                 restartScanner();
             }
         });
 
         // Cleanup on page unload
-        window.addEventListener('beforeunload', function() {
+        window.addEventListener('beforeunload', function () {
             if (scanner) {
                 scanner.stop();
             }
