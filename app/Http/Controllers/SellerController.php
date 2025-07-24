@@ -1122,22 +1122,9 @@ class SellerController extends Controller
                 return redirect()->route('login')->with('error', 'Please log in to access receipts.');
             }
 
-            // Debug: Check what's causing the issue
-            echo "<h1>Debug Info</h1>";
-            echo "<p>Seller ID: " . $seller->id . "</p>";
-            echo "<p>Seller Name: " . $seller->business_name . "</p>";
-
-            // Check if tables exist
-            echo "<p>pending_transactions table exists: " . (Schema::hasTable('pending_transactions') ? 'YES' : 'NO') . "</p>";
-            echo "<p>items table exists: " . (Schema::hasTable('items') ? 'YES' : 'NO') . "</p>";
-
-            // Test the first database query
             try {
                 $testQuery = DB::table('pending_transactions')->where('seller_id', $seller->id)->count();
-                echo "<p>Test query successful. Count: " . $testQuery . "</p>";
             } catch (\Exception $e) {
-                echo "<p style='color: red;'>Database query failed: " . $e->getMessage() . "</p>";
-                echo "<pre>" . $e->getTraceAsString() . "</pre>";
                 return; // Stop here to see the error
             }
 
@@ -1169,12 +1156,10 @@ class SellerController extends Controller
                 $query->whereDate('created_at', '<=', $dateTo);
             }
 
-            echo "<p>About to run paginated query...</p>";
 
             // Get receipts with pagination
             $receipts = $query->paginate(20);
 
-            echo "<p>Query successful. Found " . $receipts->total() . " receipts.</p>";
 
             // Parse items JSON for display
             $receipts->getCollection()->transform(function ($receipt) {
@@ -1197,8 +1182,6 @@ class SellerController extends Controller
                 'total_points_claimed' => DB::table('pending_transactions')->where('seller_id', $seller->id)->where('status', 'claimed')->sum('total_points'),
             ];
 
-            echo "<p>Stats calculated successfully.</p>";
-            echo "<p>About to return view...</p>";
 
             return view('receipts.index', compact('receipts', 'stats', 'status', 'search', 'dateFrom', 'dateTo'));
 

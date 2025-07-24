@@ -34,7 +34,7 @@ body {
 
 /* Header */
 .dashboard-header {
-    background: #000000;
+    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
     padding: 16px 20px;
     position: sticky;
     top: 0;
@@ -489,21 +489,31 @@ body {
 /* Quick Actions Grid - Now 5 items */
 .actions-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(4, 1fr); /* Changed from 5 to 4 to match 2x2 layout */
+    gap: 16px; /* Changed from 12px to 16px to match stats-grid */
     margin-bottom: 24px;
 }
 
 @media (max-width: 768px) {
     .actions-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr); /* 2x2 on tablet */
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr; /* Stack stats vertically on tablet */
+        gap: 12px;
     }
 }
 
 @media (max-width: 480px) {
     .actions-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
+        grid-template-columns: repeat(2, 1fr); /* Keep 2x2 on mobile */
+        gap: 12px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr; /* Stack stats vertically on mobile */
+        gap: 12px;
     }
 }
 
@@ -1001,10 +1011,6 @@ body {
                 <div class="action-label">Receipts</div>
             </a>
 
-            <a href="{{ route('seller.scanner') }}" class="action-card scanner-action">
-                <div class="action-icon">📱</div>
-                <div class="action-label">QR Scanner</div>
-            </a>
 
             <a href="{{ route('seller.photos') }}" class="action-card">
                 <div class="action-icon">📷</div>
