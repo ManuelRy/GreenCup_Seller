@@ -1,459 +1,1300 @@
 @extends('master')
 
 @section('content')
-<div class="background-animation">
-    <div class="floating-shapes">
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-    </div>
-    <div class="particles">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-    </div>
-</div>
-
-<div class="container">
-    <!-- Header Section -->
-    <div class="header">
-        <h1 class="app-title">🌱 GreenCup Dashboard</h1>
-        
-        <div class="profile-section">
-            <div class="profile-pic"></div>
-            <div class="greeting">
-                <h2>Welcome back, {{ $seller->business_name }}!</h2>
-                <p>{{ $seller->email }}</p>
-                <button type="button" onclick="showLogoutModal()" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 6px 12px; border-radius: 15px; font-size: 12px; cursor: pointer; transition: all 0.3s ease; margin-top: 10px;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
-                    🚪 Logout
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Points Card -->
-    <div class="points-card">
-        <div class="points-amount" id="totalPoints">{{ number_format($totalRankPoints) }}</div>
-        <div class="points-label">
-            🏆 {{ $currentRank->name }} Rank Points
-        </div>
-    </div>
-
-    <!-- Rank Progress Section -->
-    <div class="rank-progress-section" style="margin: 0 30px 30px; background: white; border-radius: 25px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-        <h3 style="color: #2E8B57; margin-bottom: 20px; font-size: 18px; font-weight: 600;">Rank Progress</h3>
-        
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="background: linear-gradient(45deg, #fd7e14, #ffc107); color: white; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 14px;">
-                    {{ $currentRank->name }} Seller
-                </span>
-                <span style="color: #2E8B57; font-weight: 600;">{{ number_format($totalRankPoints) }} points</span>
-            </div>
-            @if($nextRank)
-            <div style="color: #6c757d; font-size: 14px;">
-                {{ number_format($pointsToNext) }} points to {{ $nextRank->name }}
-            </div>
-            @else
-            <div style="color: #28a745; font-size: 14px; font-weight: 600;">
-                🎉 Maximum rank achieved!
-            </div>
-            @endif
-        </div>
-        
-        @if($nextRank)
-        <div style="width: 100%; height: 12px; background: #e9ecef; border-radius: 6px; overflow: hidden; margin-bottom: 10px;">
-            <div style="height: 100%; background: linear-gradient(45deg, #fd7e14, #ffc107); border-radius: 6px; width: {{ min(100, (($totalRankPoints - $currentRank->min_points) / ($nextRank->min_points - $currentRank->min_points)) * 100) }}%; transition: width 0.3s ease;"></div>
-        </div>
-        
-        <div style="display: flex; justify-content: space-between; font-size: 12px; color: #6c757d;">
-            <span>{{ $currentRank->name }} ({{ number_format($currentRank->min_points) }})</span>
-            <span>{{ $nextRank->name }} ({{ number_format($nextRank->min_points) }})</span>
-        </div>
-        @endif
-    </div>
-
-    <!-- Stats Grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin: 0 30px 30px; padding: 0;">
-        <!-- Points Given -->
-        <div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.12); text-align: center; border-top: 4px solid #28a745;">
-            <div style="font-size: 14px; color: #28a745; margin-bottom: 8px; font-weight: 600;">Points Given</div>
-            <div style="font-size: 24px; font-weight: bold; color: #2c3e50;">{{ number_format($pointsGiven) }}</div>
-        </div>
-
-        <!-- Customers -->
-        <div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.12); text-align: center; border-top: 4px solid #6f42c1;">
-            <div style="font-size: 14px; color: #6f42c1; margin-bottom: 8px; font-weight: 600;">Customers</div>
-            <div style="font-size: 24px; font-weight: bold; color: #2c3e50;">{{ number_format($totalCustomers) }}</div>
-        </div>
-
-        <!-- Transactions -->
-        <div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.12); text-align: center; border-top: 4px solid #17a2b8;">
-            <div style="font-size: 14px; color: #17a2b8; margin-bottom: 8px; font-weight: 600;">Transactions</div>
-            <div style="font-size: 24px; font-weight: bold; color: #2c3e50;">{{ number_format($totalTransactions) }}</div>
-        </div>
-    </div>
-
-    <!-- Analytics Section -->
-    <div class="analytics-section">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-            <h3 style="color: white; font-size: 18px; font-weight: 600; margin: 0;">Activity Overview</h3>
-        </div>
-
-        @if($totalTransactions > 0)
-        <div class="spending-chart">
-            <div class="chart-circle">
-                <div class="chart-content">
-                    <span class="chart-icon">📊</span>
-                    <div class="chart-title">Total Activity</div>
-                    <div class="chart-amount">{{ number_format($totalActivity) }} pts</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="flow-cards">
-            <div class="flow-card">
-                <div class="flow-header">
-                    <div class="flow-title">
-                        <span>📈</span>
-                        <span>Points Given</span>
-                    </div>
-                </div>
-                <div class="flow-amount">{{ number_format($pointsGiven) }} pts</div>
-                <div class="flow-change points-in-change">{{ round($givingPercentage) }}% of activity</div>
-            </div>
-
-            <div class="flow-card">
-                <div class="flow-header">
-                    <div class="flow-title">
-                        <span>🎁</span>
-                        <span>Redemptions</span>
-                    </div>
-                </div>
-                <div class="flow-amount">{{ number_format($pointsFromRedemptions) }} pts</div>
-                <div class="flow-change points-out-change">{{ round($redemptionPercentage) }}% of activity</div>
-            </div>
-        </div>
-        @else
-        <!-- Empty state for no transactions -->
-        <div style="text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.8);">
-            <div style="font-size: 48px; margin-bottom: 20px;">📱</div>
-            <h3 style="color: white; margin-bottom: 10px;">No Activity Yet</h3>
-            <p style="font-size: 16px; margin-bottom: 30px;">Start scanning customer QR codes to track your green impact!</p>
-            <button onclick="window.location.href='{{ route('seller.scanner') }}'" style="background: white; color: #2E8B57; border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
-                Open Scanner
-            </button>
-        </div>
-        @endif
-
-        <div class="cash-flow-section">`
-            <div class="cash-flow-header">
-                <div class="cash-flow-title">
-                    <span>⭐</span>
-                    <span>Rank Status</span>
-                </div>
-            </div>
-            <div class="net-flow-label">Current Rank</div>
-            <div class="net-flow-amount" style="color: #28a745;">{{ $currentRank->name }}</div>
-            
-            @if($nextRank)
-            <div class="flow-bars">
-                <div class="flow-bar-section">
-                    <div class="flow-bar-label">Current Points</div>
-                    <div class="flow-bar points-in-bar"></div>
-                    <div class="flow-bar-amount">{{ number_format($totalRankPoints) }}</div>
-                </div>
-                <div class="flow-bar-section">
-                    <div class="flow-bar-label">Next Rank</div>
-                    <div class="flow-bar points-out-bar"></div>
-                    <div class="flow-bar-amount">{{ number_format($nextRank->min_points) }}</div>
-                </div>
-            </div>
-            @else
-            <div style="text-align: center; padding: 20px; color: #28a745;">
-                <p style="font-size: 18px; margin: 0;">🏆 Congratulations! You've reached the highest rank!</p>
-            </div>
-            @endif
-        </div>
-    </div>
-
-    <!-- Top Items Section -->
-    <div style="margin: 0 30px 30px; background: white; border-radius: 16px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid #e9ecef;">
-        <h3 style="color: #2c3e50; font-size: 18px; margin-bottom: 20px;">Top Scanned Items</h3>
-        
-        @if($topItems->count() > 0)
-            @foreach($topItems as $item)
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #e9ecef;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; background: linear-gradient(45deg, #28a745, #20c997);">
-                        @switch($item->name)
-                            @case('Reusable Cup') ♻️ @break
-                            @case('Coffee Cup') ☕ @break
-                            @case('Water Bottle') 🥤 @break
-                            @case('Food Container') 🍽️ @break
-                            @case('Shopping Bag') 🛍️ @break
-                            @case('Takeout Container') 📦 @break
-                            @case('Straw') 🥤 @break
-                            @case('Utensils Set') 🍴 @break
-                            @default 📦
-                        @endswitch
-                    </div>
-                    <div>
-                        <h4 style="color: #2c3e50; font-size: 16px; margin-bottom: 2px;">{{ $item->name }}</h4>
-                        <p style="color: #6c757d; font-size: 14px;">{{ number_format($item->scan_count) }} scans</p>
-                    </div>
-                </div>
-                <div style="text-align: right;">
-                    <div style="color: #28a745; font-weight: bold; font-size: 16px;">+{{ number_format($item->total_points) }} pts</div>
-                    <div style="color: #6c757d; font-size: 14px;">{{ number_format($item->total_units) }} units</div>
-                </div>
-            </div>
-            @endforeach
-        @else
-            <!-- Empty state for no items -->
-            <div style="text-align: center; padding: 40px 20px; color: #6c757d;">
-                <div style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;">📦</div>
-                <p style="font-size: 16px;">No items scanned yet. Start scanning customer items to see your top products!</p>
-            </div>
-        @endif
-    </div>
-
-    <!-- Services Grid -->
-<!-- Services Grid -->
-<div class="services-grid">
-    <a href="{{ route('seller.profile') ?? '#' }}" class="service-item">
-        <div class="service-icon">👤</div>
-        <div class="service-name">Account</div>
-    </a>
-
-<a href="{{ route('seller.scanner') }}" class="service-item">
-        <div class="service-icon">📱</div>
-        <div class="service-name">Point<br>Scanner</div>
-    </a>
-
-    <!-- ADD THIS NEW ITEM -->
-    <a href="{{ route('seller.photos') }}" class="service-item">
-        <div class="service-icon">📷</div>
-        <div class="service-name">Store<br>Gallery</div>
-    </a>
-</div>
-    
-    @if($totalTransactions == 0)
-    <!-- Getting Started Guide for new sellers -->
-    <div style="margin: 0 30px 30px; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-radius: 16px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
-        <h3 style="color: #2E8B57; font-size: 18px; margin-bottom: 15px;">🚀 Getting Started</h3>
-        <ol style="color: #558b2f; font-size: 15px; line-height: 1.8; margin: 0; padding-left: 20px;">
-            <li>Share your seller QR code with customers</li>
-            <li>Scan customer items when they use reusable products</li>
-            <li>Award points automatically to encourage green behavior</li>
-            <li>Track your impact and climb the ranks!</li>
-        </ol>
-    </div>
-    @endif
-</div>
-
-<!-- Logout Confirmation Modal -->
-<!-- Style 1: Friendly Modal (Current) -->
-<div id="logoutModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; opacity: 0; transition: opacity 0.3s ease;">
-    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 20px; padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 400px; width: 90%; text-align: center;">
-        <div style="font-size: 48px; margin-bottom: 20px;">👋</div>
-        <h3 style="color: #2c3e50; margin-bottom: 10px; font-size: 22px;">Leaving Already?</h3>
-        <p style="color: #6c757d; margin-bottom: 25px; font-size: 16px;">Are you sure you want to logout from GreenCup?</p>
-        
-        <form id="logoutForm" action="{{ route('logout') }}" method="POST" style="display: inline-block;">
-            @csrf
-            <div style="display: flex; gap: 15px; justify-content: center;">
-                <button type="button" onclick="hideLogoutModal()" style="background: #e9ecef; color: #6c757d; border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: inherit;" onmouseover="this.style.background='#dee2e6'" onmouseout="this.style.background='#e9ecef'">
-                    Stay Here
-                </button>
-                <button type="submit" style="background: linear-gradient(45deg, #dc3545, #e83e8c); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(220,53,69,0.3); font-family: inherit;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(220,53,69,0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(220,53,69,0.3)'">
-                    Yes, Logout
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-
 <style>
-/* Additional dashboard-specific styles */
-.rank-progress-section h3 {
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #ffffff;
+    color: #333333;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Container with Gradient Background */
+.dashboard-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #00b09b 0%, #00cdac 50%, #00dfa8 100%);
+    padding-bottom: 40px;
+}
+
+/* Header */
+.dashboard-header {
+    background: #000000;
+    padding: 16px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.app-title {
+    color: white;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.user-section:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.user-avatar:hover {
+    transform: scale(1.05);
+}
+
+.user-name {
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Main Content */
+.main-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 24px 16px;
+}
+
+/* Points Card */
+.points-card {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    position: relative;
+    overflow: hidden;
+}
+
+.points-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, #00b09b, #00cdac, #00dfa8, #00b09b);
+    opacity: 0.05;
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    to { transform: rotate(360deg); }
+}
+
+.points-value {
+    font-size: 56px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 2;
+}
+
+.points-label {
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Progress Section */
+.progress-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 2px solid #f0f0f0;
+}
+
+.progress-section {
+    position: relative;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #f59e0b;
+}
+
+.progress-text {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: #e5e7eb;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
+    border-radius: 5px;
+    transition: width 0.8s ease;
+    box-shadow: 0 2px 4px rgba(251, 191, 36, 0.4);
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #999;
+    font-weight: 500;
+}
+
+/* Receipt Management Card */
+.receipt-stats-card {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.receipt-stats-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -30%;
+    width: 100%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+    transform: rotate(15deg);
+    pointer-events: none;
+}
+
+.receipt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.receipt-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #064e3b;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.receipt-icon {
+    font-size: 22px;
+}
+
+.receipt-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.receipt-stat {
+    text-align: center;
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+.receipt-stat-value {
+    font-size: 36px;
+    font-weight: 800;
+    color: #10b981;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+.receipt-stat-label {
+    font-size: 12px;
+    color: #047857;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.receipt-actions {
+    display: flex;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+}
+
+.receipt-btn {
+    flex: 1;
+    padding: 14px 18px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.receipt-btn-primary {
+    background: #10b981;
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.receipt-btn-primary:hover {
+    background: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.receipt-btn-secondary {
+    background: white;
+    color: #047857;
+    border: 2px solid rgba(16, 185, 129, 0.3);
+}
+
+.receipt-btn-secondary:hover {
+    background: #f0fdf4;
+    color: #064e3b;
+    text-decoration: none;
+    transform: translateY(-2px);
+    border-color: rgba(16, 185, 129, 0.5);
+}
+
+/* Analytics Card */
+.analytics-card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.analytics-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.analytics-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Donut Chart Container */
+.chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.donut-chart {
+    width: 200px;
+    height: 200px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+}
+
+.chart-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.chart-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1;
+}
+
+.chart-label {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+.legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.legend-dot.green {
+    background: #10b981;
+}
+
+.legend-dot.red {
+    background: #ef4444;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.stat-title {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-icon {
+    font-size: 20px;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.stat-subtitle {
+    font-size: 12px;
+    color: #999;
+}
+
+/* Quick Actions Grid - Now 5 items */
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+    .actions-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+}
+
+.action-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px 12px;
+    text-align: center;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: 2px solid transparent;
+}
+
+.action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    color: #333;
+    text-decoration: none;
+    border-color: #00b09b;
+}
+
+.action-card.receipt-action {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 2px solid rgba(16, 185, 129, 0.2);
+}
+
+.action-card.receipt-action:hover {
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+    border-color: #10b981;
+}
+
+.action-card.scanner-action {
+    background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+    border: 2px solid rgba(139, 92, 246, 0.2);
+}
+
+.action-card.scanner-action:hover {
+    background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);
+    border-color: #8b5cf6;
+}
+
+.action-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.action-label {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+/* Recent Activity */
+.activity-card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.activity-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.view-all {
+    font-size: 14px;
+    color: #00b09b;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.view-all:hover {
+    color: #009688;
+    text-decoration: none;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border-radius: 12px;
+    transition: background-color 0.2s ease;
+}
+
+.activity-item:hover {
+    background: #f8f9fa;
+}
+
+.activity-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.activity-details {
+    flex: 1;
+}
+
+.activity-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.activity-desc {
+    font-size: 12px;
+    color: #666;
+}
+
+.activity-points {
+    font-size: 14px;
+    font-weight: 700;
+    color: #10b981;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 48px 24px;
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.empty-text {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #00b09b, #00cdac);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 176, 155, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #009688, #00b09b);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 176, 155, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+/* Getting Started Card */
+.getting-started-card {
+    background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+    border-radius: 20px;
+    padding: 24px;
+    margin-top: 24px;
+    box-shadow: 0 4px 20px rgba(251, 146, 60, 0.15);
+    border: 1px solid rgba(251, 146, 60, 0.2);
+}
+
+.getting-started-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #9a3412;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.services-grid {
-    padding-bottom: 40px;
-    grid-template-columns: repeat(3, 1fr) !important;
+.getting-started-steps {
+    line-height: 2;
+    color: #7c2d12;
+    font-weight: 500;
 }
 
-.service-item {
-    transition: all 0.3s ease;
-    border: none;
-    background: white;
-    font-family: inherit;
+.getting-started-steps p {
+    margin-bottom: 8px;
+    padding-left: 8px;
 }
 
-.service-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.18);
-}
+/* Utility Classes */
+.text-center { text-align: center; }
+.text-muted { color: #666; }
 
-/* Header logout button */
-.header .greeting button {
-    font-family: inherit;
-}
-
-/* Modal animations */
-@keyframes modalSlideIn {
-    from {
-        transform: translate(-50%, -50%) scale(0.8);
-        opacity: 0;
-    }
-    to {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-    }
-}
-
-#logoutModal > div {
-    animation: modalSlideIn 0.3s ease-out;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .services-grid {
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 15px;
-        padding: 30px 30px 40px;
+/* Mobile Optimizations */
+@media (max-width: 640px) {
+    .main-content {
+        padding: 16px 12px;
     }
     
-    .service-icon {
-        width: 50px;
-        height: 50px;
-        font-size: 24px;
+    .points-value {
+        font-size: 48px;
     }
     
-    .service-name {
-        font-size: 14px;
-    }
-}
-
-@media (max-width: 480px) {
-    .services-grid {
-        grid-template-columns: 1fr !important;
-        gap: 20px;
-    }
-    
-    .service-icon {
-        width: 60px;
-        height: 60px;
+    .stat-value {
         font-size: 28px;
     }
     
-    .service-name {
-        font-size: 16px;
+    .stats-grid {
+        grid-template-columns: 1fr;
     }
+    
+    .chart-legend {
+        gap: 20px;
+    }
+    
+    .receipt-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .receipt-actions {
+        flex-direction: column;
+    }
+    
+    .progress-header {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.slide-in {
+    animation: slideIn 0.5s ease-out;
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Toast Notifications */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-left: 4px solid #10b981;
+    z-index: 1000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast.error {
+    border-left-color: #ef4444;
 }
 </style>
 
+<div class="dashboard-container">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <h1 class="app-title">🌱 Green Cup Seller</h1>
+            
+            <div class="user-section" onclick="showLogoutConfirm()">
+                <span class="user-name">{{ $seller->business_name }}</span>
+                <div class="user-avatar" title="Click to logout">{{ substr($seller->business_name, 0, 1) }}</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Points Card -->
+        <div class="points-card fade-in">
+            <div class="points-value" id="totalPoints">{{ number_format($totalRankPoints) }}</div>
+            <div class="points-label">Total Points Earned</div>
+        </div>
+
+        <!-- Progress Section -->
+        @if($currentRank)
+        <div class="progress-card fade-in">
+            <div class="progress-section">
+                <div class="progress-header">
+                    <span class="rank-badge">
+                        🏆 {{ $currentRank->name }} Seller
+                    </span>
+                    <span class="progress-text">
+                        @if($nextRank)
+                            {{ number_format($pointsToNext) }} points to {{ $nextRank->name }}
+                        @else
+                            🎉 Maximum rank achieved!
+                        @endif
+                    </span>
+                </div>
+                
+                @if($nextRank)
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ min(100, (($totalRankPoints - $currentRank->min_points) / ($nextRank->min_points - $currentRank->min_points)) * 100) }}%"></div>
+                </div>
+                <div class="progress-labels">
+                    <span>{{ $currentRank->name }} ({{ number_format($currentRank->min_points) }})</span>
+                    <span>{{ $nextRank->name }} ({{ number_format($nextRank->min_points) }})</span>
+                </div>
+                @endif
+            </div>
+        </div>
+        @endif
+
+        <!-- Receipt Management Card -->
+        <div class="receipt-stats-card fade-in">
+            <div class="receipt-header">
+                <div class="receipt-title">
+                    <span class="receipt-icon">📄</span>
+                    Receipt Management
+                </div>
+            </div>
+            
+            <div class="receipt-stats-grid">
+                @php
+                    try {
+                        $pendingReceipts = DB::table('pending_transactions')
+                            ->where('seller_id', Auth::guard('seller')->user()->id)
+                            ->where('status', 'pending')
+                            ->count();
+                        $claimedToday = DB::table('pending_transactions')
+                            ->where('seller_id', Auth::guard('seller')->user()->id)
+                            ->where('status', 'claimed')
+                            ->whereDate('claimed_at', today())
+                            ->count();
+                    } catch (\Exception $e) {
+                        $pendingReceipts = 0;
+                        $claimedToday = 0;
+                    }
+                @endphp
+                <div class="receipt-stat">
+                    <div class="receipt-stat-value">{{ $pendingReceipts }}</div>
+                    <div class="receipt-stat-label">Pending</div>
+                </div>
+                <div class="receipt-stat">
+                    <div class="receipt-stat-value">{{ $claimedToday }}</div>
+                    <div class="receipt-stat-label">Claimed Today</div>
+                </div>
+            </div>
+            
+            <div class="receipt-actions">
+                <a href="{{ route('seller.receipts') }}" class="receipt-btn receipt-btn-secondary">
+                    <span>📋</span>
+                    View All Receipts
+                </a>
+                <a href="{{ route('seller.receipts.create') }}" class="receipt-btn receipt-btn-primary">
+                    <span>➕</span>
+                    Create Receipt
+                </a>
+            </div>
+        </div>
+
+        <!-- Analytics Card -->
+        @if($totalTransactions > 0)
+        <div class="analytics-card fade-in">
+            <div class="analytics-header">
+                <h3 class="analytics-title">📊 Points Analytics</h3>
+            </div>
+            
+            <div class="chart-container">
+                <svg class="donut-chart" viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="80" fill="none" stroke="#e5e7eb" stroke-width="20"/>
+                    <circle cx="100" cy="100" r="80" fill="none" 
+                            stroke="#10b981" 
+                            stroke-width="20"
+                            stroke-dasharray="{{ ($givingPercentage / 100) * 502.65 }} 502.65"
+                            stroke-dashoffset="0"
+                            transform="rotate(-90 100 100)"/>
+                    <circle cx="100" cy="100" r="80" fill="none" 
+                            stroke="#ef4444" 
+                            stroke-width="20"
+                            stroke-dasharray="{{ ($redemptionPercentage / 100) * 502.65 }} 502.65"
+                            stroke-dashoffset="-{{ ($givingPercentage / 100) * 502.65 }}"
+                            transform="rotate(-90 100 100)"/>
+                </svg>
+                <div class="chart-center">
+                    <div class="chart-value">{{ number_format($totalActivity) }}</div>
+                    <div class="chart-label">Total Activity</div>
+                </div>
+            </div>
+            
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <span class="legend-dot green"></span>
+                    <span>Points Given ({{ number_format($pointsGiven) }})</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot red"></span>
+                    <span>Points from Redemptions ({{ number_format($pointsFromRedemptions) }})</span>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        <!-- Stats Grid -->
+        <div class="stats-grid fade-in">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Total Customers</span>
+                    <span class="stat-icon">👥</span>
+                </div>
+                <div class="stat-value">{{ number_format($totalCustomers) }}</div>
+                <div class="stat-subtitle">Unique customers served</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Total Transactions</span>
+                    <span class="stat-icon">📋</span>
+                </div>
+                <div class="stat-value">{{ number_format($totalTransactions) }}</div>
+                <div class="stat-subtitle">All time transactions</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions - All 5 main features -->
+        <div class="actions-grid fade-in">
+            <a href="{{ route('seller.account') }}" class="action-card">
+                <div class="action-icon">👤</div>
+                <div class="action-label">Account</div>
+            </a>
+
+            <a href="{{ route('seller.receipts') }}" class="action-card receipt-action">
+                <div class="action-icon">📄</div>
+                <div class="action-label">Receipts</div>
+            </a>
+
+            <a href="{{ route('seller.scanner') }}" class="action-card scanner-action">
+                <div class="action-icon">📱</div>
+                <div class="action-label">QR Scanner</div>
+            </a>
+
+            <a href="{{ route('seller.photos') }}" class="action-card">
+                <div class="action-icon">📷</div>
+                <div class="action-label">Gallery</div>
+            </a>
+
+            <a href="{{ route('seller.account') }}#transactions" class="action-card">
+                <div class="action-icon">📊</div>
+                <div class="action-label">History</div>
+            </a>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-card fade-in">
+            <div class="activity-header">
+                <h3 class="activity-title">⚡ Recent Activity</h3>
+                @if($totalTransactions > 0)
+                <a href="{{ route('seller.account') }}" class="view-all">View All →</a>
+                @endif
+            </div>
+            
+            @if($totalTransactions > 0)
+                @php
+                    // Get recent transactions for display
+                    $recentTransactions = collect();
+                    try {
+                        $recentTransactions = DB::table('point_transactions')
+                            ->join('consumers', 'point_transactions.consumer_id', '=', 'consumers.id')
+                            ->leftJoin('qr_codes', 'point_transactions.qr_code_id', '=', 'qr_codes.id')
+                            ->leftJoin('items', 'qr_codes.item_id', '=', 'items.id')
+                            ->where('point_transactions.seller_id', $seller->id)
+                            ->select([
+                                'point_transactions.id',
+                                'point_transactions.points',
+                                'point_transactions.type',
+                                'point_transactions.created_at',
+                                'consumers.full_name as consumer_name',
+                                'items.name as item_name'
+                            ])
+                            ->orderBy('point_transactions.created_at', 'desc')
+                            ->limit(5)
+                            ->get();
+                    } catch (\Exception $e) {
+                        $recentTransactions = collect();
+                    }
+                @endphp
+                
+                @if($recentTransactions->count() > 0)
+                <div class="activity-list">
+                    @foreach($recentTransactions as $transaction)
+                    <div class="activity-item slide-in">
+                        <div class="activity-avatar">
+                            @if($transaction->type === 'earn')
+                                ✅
+                            @else
+                                💳
+                            @endif
+                        </div>
+                        <div class="activity-details">
+                            <div class="activity-name">{{ $transaction->consumer_name ?? 'Customer' }}</div>
+                            <div class="activity-desc">
+                                @if($transaction->type === 'earn')
+                                    Earned points • {{ $transaction->item_name ?? 'Item' }}
+                                @else
+                                    Redeemed points • {{ $transaction->item_name ?? 'Item' }}
+                                @endif
+                            </div>
+                        </div>
+                        <div class="activity-points">
+                            @if($transaction->type === 'earn')
+                                +{{ $transaction->points }} pts
+                            @else
+                                -{{ $transaction->points }} pts
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                <div class="empty-state">
+                    <div class="empty-text">No recent transactions to display</div>
+                </div>
+                @endif
+            @else
+                <div class="empty-state">
+                    <div class="empty-icon">🚀</div>
+                    <h4 class="empty-title">Ready to Get Started?</h4>
+                    <p class="empty-text">Create your first receipt to start tracking your green impact and helping customers earn points!</p>
+                    <a href="{{ route('seller.receipts.create') }}" class="btn-primary">Create First Receipt</a>
+                </div>
+            @endif
+        </div>
+
+        @if($totalTransactions == 0)
+        <!-- Getting Started Guide -->
+        <div class="getting-started-card fade-in">
+            <h3 class="getting-started-title">
+                <span>🌟</span>
+                Getting Started Guide
+            </h3>
+            <div class="getting-started-steps">
+                <p><strong>1.</strong> Create receipts for eco-friendly customer purchases</p>
+                <p><strong>2.</strong> Share QR codes with customers to claim their green points</p>
+                <p><strong>3.</strong> Use the QR scanner to award points for bring-your-own items</p>
+                <p><strong>4.</strong> Track customer engagement and monitor your environmental impact</p>
+                <p><strong>5.</strong> Climb the seller ranks and unlock exclusive benefits!</p>
+            </div>
+        </div>
+        @endif
+    </main>
+</div>
+
+<!-- Logout Form (hidden) -->
+<form id="logoutForm" action="{{ route('logout') }}" method="POST" style="display: none;">
+    @csrf
+</form>
+
+<!-- Toast Container -->
+<div id="toast" class="toast" style="display: none;">
+    <span id="toast-message">Success!</span>
+</div>
+
 <script>
-// Logout modal functions
-function showLogoutModal() {
-    const modal = document.getElementById('logoutModal');
-    modal.style.display = 'block';
-    document.body.style.overflow = 'hidden'; // Prevent body scroll
-    setTimeout(() => {
-        modal.style.opacity = '1';
-    }, 10);
+// Global variables
+let isRefreshing = false;
+
+// Show logout confirmation
+function showLogoutConfirm() {
+    if (confirm('Are you sure you want to logout?')) {
+        document.getElementById('logoutForm').submit();
+    }
 }
 
-function hideLogoutModal() {
-    const modal = document.getElementById('logoutModal');
-    modal.style.opacity = '0';
-    document.body.style.overflow = ''; // Restore body scroll
+// Show toast notification
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    const messageEl = document.getElementById('toast-message');
+    
+    messageEl.textContent = message;
+    toast.className = `toast ${type}`;
+    toast.style.display = 'block';
+    
+    // Show toast
+    setTimeout(() => toast.classList.add('show'), 100);
+    
+    // Hide toast
     setTimeout(() => {
-        modal.style.display = 'none';
-    }, 300);
+        toast.classList.remove('show');
+        setTimeout(() => toast.style.display = 'none', 300);
+    }, 4000);
 }
 
-// Close modal when clicking outside
-document.getElementById('logoutModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        hideLogoutModal();
-    }
-});
+// Animate numbers on page load
+function animateValue(element, start, end, duration) {
+    if (!element) return;
+    
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const current = Math.floor(progress * (end - start) + start);
+        element.textContent = current.toLocaleString();
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        }
+    };
+    window.requestAnimationFrame(step);
+}
 
-// Close modal with ESC key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && document.getElementById('logoutModal').style.display === 'block') {
-        hideLogoutModal();
-    }
-});
-
-// Add some interactive functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Animate numbers on page load
-    function animateValue(element, start, end, duration) {
-        if (!element) return;
+// Refresh dashboard data
+async function refreshDashboardData() {
+    if (isRefreshing) return;
+    
+    isRefreshing = true;
+    
+    try {
+        const response = await fetch('{{ route("dashboard.data") }}');
+        if (!response.ok) throw new Error('Network response was not ok');
         
-        let startTimestamp = null;
-        const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            const current = Math.floor(progress * (end - start) + start);
-            element.textContent = current.toLocaleString();
-            if (progress < 1) {
-                window.requestAnimationFrame(step);
+        const data = await response.json();
+        
+        // Update total points with animation
+        const totalPointsEl = document.getElementById('totalPoints');
+        if (totalPointsEl && data.total_rank_points !== undefined) {
+            const currentValue = parseInt(totalPointsEl.textContent.replace(/,/g, ''));
+            const newValue = data.total_rank_points;
+            
+            if (currentValue !== newValue) {
+                animateValue(totalPointsEl, currentValue, newValue, 1000);
             }
-        };
-        window.requestAnimationFrame(step);
+        }
+        
+        // Update other dashboard stats if needed
+        console.log('Dashboard data refreshed successfully');
+        
+    } catch (error) {
+        console.error('Error refreshing dashboard data:', error);
+    } finally {
+        isRefreshing = false;
     }
+}
 
-    // Animate stats on page load
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Dashboard initialized');
+    
+    // Animate total points on load
     const totalPointsEl = document.getElementById('totalPoints');
     if (totalPointsEl) {
         const currentValue = parseInt(totalPointsEl.textContent.replace(/,/g, ''));
+        totalPointsEl.textContent = '0';
         animateValue(totalPointsEl, 0, currentValue, 2000);
     }
 
-    // Add hover effects to stat cards
-    const statCards = document.querySelectorAll('[style*="border-top: 4px solid"]');
-    statCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px) scale(1.02)';
-            this.style.transition = 'all 0.3s ease';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-        });
+    // Add staggered fade-in animations
+    const fadeElements = document.querySelectorAll('.fade-in');
+    fadeElements.forEach((el, index) => {
+        el.style.opacity = '0';
+        setTimeout(() => {
+            el.style.opacity = '1';
+        }, index * 150);
     });
 
-    // Optional: Auto-refresh dashboard data every 60 seconds
+    // Add slide-in animations for activity items
+    const slideElements = document.querySelectorAll('.slide-in');
+    slideElements.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(-20px)';
+        setTimeout(() => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateX(0)';
+        }, 500 + (index * 100));
+    });
+
     @if($totalTransactions > 0)
-    setInterval(function() {
-        fetch('{{ route("dashboard.data") }}')
-            .then(response => response.json())
-            .then(data => {
-                // Update points display
-                if (data.total_rank_points !== undefined) {
-                    document.getElementById('totalPoints').textContent = data.total_rank_points.toLocaleString();
-                }
-                // You can update other elements here as needed
-            })
-            .catch(error => console.error('Error refreshing data:', error));
-    }, 60000); // Refresh every 60 seconds
+    // Auto-refresh dashboard data every 2 minutes
+    setInterval(refreshDashboardData, 120000);
     @endif
+
+    // Show welcome message for new sellers
+    @if($totalTransactions == 0)
+    setTimeout(() => {
+        showToast('Welcome to Green Cup! Create your first receipt to get started.', 'success');
+    }, 1000);
+    @endif
+});
+
+// Handle visibility change (refresh when user returns to tab)
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden && {{ $totalTransactions > 0 ? 'true' : 'false' }}) {
+        setTimeout(refreshDashboardData, 1000);
+    }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Alt + R: Refresh data
+    if (e.altKey && e.key === 'r') {
+        e.preventDefault();
+        refreshDashboardData();
+        showToast('Dashboard refreshed!');
+    }
+    
+    // Alt + N: New receipt
+    if (e.altKey && e.key === 'n') {
+        e.preventDefault();
+        window.location.href = '{{ route("seller.receipts.create") }}';
+    }
+    
+    // Alt + S: Scanner
+    if (e.altKey && e.key === 's') {
+        e.preventDefault();
+        window.location.href = '{{ route("seller.scanner") }}';
+    }
+});
+
+// Handle online/offline status
+window.addEventListener('online', function() {
+    showToast('Connection restored!', 'success');
+    refreshDashboardData();
+});
+
+window.addEventListener('offline', function() {
+    showToast('Connection lost. Working offline.', 'error');
+});
+
+// Performance monitoring
+window.addEventListener('load', function() {
+    const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+    console.log(`Dashboard loaded in ${loadTime}ms`);
 });
 </script>
 @endsection
