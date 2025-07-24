@@ -2,17 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Register Business - GreenCup</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
+    /* Mobile-First Responsive Design */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+      -webkit-font-smoothing: antialiased;
+    }
+
     body {
       background: linear-gradient(-45deg, #10B981, #059669, #047857, #064E3B, #10B981);
       background-size: 400% 400%;
       animation: gradientShift 15s ease infinite;
       min-height: 100vh;
-      font-family: 'Inter', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      overflow-x: hidden;
+      /* Safe area support */
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
     }
     
     @keyframes gradientShift {
@@ -28,53 +46,297 @@
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
     
-    .btn-premium {
+    /* Container - Mobile First */
+    .registration-container {
+      width: 100%;
+      padding: clamp(12px, 3vw, 32px);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .registration-card {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: clamp(20px, 5vw, 40px);
+      border-radius: clamp(16px, 4vw, 24px);
+      flex: 1;
+    }
+
+    /* Mobile Back Button */
+    .mobile-back-btn {
+      position: fixed;
+      top: clamp(16px, 4vw, 20px);
+      left: clamp(16px, 4vw, 20px);
+      z-index: 50;
+      width: clamp(40px, 10vw, 48px);
+      height: clamp(40px, 10vw, 48px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: white;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: clamp(16px, 4vw, 18px);
+      touch-action: manipulation;
+    }
+
+    .mobile-back-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      text-decoration: none;
+    }
+
+    /* Typography - Responsive */
+    .main-title {
+      font-size: clamp(24px, 6vw, 36px);
+      font-weight: 700;
+      color: white;
+      margin-bottom: clamp(6px, 1.5vw, 8px);
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: clamp(14px, 3.5vw, 16px);
+      color: #d1fae5;
+      text-align: center;
+      margin-bottom: clamp(24px, 6vw, 32px);
+    }
+
+    .logo-container {
+      width: clamp(60px, 12vw, 80px);
+      height: clamp(60px, 12vw, 80px);
+      margin: 0 auto clamp(16px, 4vw, 20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .logo-icon {
+      font-size: clamp(24px, 6vw, 32px);
+      color: white;
+    }
+
+    /* Progress Bar - Mobile Optimized */
+    .progress-container {
+      margin-bottom: clamp(20px, 5vw, 32px);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: clamp(6px, 1.5vw, 8px);
+    }
+
+    .progress-label {
+      color: white;
+      font-size: clamp(11px, 2.75vw, 12px);
+      font-weight: 600;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: clamp(6px, 1.5vw, 8px);
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: clamp(3px, 0.75vw, 4px);
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
       background: linear-gradient(135deg, #10B981, #059669);
-      transition: all 0.3s ease;
+      border-radius: inherit;
+      transition: width 0.3s ease;
+      width: 0%;
     }
-    
-    .btn-premium:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(16, 185, 129, 0.4);
+
+    /* Form Elements - Mobile First */
+    .form-container {
+      width: 100%;
     }
-    
-    .btn-premium:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-      transform: none;
+
+    .form-group {
+      margin-bottom: clamp(16px, 4vw, 24px);
+      position: relative;
     }
-    
-    .input-premium {
+
+    .form-label {
+      display: block;
+      color: white;
+      font-weight: 600;
+      margin-bottom: clamp(6px, 1.5vw, 8px);
+      font-size: clamp(14px, 3.5vw, 16px);
+      line-height: 1.3;
+    }
+
+    .form-label i {
+      margin-right: clamp(6px, 1.5vw, 8px);
+      color: #10B981;
+      font-size: clamp(12px, 3vw, 14px);
+    }
+
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
       background: rgba(255, 255, 255, 0.1);
       border: 2px solid rgba(16, 185, 129, 0.3);
       color: white;
+      border-radius: clamp(8px, 2vw, 12px);
+      padding: clamp(12px, 3vw, 16px) clamp(14px, 3.5vw, 20px);
+      font-size: 16px; /* Fixed to prevent iOS zoom */
+      font-weight: 500;
       transition: all 0.3s ease;
+      min-height: 44px; /* iOS touch target */
     }
-    
-    .input-premium:focus {
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
       border-color: #10B981;
       box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
       outline: none;
     }
-    
-    .input-premium::placeholder {
+
+    .form-input::placeholder, .form-textarea::placeholder {
       color: rgba(255, 255, 255, 0.7);
     }
 
+    .form-textarea {
+      resize: vertical;
+      min-height: clamp(80px, 20vw, 120px);
+      font-family: inherit;
+    }
+
+    /* Grid Layout - Responsive */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(12px, 3vw, 16px);
+    }
+
+    @media (min-width: 480px) {
+      .form-grid.two-columns {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* Validation Icons */
+    .validation-icon {
+      position: absolute;
+      right: clamp(12px, 3vw, 16px);
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: clamp(14px, 3.5vw, 16px);
+      z-index: 10;
+    }
+
+    /* Error States */
     .error-input {
       border-color: #EF4444 !important;
       box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2) !important;
     }
 
-    .success-input {
-      border-color: #10B981 !important;
-      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2) !important;
+    .error-message {
+      color: #fca5a5;
+      font-size: clamp(11px, 2.75vw, 12px);
+      margin-top: clamp(4px, 1vw, 6px);
+      display: flex;
+      align-items: center;
+      gap: clamp(4px, 1vw, 6px);
     }
 
+    .error-message i {
+      font-size: clamp(10px, 2.5vw, 11px);
+    }
+
+    /* Buttons - Touch Optimized */
+    .btn-primary {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      border: none;
+      border-radius: clamp(8px, 2vw, 12px);
+      padding: clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px);
+      font-size: clamp(14px, 3.5vw, 16px);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(6px, 1.5vw, 8px);
+      touch-action: manipulation;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #6B7280, #4B5563);
+      color: white;
+      border: none;
+      border-radius: clamp(6px, 1.5vw, 8px);
+      padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 16px);
+      font-size: clamp(12px, 3vw, 14px);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(4px, 1vw, 6px);
+      touch-action: manipulation;
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: clamp(16px, 4vw, 20px);
+      font-size: clamp(16px, 4vw, 18px);
+      margin-top: clamp(16px, 4vw, 20px);
+    }
+
+    /* Custom Select Styling */
+    .form-select {
+      background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23ffffff" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right clamp(12px, 3vw, 16px) center;
+      background-size: clamp(10px, 2.5vw, 12px);
+      appearance: none;
+      padding-right: clamp(32px, 8vw, 40px);
+    }
+
+    .form-select option {
+      background: #047857;
+      color: white;
+      padding: 8px;
+    }
+
+    .form-select optgroup {
+      background: #064E3B;
+      color: #D1FAE5;
+      font-weight: bold;
+    }
+
+    /* Password Strength */
     .password-strength {
-      height: 4px;
-      border-radius: 2px;
-      margin-top: 8px;
+      height: clamp(3px, 0.75vw, 4px);
+      border-radius: clamp(1.5px, 0.375vw, 2px);
+      margin-top: clamp(6px, 1.5vw, 8px);
       background: rgba(255, 255, 255, 0.2);
       overflow: hidden;
     }
@@ -82,24 +344,153 @@
     .strength-bar {
       height: 100%;
       transition: all 0.3s ease;
-      border-radius: 2px;
+      border-radius: inherit;
     }
 
-    .field-group {
-      position: relative;
+    .password-help {
+      color: #d1fae5;
+      font-size: clamp(10px, 2.5vw, 11px);
+      margin-top: clamp(2px, 0.5vw, 4px);
     }
 
-    .validation-icon {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 16px;
+    /* Character Counter */
+    .character-counter {
+      text-align: right;
+      color: #d1fae5;
+      font-size: clamp(10px, 2.5vw, 11px);
+      margin-top: clamp(2px, 0.5vw, 4px);
     }
 
+    /* Custom Hours Input */
+    .custom-hours-container {
+      margin-top: clamp(8px, 2vw, 12px);
+      display: none;
+    }
+
+    /* Location Button */
+    .location-button {
+      margin: clamp(12px, 3vw, 16px) auto;
+      background: #059669;
+    }
+
+    .location-button:hover {
+      background: #047857;
+    }
+
+    /* Checkbox Styling */
+    .checkbox-container {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(8px, 2vw, 12px);
+      margin: clamp(16px, 4vw, 20px) 0;
+    }
+
+    .checkbox-input {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .checkbox-label {
+      color: white;
+      font-size: clamp(12px, 3vw, 14px);
+      line-height: 1.4;
+      cursor: pointer;
+    }
+
+    .checkbox-label a {
+      color: #10B981;
+      text-decoration: underline;
+    }
+
+    .checkbox-label a:hover {
+      color: #059669;
+    }
+
+    /* Alert Messages */
+    .alert {
+      padding: clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px);
+      border-radius: clamp(8px, 2vw, 12px);
+      margin-bottom: clamp(16px, 4vw, 20px);
+      font-size: clamp(12px, 3vw, 14px);
+      line-height: 1.5;
+    }
+
+    .alert-content {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(6px, 1.5vw, 8px);
+    }
+
+    .alert i {
+      font-size: clamp(14px, 3.5vw, 16px);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .alert.success {
+      border-left: 4px solid #10B981;
+    }
+
+    .alert.error {
+      border-left: 4px solid #EF4444;
+    }
+
+    /* Links Section */
+    .links-section {
+      text-align: center;
+      margin-top: clamp(24px, 6vw, 40px);
+    }
+
+    .link-text {
+      color: #d1fae5;
+      font-size: clamp(14px, 3.5vw, 16px);
+      margin-bottom: clamp(12px, 3vw, 16px);
+    }
+
+    .primary-link {
+      display: inline-flex;
+      align-items: center;
+      color: white;
+      font-weight: 600;
+      font-size: clamp(16px, 4vw, 20px);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      gap: clamp(8px, 2vw, 12px);
+      min-height: 44px;
+      padding: clamp(8px, 2vw, 12px);
+      border-radius: 8px;
+    }
+
+    .primary-link:hover {
+      color: #10B981;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Desktop Back Button */
+    .desktop-back-btn {
+      display: none;
+    }
+
+    /* Loading States */
+    .spinner {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Tooltip */
     .tooltip {
       position: relative;
       cursor: help;
+      display: inline-block;
+      margin-left: clamp(4px, 1vw, 6px);
     }
 
     .tooltip::after {
@@ -110,9 +501,9 @@
       transform: translateX(-50%);
       background: rgba(0, 0, 0, 0.8);
       color: white;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 12px;
+      padding: clamp(6px, 1.5vw, 8px) clamp(8px, 2vw, 12px);
+      border-radius: clamp(4px, 1vw, 6px);
+      font-size: clamp(10px, 2.5vw, 12px);
       white-space: nowrap;
       opacity: 0;
       pointer-events: none;
@@ -124,66 +515,197 @@
       opacity: 1;
     }
 
-    /* Custom dropdown styling */
-    .select-premium {
-      background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23ffffff" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: right 1rem center;
-      background-size: 0.75rem;
-      color-scheme: dark;
-      appearance: none;
+    /* Responsive Breakpoints */
+    @media (min-width: 480px) {
+      .registration-container {
+        padding: 20px;
+      }
+      
+      .registration-card {
+        padding: 36px 32px;
+      }
+      
+      .mobile-back-btn {
+        display: none;
+      }
     }
 
-    .select-premium option {
-      background: #047857;
-      color: white;
-      padding: 10px;
+    @media (min-width: 768px) {
+      .registration-container {
+        padding: 32px;
+      }
+      
+      .registration-card {
+        max-width: 600px;
+        padding: 48px 40px;
+      }
+      
+      .desktop-back-btn {
+        display: block;
+        text-align: center;
+        margin-top: 32px;
+      }
+
+      .desktop-back-btn button {
+        background: none;
+        border: none;
+        color: #10B981;
+        font-size: 16px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .desktop-back-btn button:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.1);
+      }
     }
 
-    .select-premium optgroup {
-      background: #064E3B;
-      color: #D1FAE5;
-      font-weight: bold;
+    /* Landscape Mobile Optimization */
+    @media (max-height: 600px) and (orientation: landscape) {
+      .registration-container {
+        padding: 8px 16px;
+      }
+      
+      .registration-card {
+        padding: 16px 20px;
+        margin: 8px auto;
+      }
+      
+      .logo-container {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 12px;
+      }
+      
+      .main-title {
+        font-size: 20px;
+        margin-bottom: 4px;
+      }
+      
+      .subtitle {
+        font-size: 12px;
+        margin-bottom: 16px;
+      }
+      
+      .form-group {
+        margin-bottom: 12px;
+      }
+      
+      .progress-container {
+        margin-bottom: 16px;
+      }
+      
+      .links-section {
+        margin-top: 20px;
+      }
+    }
+
+    /* Very Small Devices */
+    @media (max-width: 320px) {
+      .registration-container {
+        padding: 8px;
+      }
+      
+      .registration-card {
+        padding: 16px 12px;
+      }
+      
+      .form-input, .form-textarea, .form-select {
+        padding: 10px 12px;
+      }
+      
+      .submit-button {
+        padding: 14px 16px;
+      }
+    }
+
+    /* High DPI Displays */
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      .glass {
+        backdrop-filter: blur(25px);
+      }
+    }
+
+    /* Touch Improvements */
+    @media (hover: none) and (pointer: coarse) {
+      .btn-primary:hover,
+      .btn-secondary:hover {
+        transform: none;
+      }
+      
+      .btn-primary:active,
+      .btn-secondary:active {
+        transform: scale(0.98);
+        opacity: 0.9;
+      }
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      
+      body {
+        animation: none;
+        background: #10B981;
+      }
+    }
+
+    /* Focus Management */
+    .btn-primary:focus-visible,
+    .form-input:focus-visible,
+    .form-textarea:focus-visible,
+    .form-select:focus-visible {
+      outline: 2px solid #10B981;
+      outline-offset: 2px;
     }
   </style>
 </head>
-<body class="py-8 px-4">
-  <!-- Mobile Back Button -->
-  <div class="md:hidden fixed top-4 left-4 z-50">
-    <button onclick="history.back()" class="flex items-center justify-center w-12 h-12 glass rounded-full text-white hover:bg-white hover:bg-opacity-20 transition-all">
-      <i class="fas fa-arrow-left text-lg"></i>
-    </button>
-  </div>
 
-  <div class="w-full max-w-lg mx-auto">
-    <div class="glass rounded-3xl p-10 shadow-2xl">
+<body>
+  <!-- Mobile Back Button -->
+  <a href="javascript:history.back()" class="mobile-back-btn glass">
+    <i class="fas fa-arrow-left"></i>
+  </a>
+
+  <div class="registration-container">
+    <div class="registration-card glass">
       <!-- Logo and Header -->
-      <div class="text-center mb-10">
-        <div class="inline-flex items-center justify-center w-24 h-24 glass rounded-full mb-6">
-          <i class="fas fa-store text-4xl text-white"></i>
+      <div class="text-center">
+        <div class="logo-container glass">
+          <i class="logo-icon fas fa-store"></i>
         </div>
-        <h1 class="text-4xl font-bold text-white mb-3">Business Registration</h1>
-        <p class="text-green-100 text-lg">Join GreenCup as a seller</p>
+        <h1 class="main-title">Business Registration</h1>
+        <p class="subtitle">Join GreenCup as a seller</p>
       </div>
 
       <!-- Success Message -->
       @if(session('success'))
-        <div class="mb-6 px-4 py-3 glass rounded-lg border-l-4 border-green-400" id="successAlert">
-          <div class="flex items-center">
-            <i class="fas fa-check-circle text-green-400 mr-3"></i>
-            <span class="text-white">{{ session('success') }}</span>
+        <div class="alert glass success" id="successAlert">
+          <div class="alert-content">
+            <i class="fas fa-check-circle" style="color: #10B981;"></i>
+            <span style="color: white;">{{ session('success') }}</span>
           </div>
         </div>
       @endif
 
       <!-- System Error Messages -->
       @if(session('error'))
-      <div class="mb-6 px-4 py-3 glass rounded-lg border-l-4 border-red-400">
-        <div class="flex items-start">
-          <i class="fas fa-exclamation-triangle text-red-400 mr-3 mt-0.5"></i>
+      <div class="alert glass error">
+        <div class="alert-content">
+          <i class="fas fa-exclamation-triangle" style="color: #EF4444;"></i>
           <div>
-            <p class="text-white font-medium mb-2">System Error:</p>
-            <p class="text-red-100 text-sm">{{ session('error') }}</p>
+            <p style="color: white; font-weight: 600; margin-bottom: 4px;">System Error:</p>
+            <p style="color: #fca5a5; font-size: clamp(11px, 2.75vw, 12px);">{{ session('error') }}</p>
           </div>
         </div>
       </div>
@@ -191,14 +713,14 @@
 
       <!-- Validation Error Messages -->
       @if($errors->any())
-        <div class="mb-6 px-4 py-3 glass rounded-lg border-l-4 border-red-400" id="errorAlert">
-          <div class="flex items-start">
-            <i class="fas fa-exclamation-triangle text-red-400 mr-3 mt-0.5"></i>
+        <div class="alert glass error" id="errorAlert">
+          <div class="alert-content">
+            <i class="fas fa-exclamation-triangle" style="color: #EF4444;"></i>
             <div>
-              <p class="text-white font-medium mb-2">Please fix the following errors:</p>
-              <ul class="text-red-100 text-sm space-y-1 list-disc list-inside">
+              <p style="color: white; font-weight: 600; margin-bottom: 4px;">Please fix the following errors:</p>
+              <ul style="color: #fca5a5; font-size: clamp(11px, 2.75vw, 12px); margin: 0; padding-left: 16px;">
                 @foreach($errors->all() as $error)
-                  <li>{{ $error }}</li>
+                  <li style="margin-bottom: 2px;">{{ $error }}</li>
                 @endforeach
               </ul>
             </div>
@@ -207,104 +729,103 @@
       @endif
 
       <!-- Registration Progress Bar -->
-      <div class="mb-8">
-        <div class="flex justify-between text-white text-xs mb-2">
-          <span>Registration Progress</span>
-          <span id="progressText">0% Complete</span>
+      <div class="progress-container">
+        <div class="progress-header">
+          <span class="progress-label">Registration Progress</span>
+          <span class="progress-label" id="progressText">0% Complete</span>
         </div>
-        <div class="w-full bg-gray-300 rounded-full h-2">
-          <div class="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full transition-all duration-300" 
-               style="width: 0%" id="progressBar"></div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressBar"></div>
         </div>
       </div>
 
-      <form action="{{ route('sellers.store') }}" method="POST" class="space-y-6" id="registrationForm" novalidate>
+      <form action="{{ route('sellers.store') }}" method="POST" class="form-container" id="registrationForm" novalidate>
         @csrf
         
         <!-- Business Name -->
-        <div class="field-group">
-          <label for="business_name" class="block text-white font-medium mb-2">
-            <i class="fas fa-store mr-2 text-green-400"></i>Business Name *
-            <span class="tooltip text-green-300" data-tooltip="The official name of your business">ⓘ</span>
+        <div class="form-group">
+          <label for="business_name" class="form-label">
+            <i class="fas fa-store"></i>Business Name *
+            <span class="tooltip" data-tooltip="The official name of your business">ⓘ</span>
           </label>
-          <div class="relative">
+          <div style="position: relative;">
             <input type="text" id="business_name" name="business_name" value="{{ old('business_name') }}"
-              class="w-full input-premium glass rounded-xl px-5 py-4 pr-12 text-white placeholder-green-200 focus:outline-none @error('business_name') error-input @enderror"
+              class="form-input @error('business_name') error-input @enderror"
               placeholder="Enter your business name" required minlength="2" maxlength="255" />
             <div class="validation-icon" id="business_name_icon"></div>
           </div>
           @error('business_name')
-            <p class="mt-2 text-red-300 text-sm flex items-center" id="business_name_error">
-              <i class="fas fa-exclamation-circle mr-2"></i>{{ $message }}
+            <p class="error-message" id="business_name_error">
+              <i class="fas fa-exclamation-circle"></i>{{ $message }}
             </p>
           @enderror
         </div>
 
         <!-- Business Email -->
-        <div class="field-group">
-          <label for="email" class="block text-white font-medium mb-2">
-            <i class="fas fa-envelope mr-2 text-green-400"></i>Business Email *
-            <span class="tooltip text-green-300" data-tooltip="Email address for your business account">ⓘ</span>
+        <div class="form-group">
+          <label for="email" class="form-label">
+            <i class="fas fa-envelope"></i>Business Email *
+            <span class="tooltip" data-tooltip="Email address for your business account">ⓘ</span>
           </label>
-          <div class="relative">
+          <div style="position: relative;">
             <input type="email" id="email" name="email" value="{{ old('email') }}"
-              class="w-full input-premium glass rounded-xl px-5 py-4 pr-12 text-white placeholder-green-200 focus:outline-none @error('email') error-input @enderror"
-              placeholder="Enter your business email" required />
+              class="form-input @error('email') error-input @enderror"
+              placeholder="Enter your business email" required autocomplete="email" />
             <div class="validation-icon" id="email_icon"></div>
           </div>
           @error('email')
-            <p class="mt-2 text-red-300 text-sm flex items-center" id="email_error">
-              <i class="fas fa-exclamation-circle mr-2"></i>{{ $message }}
+            <p class="error-message" id="email_error">
+              <i class="fas fa-exclamation-circle"></i>{{ $message }}
             </p>
           @enderror
         </div>
 
         <!-- Phone Number -->
-        <div class="field-group">
-          <label for="phone" class="block text-white font-medium mb-2">
-            <i class="fas fa-phone mr-2 text-green-400"></i>Phone Number
-            <span class="text-green-200 font-normal">(optional)</span>
+        <div class="form-group">
+          <label for="phone" class="form-label">
+            <i class="fas fa-phone"></i>Phone Number
+            <span style="color: #d1fae5; font-weight: 400;">(optional)</span>
           </label>
-          <div class="relative">
+          <div style="position: relative;">
             <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
-              class="w-full input-premium glass rounded-xl px-5 py-4 pr-12 text-white placeholder-green-200 focus:outline-none @error('phone') error-input @enderror"
-              placeholder="Enter business phone number" />
+              class="form-input @error('phone') error-input @enderror"
+              placeholder="Enter business phone number" autocomplete="tel" />
             <div class="validation-icon" id="phone_icon"></div>
           </div>
           @error('phone')
-            <p class="mt-2 text-red-300 text-sm flex items-center" id="phone_error">
-              <i class="fas fa-exclamation-circle mr-2"></i>{{ $message }}
+            <p class="error-message" id="phone_error">
+              <i class="fas fa-exclamation-circle"></i>{{ $message }}
             </p>
           @enderror
         </div>
 
         <!-- Business Description -->
-        <div class="field-group">
-          <label for="description" class="block text-white font-medium mb-2">
-            <i class="fas fa-file-text mr-2 text-green-400"></i>Business Description
-            <span class="text-green-200 font-normal">(optional)</span>
+        <div class="form-group">
+          <label for="description" class="form-label">
+            <i class="fas fa-file-text"></i>Business Description
+            <span style="color: #d1fae5; font-weight: 400;">(optional)</span>
           </label>
           <textarea id="description" name="description" rows="3" maxlength="1000"
-            class="w-full input-premium glass rounded-xl px-5 py-4 text-white placeholder-green-200 focus:outline-none resize-vertical @error('description') error-input @enderror"
+            class="form-textarea @error('description') error-input @enderror"
             placeholder="Describe your business, products, or services">{{ old('description') }}</textarea>
-          <div class="text-right text-green-200 text-xs mt-1">
+          <div class="character-counter">
             <span id="description_count">0</span>/1000 characters
           </div>
           @error('description')
-            <p class="mt-2 text-red-300 text-sm flex items-center" id="description_error">
-              <i class="fas fa-exclamation-circle mr-2"></i>{{ $message }}
+            <p class="error-message" id="description_error">
+              <i class="fas fa-exclamation-circle"></i>{{ $message }}
             </p>
           @enderror
         </div>
 
         <!-- Working Hours -->
-        <div class="field-group">
-          <label for="working_hours" class="block text-white font-medium mb-2">
-            <i class="fas fa-clock mr-2 text-green-400"></i>Working Hours
-            <span class="text-green-200 font-normal">(optional)</span>
+        <div class="form-group">
+          <label for="working_hours" class="form-label">
+            <i class="fas fa-clock"></i>Working Hours
+            <span style="color: #d1fae5; font-weight: 400;">(optional)</span>
           </label>
           <select id="working_hours" name="working_hours"
-            class="w-full input-premium glass rounded-xl px-5 py-4 text-white focus:outline-none select-premium @error('working_hours') error-input @enderror">
+            class="form-select @error('working_hours') error-input @enderror">
             <option value="">-- Select Working Hours --</option>
             
             <!-- Standard Business Hours -->
@@ -352,57 +873,6 @@
               </option>
             </optgroup>
             
-            <!-- Retail/Restaurant Hours -->
-            <optgroup label="🛍️ Retail & Restaurant">
-              <option value="Mon-Thu 10AM-9PM, Fri-Sat 10AM-10PM, Sun 12PM-8PM" {{ old('working_hours') == 'Mon-Thu 10AM-9PM, Fri-Sat 10AM-10PM, Sun 12PM-8PM' ? 'selected' : '' }}>
-                Mall Hours (Longer Weekends)
-              </option>
-              <option value="Mon-Sun 10AM-10PM" {{ old('working_hours') == 'Mon-Sun 10AM-10PM' ? 'selected' : '' }}>
-                Retail Hours (10AM-10PM Daily)
-              </option>
-              <option value="Mon-Sun 11AM-11PM" {{ old('working_hours') == 'Mon-Sun 11AM-11PM' ? 'selected' : '' }}>
-                Restaurant Hours (11AM-11PM)
-              </option>
-              <option value="Mon-Thu 5PM-11PM, Fri-Sat 5PM-12AM, Sun 5PM-10PM" {{ old('working_hours') == 'Mon-Thu 5PM-11PM, Fri-Sat 5PM-12AM, Sun 5PM-10PM' ? 'selected' : '' }}>
-                Dinner Service (Evenings Only)
-              </option>
-            </optgroup>
-            
-            <!-- Part-time/Flexible -->
-            <optgroup label="⏰ Flexible & Part-time">
-              <option value="Mon-Wed-Fri 9AM-3PM" {{ old('working_hours') == 'Mon-Wed-Fri 9AM-3PM' ? 'selected' : '' }}>
-                Part-time (Mon/Wed/Fri Mornings)
-              </option>
-              <option value="Tue-Thu 2PM-8PM" {{ old('working_hours') == 'Tue-Thu 2PM-8PM' ? 'selected' : '' }}>
-                Part-time (Tue/Thu Afternoons)
-              </option>
-              <option value="Weekends Only (Sat-Sun 9AM-6PM)" {{ old('working_hours') == 'Weekends Only (Sat-Sun 9AM-6PM)' ? 'selected' : '' }}>
-                Weekends Only
-              </option>
-              <option value="By Appointment Only" {{ old('working_hours') == 'By Appointment Only' ? 'selected' : '' }}>
-                By Appointment Only
-              </option>
-              <option value="Seasonal Hours (Call for Schedule)" {{ old('working_hours') == 'Seasonal Hours (Call for Schedule)' ? 'selected' : '' }}>
-                Seasonal Hours
-              </option>
-            </optgroup>
-            
-            <!-- Services/Professional -->
-            <optgroup label="💼 Professional Services">
-              <option value="Mon-Fri 8AM-4PM" {{ old('working_hours') == 'Mon-Fri 8AM-4PM' ? 'selected' : '' }}>
-                Early Professional (8AM-4PM)
-              </option>
-              <option value="Mon-Fri 10AM-7PM" {{ old('working_hours') == 'Mon-Fri 10AM-7PM' ? 'selected' : '' }}>
-                Late Professional (10AM-7PM)
-              </option>
-              <option value="Mon-Fri 9AM-5PM, Sat 9AM-2PM" {{ old('working_hours') == 'Mon-Fri 9AM-5PM, Sat 9AM-2PM' ? 'selected' : '' }}>
-                Weekdays + Saturday Morning
-              </option>
-              <option value="Emergency Service Available 24/7" {{ old('working_hours') == 'Emergency Service Available 24/7' ? 'selected' : '' }}>
-                Emergency Service 24/7
-              </option>
-            </optgroup>
-            
             <!-- Custom Option -->
             <optgroup label="✏️ Custom">
               <option value="custom" {{ old('working_hours') == 'custom' ? 'selected' : '' }}>
@@ -411,311 +881,327 @@
             </optgroup>
           </select>
           
-          <!-- Custom Hours Input (shown when "custom" is selected) -->
-          <div id="customHoursInput" style="display: none;" class="mt-3">
-            <label for="custom_working_hours" class="block text-white font-medium mb-2 text-sm">
-              <i class="fas fa-edit mr-2 text-green-400"></i>Enter your custom working hours:
+          <!-- Custom Hours Input -->
+          <div id="customHoursInput" class="custom-hours-container">
+            <label for="custom_working_hours" class="form-label" style="margin-bottom: 6px; font-size: clamp(12px, 3vw, 14px);">
+              <i class="fas fa-edit"></i>Enter your custom working hours:
             </label>
             <input type="text" id="custom_working_hours" name="custom_working_hours" 
                    value="{{ old('custom_working_hours') }}"
-                   class="w-full input-premium glass rounded-xl px-5 py-3 text-white placeholder-green-200 focus:outline-none"
+                   class="form-input"
                    placeholder="e.g., Mon-Wed 9AM-1PM, Thu-Fri 2PM-6PM" />
           </div>
           
           @error('working_hours')
-            <p class="mt-2 text-red-300 text-sm flex items-center" id="working_hours_error">
-              <i class="fas fa-exclamation-circle mr-2"></i>{{ $message }}
+            <p class="error-message" id="working_hours_error">
+              <i class="fas fa-exclamation-circle"></i>{{ $message }}
             </p>
           @enderror
         </div>
 
         <!-- Business Address -->
-        <div class="field-group">
-          <label for="address" class="block text-white font-medium mb-2">
-            <i class="fas fa-map-marker-alt mr-2 text-green-400"></i>Business Address *
+        <div class="form-group">
+          <label for="address" class="form-label">
+            <i class="fas fa-map-marker-alt"></i>Business Address *
+            <button type="button" id="undoAddressBtn" style="display: none; background: none; border: none; color: #F59E0B; font-size: 10px; margin-left: 8px; cursor: pointer; text-decoration: underline;" onclick="undoAddressFill()">
+              ↺ Undo auto-fill
+            </button>
           </label>
           <textarea id="address" name="address" rows="2" required minlength="10" maxlength="500"
-            class="w-full input-premium glass rounded-xl px-5 py-4 text-white placeholder-green-200 focus:outline-none resize-vertical @error('address') error-input @enderror"
+            class="form-textarea @error('address') error-input @enderror"
             placeholder="Enter your complete business address">{{ old('address') }}</textarea>
           @error('address')
-            <p class="mt-2 text-red-300 text-sm flex items-center" id="address_error">
-              <i class="fas fa-exclamation-circle mr-2"></i>{{ $message }}
+            <p class="error-message" id="address_error">
+              <i class="fas fa-exclamation-circle"></i>{{ $message }}
             </p>
           @enderror
         </div>
 
         <!-- Location Coordinates -->
-        <div class="grid grid-cols-2 gap-4">
-          <div class="field-group">
-            <label for="latitude" class="block text-white font-medium mb-2">
-              <i class="fas fa-map mr-2 text-green-400"></i>Latitude *
+        <div class="form-grid two-columns">
+          <div class="form-group">
+            <label for="latitude" class="form-label">
+              <i class="fas fa-map"></i>Latitude *
             </label>
-            <div class="relative">
+            <div style="position: relative;">
               <input type="number" step="any" id="latitude" name="latitude" value="{{ old('latitude') }}" required
-                class="w-full input-premium glass rounded-xl px-5 py-4 pr-12 text-white placeholder-green-200 focus:outline-none @error('latitude') error-input @enderror"
+                class="form-input @error('latitude') error-input @enderror"
                 placeholder="e.g., 11.5564" min="-90" max="90" />
               <div class="validation-icon" id="latitude_icon"></div>
             </div>
             @error('latitude')
-              <p class="mt-2 text-red-300 text-sm flex items-center" id="latitude_error">
-                <i class="fas fa-exclamation-circle mr-2"></i>{{ $message }}
+              <p class="error-message" id="latitude_error">
+                <i class="fas fa-exclamation-circle"></i>{{ $message }}
               </p>
             @enderror
           </div>
           
-          <div class="field-group">
-            <label for="longitude" class="block text-white font-medium mb-2">
-              <i class="fas fa-map mr-2 text-green-400"></i>Longitude *
+          <div class="form-group">
+            <label for="longitude" class="form-label">
+              <i class="fas fa-map"></i>Longitude *
             </label>
-            <div class="relative">
+            <div style="position: relative;">
               <input type="number" step="any" id="longitude" name="longitude" value="{{ old('longitude') }}" required
-                class="w-full input-premium glass rounded-xl px-5 py-4 pr-12 text-white placeholder-green-200 focus:outline-none @error('longitude') error-input @enderror"
+                class="form-input @error('longitude') error-input @enderror"
                 placeholder="e.g., 104.9282" min="-180" max="180" />
               <div class="validation-icon" id="longitude_icon"></div>
             </div>
             @error('longitude')
-              <p class="mt-2 text-red-300 text-sm flex items-center" id="longitude_error">
-                <i class="fas fa-exclamation-circle mr-2"></i>{{ $message }}
+              <p class="error-message" id="longitude_error">
+                <i class="fas fa-exclamation-circle"></i>{{ $message }}
               </p>
             @enderror
           </div>
         </div>
 
         <!-- Get Location Button -->
-        <div class="text-center">
+        <div style="text-align: center;">
           <button type="button" onclick="getCurrentLocation()" id="locationButton"
-            class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center mx-auto">
-            <i class="fas fa-location-arrow mr-2" id="locationIcon"></i>
-            <span id="locationText">Get My Current Location</span>
+            class="btn-secondary location-button">
+            <i class="fas fa-location-arrow" id="locationIcon"></i>
+            <span id="locationText">Get My Location & Address</span>
           </button>
+          <p style="color: #d1fae5; font-size: clamp(10px, 2.5vw, 11px); margin-top: 6px; text-align: center;">
+            📍 Automatically fills coordinates and business address
+          </p>
         </div>
 
         <!-- Password -->
-        <div class="field-group">
-          <label for="password" class="block text-white font-medium mb-2">
-            <i class="fas fa-lock mr-2 text-green-400"></i>Password *
-            <span class="tooltip text-green-300" data-tooltip="Must be at least 8 characters with uppercase, lowercase, and number">ⓘ</span>
+        <div class="form-group">
+          <label for="password" class="form-label">
+            <i class="fas fa-lock"></i>Password *
+            <span class="tooltip" data-tooltip="Must be at least 8 characters with uppercase, lowercase, and number">ⓘ</span>
           </label>
-          <div class="relative">
+          <div style="position: relative;">
             <input type="password" id="password" name="password"
-              class="w-full input-premium glass rounded-xl px-5 py-4 pr-12 text-white placeholder-green-200 focus:outline-none @error('password') error-input @enderror"
-              placeholder="Create a strong password (min 8 characters)" required minlength="8" />
-            <button type="button" onclick="togglePassword('password')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-300 hover:text-white transition-colors">
+              class="form-input @error('password') error-input @enderror"
+              placeholder="Create a strong password (min 8 characters)" required minlength="8" autocomplete="new-password" />
+            <button type="button" onclick="togglePassword('password')" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #10B981; cursor: pointer; font-size: 14px;">
               <i id="passwordToggle" class="fas fa-eye"></i>
             </button>
           </div>
           <div class="password-strength">
             <div class="strength-bar" id="passwordStrength"></div>
           </div>
-          <p class="text-green-200 text-xs mt-1" id="passwordHelp">
+          <p class="password-help" id="passwordHelp">
             Password strength: <span id="strengthText">Enter password</span>
           </p>
           @error('password')
-            <p class="mt-2 text-red-300 text-sm flex items-center" id="password_error">
-              <i class="fas fa-exclamation-circle mr-2"></i>{{ $message }}
+            <p class="error-message" id="password_error">
+              <i class="fas fa-exclamation-circle"></i>{{ $message }}
             </p>
           @enderror
         </div>
 
         <!-- Confirm Password -->
-        <div class="field-group">
-          <label for="password_confirmation" class="block text-white font-medium mb-2">
-            <i class="fas fa-lock mr-2 text-green-400"></i>Confirm Password *
+        <div class="form-group">
+          <label for="password_confirmation" class="form-label">
+            <i class="fas fa-lock"></i>Confirm Password *
           </label>
-          <div class="relative">
+          <div style="position: relative;">
             <input type="password" id="password_confirmation" name="password_confirmation"
-              class="w-full input-premium glass rounded-xl px-5 py-4 pr-12 text-white placeholder-green-200 focus:outline-none @error('password_confirmation') error-input @enderror"
-              placeholder="Confirm your password" required />
-            <button type="button" onclick="togglePassword('password_confirmation')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-300 hover:text-white transition-colors">
+              class="form-input @error('password_confirmation') error-input @enderror"
+              placeholder="Confirm your password" required autocomplete="new-password" />
+            <button type="button" onclick="togglePassword('password_confirmation')" style="position: absolute; right: 40px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #10B981; cursor: pointer; font-size: 14px;">
               <i id="confirmPasswordToggle" class="fas fa-eye"></i>
             </button>
+            <div class="validation-icon" id="password_confirmation_icon" style="right: 12px;"></div>
           </div>
-          <div class="validation-icon" id="password_confirmation_icon" style="right: 45px;"></div>
           @error('password_confirmation')
-            <p class="mt-2 text-red-300 text-sm flex items-center" id="password_confirmation_error">
-              <i class="fas fa-exclamation-circle mr-2"></i>{{ $message }}
+            <p class="error-message" id="password_confirmation_error">
+              <i class="fas fa-exclamation-circle"></i>{{ $message }}
             </p>
           @enderror
         </div>
 
         <!-- Terms Agreement -->
-        <div class="flex items-start space-x-3">
-          <input type="checkbox" id="terms" name="terms" required class="mt-1" />
-          <label for="terms" class="text-white text-sm leading-relaxed cursor-pointer">
-            I agree to the <a href="#" class="text-green-300 hover:text-green-200 underline">Terms of Service</a> 
-            and <a href="#" class="text-green-300 hover:text-green-200 underline">Privacy Policy</a>
+        <div class="checkbox-container">
+          <input type="checkbox" id="terms" name="terms" required class="checkbox-input" />
+          <label for="terms" class="checkbox-label">
+            I agree to the <a href="#">Terms of Service</a> 
+            and <a href="#">Privacy Policy</a>
           </label>
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" id="submitButton"
-          class="w-full btn-premium text-white font-semibold py-5 rounded-xl transition-all duration-300 flex items-center justify-center text-lg">
-          <i class="fas fa-store mr-3" id="submitIcon"></i>
+        <button type="submit" id="submitButton" class="btn-primary submit-button">
+          <i class="fas fa-store" id="submitIcon"></i>
           <span id="submitText">Register Business</span>
         </button>
       </form>
 
       <!-- Login Link -->
-      <div class="mt-10 text-center">
-        <p class="text-green-100 mb-5 text-lg">Already have a business account?</p>
-        <a href="{{ route('login') }}" class="inline-flex items-center text-white font-semibold text-xl hover:text-green-200 transition-colors">
-          <i class="fas fa-sign-in-alt mr-3"></i>
-          Sign In Instead
+      <div class="links-section">
+        <p class="link-text">Already have a business account?</p>
+        <a href="{{ route('login') }}" class="primary-link">
+          <i class="fas fa-sign-in-alt"></i>
+          <span>Sign In Instead</span>
         </a>
       </div>
 
       <!-- Desktop Back Button -->
-      <div class="hidden md:block mt-8 text-center">
-        <button onclick="history.back()" class="inline-flex items-center text-green-200 hover:text-white transition-colors text-lg">
-          <i class="fas fa-arrow-left mr-3"></i>
-          Go Back
+      <div class="desktop-back-btn">
+        <button onclick="history.back()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Go Back</span>
         </button>
       </div>
     </div>
   </div>
 
   <script>
-    // Form validation and progress tracking
-    const form = document.getElementById('registrationForm');
-    const progressBar = document.getElementById('progressBar');
-    const progressText = document.getElementById('progressText');
-    
-    // Required fields for progress calculation
-    const requiredFields = ['business_name', 'email', 'address', 'latitude', 'longitude', 'password', 'password_confirmation'];
-    
-    // Real-time validation and progress
-    function updateProgress() {
-      let filledFields = 0;
-      let totalFields = requiredFields.length;
-      
-      requiredFields.forEach(fieldName => {
-        const field = document.getElementById(fieldName);
-        if (field && field.value.trim()) {
-          filledFields++;
-        }
-      });
-      
-      const percentage = Math.round((filledFields / totalFields) * 100);
-      progressBar.style.width = percentage + '%';
-      progressText.textContent = percentage + '% Complete';
-    }
-
-    // Field validation
-    function validateField(fieldName, value) {
-      const icon = document.getElementById(fieldName + '_icon');
-      const error = document.getElementById(fieldName + '_error');
-      
-      if (!icon) return;
-      
-      let isValid = false;
-      
-      switch(fieldName) {
-        case 'business_name':
-          isValid = value.length >= 2 && value.length <= 255;
-          break;
-        case 'email':
-          isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-          break;
-        case 'phone':
-          isValid = !value || value.length >= 10;
-          break;
-        case 'address':
-          isValid = value.length >= 10 && value.length <= 500;
-          break;
-        case 'latitude':
-          isValid = !isNaN(value) && value >= -90 && value <= 90;
-          break;
-        case 'longitude':
-          isValid = !isNaN(value) && value >= -180 && value <= 180;
-          break;
-        case 'password':
-          isValid = value.length >= 8 && /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/.test(value);
-          break;
-        case 'password_confirmation':
-          const password = document.getElementById('password').value;
-          isValid = value === password && value.length >= 8;
-          break;
-      }
-      
-      if (value) {
-        if (isValid) {
-          icon.innerHTML = '<i class="fas fa-check text-green-400"></i>';
-          if (error) error.style.display = 'none';
-        } else {
-          icon.innerHTML = '<i class="fas fa-times text-red-400"></i>';
-        }
-      } else {
-        icon.innerHTML = '';
-      }
-      
-      return isValid;
-    }
-
-    // Password strength checker
-    function checkPasswordStrength(password) {
-      const strengthBar = document.getElementById('passwordStrength');
-      const strengthText = document.getElementById('strengthText');
-      
-      if (!password) {
-        strengthBar.style.width = '0%';
-        strengthBar.style.backgroundColor = '';
-        strengthText.textContent = 'Enter password';
-        return;
-      }
-      
-      let strength = 0;
-      const checks = {
-        length: password.length >= 8,
-        lowercase: /[a-z]/.test(password),
-        uppercase: /[A-Z]/.test(password),
-        number: /\d/.test(password),
-        special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
-      };
-      
-      strength = Object.values(checks).filter(Boolean).length;
-      
-      const colors = ['#EF4444', '#F59E0B', '#EAB308', '#22C55E', '#10B981'];
-      const labels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
-      const widths = ['20%', '40%', '60%', '80%', '100%'];
-      
-      strengthBar.style.width = widths[strength - 1] || '20%';
-      strengthBar.style.backgroundColor = colors[strength - 1] || colors[0];
-      strengthText.textContent = labels[strength - 1] || labels[0];
-    }
-
-    // Character counter for description
-    const descriptionField = document.getElementById('description');
-    const descriptionCounter = document.getElementById('description_count');
-    
-    if (descriptionField && descriptionCounter) {
-      descriptionField.addEventListener('input', function() {
-        descriptionCounter.textContent = this.value.length;
-      });
-      // Initialize counter
-      descriptionCounter.textContent = descriptionField.value.length;
-    }
-
-    // Handle custom working hours option
-    document.getElementById('working_hours').addEventListener('change', function() {
-      const customInput = document.getElementById('customHoursInput');
-      const customField = document.getElementById('custom_working_hours');
-      
-      if (this.value === 'custom') {
-        customInput.style.display = 'block';
-        customField.required = true;
-        customField.focus();
-      } else {
-        customInput.style.display = 'none';
-        customField.required = false;
-        customField.value = '';
-      }
-      
-      // Update validation and progress
-      updateProgress();
-    });
-
-    // Initialize custom hours visibility on page load
+    // Mobile-optimized form validation and progress tracking
     document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('registrationForm');
+      const progressBar = document.getElementById('progressBar');
+      const progressText = document.getElementById('progressText');
+      
+      // Required fields for progress calculation
+      const requiredFields = ['business_name', 'email', 'address', 'latitude', 'longitude', 'password', 'password_confirmation'];
+      
+      // Prevent iOS zoom on input focus
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        const inputs = document.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+          input.addEventListener('focus', function() {
+            if (this.style.fontSize !== '16px') {
+              this.style.fontSize = '16px';
+            }
+          });
+        });
+      }
+
+      // Real-time validation and progress
+      function updateProgress() {
+        let filledFields = 0;
+        let totalFields = requiredFields.length;
+        
+        requiredFields.forEach(fieldName => {
+          const field = document.getElementById(fieldName);
+          if (field && field.value.trim()) {
+            filledFields++;
+          }
+        });
+        
+        const percentage = Math.round((filledFields / totalFields) * 100);
+        progressBar.style.width = percentage + '%';
+        progressText.textContent = percentage + '% Complete';
+      }
+
+      // Field validation
+      function validateField(fieldName, value) {
+        const icon = document.getElementById(fieldName + '_icon');
+        const error = document.getElementById(fieldName + '_error');
+        
+        if (!icon) return;
+        
+        let isValid = false;
+        
+        switch(fieldName) {
+          case 'business_name':
+            isValid = value.length >= 2 && value.length <= 255;
+            break;
+          case 'email':
+            isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            break;
+          case 'phone':
+            isValid = !value || value.length >= 10;
+            break;
+          case 'address':
+            isValid = value.length >= 10 && value.length <= 500;
+            break;
+          case 'latitude':
+            isValid = !isNaN(value) && value >= -90 && value <= 90;
+            break;
+          case 'longitude':
+            isValid = !isNaN(value) && value >= -180 && value <= 180;
+            break;
+          case 'password':
+            isValid = value.length >= 8 && /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/.test(value);
+            break;
+          case 'password_confirmation':
+            const password = document.getElementById('password').value;
+            isValid = value === password && value.length >= 8;
+            break;
+        }
+        
+        if (value) {
+          if (isValid) {
+            icon.innerHTML = '<i class="fas fa-check" style="color: #10B981;"></i>';
+            if (error) error.style.display = 'none';
+          } else {
+            icon.innerHTML = '<i class="fas fa-times" style="color: #EF4444;"></i>';
+          }
+        } else {
+          icon.innerHTML = '';
+        }
+        
+        return isValid;
+      }
+
+      // Password strength checker
+      function checkPasswordStrength(password) {
+        const strengthBar = document.getElementById('passwordStrength');
+        const strengthText = document.getElementById('strengthText');
+        
+        if (!password) {
+          strengthBar.style.width = '0%';
+          strengthBar.style.backgroundColor = '';
+          strengthText.textContent = 'Enter password';
+          return;
+        }
+        
+        let strength = 0;
+        const checks = {
+          length: password.length >= 8,
+          lowercase: /[a-z]/.test(password),
+          uppercase: /[A-Z]/.test(password),
+          number: /\d/.test(password),
+          special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+        };
+        
+        strength = Object.values(checks).filter(Boolean).length;
+        
+        const colors = ['#EF4444', '#F59E0B', '#EAB308', '#22C55E', '#10B981'];
+        const labels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+        const widths = ['20%', '40%', '60%', '80%', '100%'];
+        
+        strengthBar.style.width = widths[strength - 1] || '20%';
+        strengthBar.style.backgroundColor = colors[strength - 1] || colors[0];
+        strengthText.textContent = labels[strength - 1] || labels[0];
+      }
+
+      // Character counter for description
+      const descriptionField = document.getElementById('description');
+      const descriptionCounter = document.getElementById('description_count');
+      
+      if (descriptionField && descriptionCounter) {
+        descriptionField.addEventListener('input', function() {
+          descriptionCounter.textContent = this.value.length;
+        });
+        // Initialize counter
+        descriptionCounter.textContent = descriptionField.value.length;
+      }
+
+      // Handle custom working hours option
+      document.getElementById('working_hours').addEventListener('change', function() {
+        const customInput = document.getElementById('customHoursInput');
+        const customField = document.getElementById('custom_working_hours');
+        
+        if (this.value === 'custom') {
+          customInput.style.display = 'block';
+          customField.required = true;
+          setTimeout(() => customField.focus(), 100);
+        } else {
+          customInput.style.display = 'none';
+          customField.required = false;
+          customField.value = '';
+        }
+        
+        updateProgress();
+      });
+
+      // Initialize custom hours visibility on page load
       const workingHoursSelect = document.getElementById('working_hours');
       const customInput = document.getElementById('customHoursInput');
       
@@ -723,37 +1209,133 @@
         customInput.style.display = 'block';
         document.getElementById('custom_working_hours').required = true;
       }
-    });
 
-    // Add event listeners to all form fields
-    document.querySelectorAll('input, textarea, select').forEach(field => {
-      field.addEventListener('input', function() {
-        validateField(this.name, this.value);
-        updateProgress();
+      // Add event listeners to all form fields
+      document.querySelectorAll('input, textarea, select').forEach(field => {
+        field.addEventListener('input', function() {
+          validateField(this.name, this.value);
+          updateProgress();
+          
+          // Clear error styling when user starts typing
+          this.classList.remove('error-input');
+          const errorElement = document.getElementById(this.name + '_error');
+          if (errorElement) {
+            errorElement.style.display = 'none';
+          }
+          
+          // Hide undo button if user manually edits address after auto-fill
+          if (this.name === 'address') {
+            const undoBtn = document.getElementById('undoAddressBtn');
+            const originalValue = this.getAttribute('data-original');
+            if (undoBtn && originalValue && this.value !== originalValue) {
+              // Only hide if the current value is different from both original and auto-filled
+              setTimeout(() => {
+                if (undoBtn.style.display !== 'none') {
+                  undoBtn.style.display = 'none';
+                  this.removeAttribute('data-original');
+                }
+              }, 1000); // Give user a moment to undo if they want
+            }
+          }
+          
+          // Special handling for password strength
+          if (this.name === 'password') {
+            checkPasswordStrength(this.value);
+          }
+          
+          // Check password confirmation match
+          if (this.name === 'password_confirmation' || this.name === 'password') {
+            const password = document.getElementById('password').value;
+            const confirmation = document.getElementById('password_confirmation').value;
+            validateField('password_confirmation', confirmation);
+          }
+        });
         
-        // Clear error styling when user starts typing
-        this.classList.remove('error-input');
-        const errorElement = document.getElementById(this.name + '_error');
-        if (errorElement) {
-          errorElement.style.display = 'none';
-        }
-        
-        // Special handling for password strength
-        if (this.name === 'password') {
-          checkPasswordStrength(this.value);
-        }
-        
-        // Check password confirmation match
-        if (this.name === 'password_confirmation' || this.name === 'password') {
-          const password = document.getElementById('password').value;
-          const confirmation = document.getElementById('password_confirmation').value;
-          validateField('password_confirmation', confirmation);
-        }
+        field.addEventListener('blur', function() {
+          validateField(this.name, this.value);
+        });
       });
+
+      // Form submission with mobile optimizations
+      form.addEventListener('submit', function(e) {
+        const button = document.getElementById('submitButton');
+        const icon = document.getElementById('submitIcon');
+        const text = document.getElementById('submitText');
+        
+        // Check terms agreement
+        const termsCheckbox = document.getElementById('terms');
+        if (!termsCheckbox.checked) {
+          e.preventDefault();
+          showToast('Please agree to the Terms of Service and Privacy Policy to continue.', 'warning');
+          return;
+        }
+
+        // Handle custom working hours
+        const workingHoursSelect = document.getElementById('working_hours');
+        const customHours = document.getElementById('custom_working_hours');
+        
+        if (workingHoursSelect.value === 'custom') {
+          if (!customHours.value.trim()) {
+            e.preventDefault();
+            showToast('Please enter your custom working hours.', 'warning');
+            customHours.focus();
+            return;
+          }
+          // Set the select value to the custom input value for submission
+          workingHoursSelect.value = customHours.value;
+        }
+        
+        // Show loading state
+        button.disabled = true;
+        icon.className = 'fas fa-spinner spinner';
+        text.textContent = 'Creating Account...';
+        
+        // Re-enable after 15 seconds as fallback
+        setTimeout(() => {
+          button.disabled = false;
+          icon.className = 'fas fa-store';
+          text.textContent = 'Register Business';
+        }, 15000);
+      });
+
+      // Initialize progress on page load
+      updateProgress();
       
-      field.addEventListener('blur', function() {
-        validateField(this.name, this.value);
+      // Auto-hide success messages after 5 seconds
+      setTimeout(() => {
+        const successMessages = document.querySelectorAll('#successAlert');
+        successMessages.forEach(msg => {
+          msg.style.opacity = '0';
+          msg.style.transition = 'opacity 0.5s ease';
+          setTimeout(() => {
+            if (msg.parentNode) {
+              msg.remove();
+            }
+          }, 500);
+        });
+      }, 5000);
+
+      // Handle orientation changes
+      window.addEventListener('orientationchange', function() {
+        setTimeout(() => {
+          // Recalculate viewport
+          const vh = window.innerHeight * 0.01;
+          document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }, 100);
       });
+
+      // Optimize for safe areas on notched devices
+      if (CSS.supports('padding-top: env(safe-area-inset-top)')) {
+        document.body.style.paddingTop = 'env(safe-area-inset-top)';
+        document.body.style.paddingBottom = 'env(safe-area-inset-bottom)';
+      }
+
+      // Mobile performance optimizations
+      if (window.DeviceMotionEvent) {
+        document.body.style.overscrollBehavior = 'contain';
+      }
+
+      console.log('Mobile-optimized registration page initialized');
     });
 
     // Password toggle functionality
@@ -770,7 +1352,7 @@
       }
     }
 
-    // Get current location
+    // Get current location with mobile optimizations and auto-fill address
     function getCurrentLocation() {
       const button = document.getElementById('locationButton');
       const icon = document.getElementById('locationIcon');
@@ -778,32 +1360,52 @@
       
       // Show loading state
       button.disabled = true;
-      icon.className = 'fas fa-spinner fa-spin mr-2';
+      icon.className = 'fas fa-spinner spinner';
       text.textContent = 'Getting Location...';
       
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          function(position) {
-            document.getElementById('latitude').value = position.coords.latitude.toFixed(7);
-            document.getElementById('longitude').value = position.coords.longitude.toFixed(7);
+          async function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
             
-            // Validate the new values
-            validateField('latitude', document.getElementById('latitude').value);
-            validateField('longitude', document.getElementById('longitude').value);
-            updateProgress();
+            // Fill coordinates
+            document.getElementById('latitude').value = lat.toFixed(7);
+            document.getElementById('longitude').value = lng.toFixed(7);
             
-            // Show success state
-            icon.className = 'fas fa-check mr-2';
-            text.textContent = 'Location Captured!';
+            // Validate the coordinate fields
+            const latField = document.getElementById('latitude');
+            const lngField = document.getElementById('longitude');
+            latField.dispatchEvent(new Event('input'));
+            lngField.dispatchEvent(new Event('input'));
             
-            // Reset button after 3 seconds
+            // Update button to show address fetching
+            text.textContent = 'Getting Address...';
+            
+            // Get address using reverse geocoding
+            try {
+              await reverseGeocode(lat, lng);
+              
+              // Show complete success state
+              icon.className = 'fas fa-check';
+              text.textContent = 'Location & Address Captured!';
+              showToast('Location and address captured successfully!', 'success');
+              
+            } catch (addressError) {
+              console.warn('Address lookup failed:', addressError);
+              
+              // Show partial success - coordinates only
+              icon.className = 'fas fa-check';
+              text.textContent = 'Location Captured!';
+              showToast('Location captured! Please enter address manually.', 'warning');
+            }
+            
+            // Reset button after 4 seconds
             setTimeout(() => {
               button.disabled = false;
-              icon.className = 'fas fa-location-arrow mr-2';
-              text.textContent = 'Get My Current Location';
-            }, 3000);
-            
-            showLocationSuccess();
+              icon.className = 'fas fa-location-arrow';
+              text.textContent = 'Get My Location & Address';
+            }, 4000);
           },
           function(error) {
             let errorMessage = 'Unable to get your location. ';
@@ -820,117 +1422,318 @@
             }
             
             // Show error state
-            icon.className = 'fas fa-exclamation-triangle mr-2';
+            icon.className = 'fas fa-exclamation-triangle';
             text.textContent = 'Location Failed';
             
             setTimeout(() => {
               button.disabled = false;
-              icon.className = 'fas fa-location-arrow mr-2';
-              text.textContent = 'Get My Current Location';
+              icon.className = 'fas fa-location-arrow';
+              text.textContent = 'Get My Location & Address';
             }, 3000);
             
-            alert(errorMessage + ' Please enter coordinates manually.');
+            showToast(errorMessage + ' Please enter coordinates manually.', 'warning');
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 60000
           }
         );
       } else {
-        icon.className = 'fas fa-exclamation-triangle mr-2';
+        icon.className = 'fas fa-exclamation-triangle';
         text.textContent = 'Not Supported';
         
         setTimeout(() => {
           button.disabled = false;
-          icon.className = 'fas fa-location-arrow mr-2';
-          text.textContent = 'Get My Current Location';
+          icon.className = 'fas fa-location-arrow';
+          text.textContent = 'Get My Location & Address';
         }, 3000);
         
-        alert('Geolocation is not supported by this browser. Please enter coordinates manually.');
+        showToast('Geolocation is not supported by this browser. Please enter coordinates manually.', 'warning');
       }
     }
 
-    function showLocationSuccess() {
-      const successDiv = document.createElement('div');
-      successDiv.style.cssText = `
+    // Reverse geocoding function to get address from coordinates
+    async function reverseGeocode(lat, lng) {
+      return new Promise((resolve, reject) => {
+        // Method 1: Try using browser's built-in reverse geocoding (if available)
+        if (window.google && window.google.maps && window.google.maps.Geocoder) {
+          // Use Google Maps Geocoder if available
+          const geocoder = new window.google.maps.Geocoder();
+          geocoder.geocode(
+            { location: { lat: lat, lng: lng } },
+            function(results, status) {
+              if (status === 'OK' && results[0]) {
+                const address = results[0].formatted_address;
+                fillAddressField(address);
+                resolve(address);
+              } else {
+                reject('Google Geocoder failed');
+              }
+            }
+          );
+        } else {
+          // Method 2: Use free Nominatim service (OpenStreetMap)
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+
+          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=en`, {
+            signal: controller.signal,
+            headers: {
+              'User-Agent': 'GreenCup Business Registration'
+            }
+          })
+            .then(response => {
+              clearTimeout(timeoutId);
+              if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+              }
+              return response.json();
+            })
+            .then(data => {
+              if (data && (data.display_name || data.address)) {
+                const address = formatNominatimAddress(data);
+                fillAddressField(address);
+                resolve(address);
+              } else {
+                throw new Error('No address data received');
+              }
+            })
+            .catch(error => {
+              clearTimeout(timeoutId);
+              console.warn('Nominatim geocoding failed:', error);
+              
+              // Method 3: Fallback to generating address from coordinates
+              generateFallbackAddress(lat, lng)
+                .then(address => {
+                  fillAddressField(address);
+                  resolve(address);
+                })
+                .catch(() => {
+                  reject('All address lookup methods failed');
+                });
+            });
+        }
+      });
+    }
+
+    // Generate a basic address when all geocoding fails
+    function generateFallbackAddress(lat, lng) {
+      return new Promise((resolve) => {
+        // Create a basic address format
+        const latDir = lat >= 0 ? 'N' : 'S';
+        const lngDir = lng >= 0 ? 'E' : 'W';
+        const basicAddress = `${Math.abs(lat).toFixed(4)}°${latDir}, ${Math.abs(lng).toFixed(4)}°${lngDir}`;
+        
+        // Try to determine rough location based on coordinates
+        let region = 'Unknown Location';
+        
+        // Very basic region detection (this is simplified)
+        if (lat >= 1 && lat <= 7 && lng >= 100 && lng <= 120) {
+          region = 'Southeast Asia';
+        } else if (lat >= -6 && lat <= 6 && lng >= 95 && lng <= 141) {
+          region = 'Indonesia/Malaysia Region';
+        } else if (lat >= 25 && lat <= 50 && lng >= -125 && lng <= -66) {
+          region = 'United States';
+        } else if (lat >= 36 && lat <= 71 && lng >= -10 && lng <= 40) {
+          region = 'Europe';
+        }
+        
+        const fallbackAddress = `Near ${basicAddress} (${region})`;
+        resolve(fallbackAddress);
+      });
+    }
+
+    // Format Nominatim response into readable address
+    function formatNominatimAddress(data) {
+      const address = data.address || {};
+      const parts = [];
+      
+      // Build address from specific to general
+      if (address.house_number && address.road) {
+        parts.push(`${address.house_number} ${address.road}`);
+      } else if (address.road) {
+        parts.push(address.road);
+      }
+      
+      if (address.neighbourhood) {
+        parts.push(address.neighbourhood);
+      } else if (address.suburb) {
+        parts.push(address.suburb);
+      }
+      
+      if (address.city) {
+        parts.push(address.city);
+      } else if (address.town) {
+        parts.push(address.town);
+      } else if (address.village) {
+        parts.push(address.village);
+      }
+      
+      if (address.state) {
+        parts.push(address.state);
+      }
+      
+      if (address.postcode) {
+        parts.push(address.postcode);
+      }
+      
+      if (address.country) {
+        parts.push(address.country);
+      }
+      
+      // If we couldn't build a proper address, use the display name
+      return parts.length > 0 ? parts.join(', ') : data.display_name;
+    }
+
+    // Fill the address field and trigger validation
+    function fillAddressField(address) {
+      const addressField = document.getElementById('address');
+      const undoBtn = document.getElementById('undoAddressBtn');
+      
+      if (addressField && address) {
+        // Store original value in case user wants to undo
+        addressField.setAttribute('data-original', addressField.value);
+        addressField.value = address;
+        
+        // Show undo button if there was original content or if auto-filled
+        if (undoBtn) {
+          undoBtn.style.display = 'inline-block';
+        }
+        
+        // Trigger validation for the address field
+        addressField.dispatchEvent(new Event('input'));
+        addressField.dispatchEvent(new Event('blur'));
+        
+        // Add a visual indicator that field was auto-filled
+        addressField.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+        addressField.style.border = '2px solid #10B981';
+        addressField.style.transition = 'all 0.5s ease';
+        
+        // Add a small "auto-filled" indicator
+        let indicator = document.getElementById('address-auto-indicator');
+        if (!indicator) {
+          indicator = document.createElement('div');
+          indicator.id = 'address-auto-indicator';
+          indicator.style.cssText = `
+            position: absolute;
+            top: -8px;
+            right: 8px;
+            background: #10B981;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+          `;
+          indicator.textContent = '✓ Auto-filled';
+          addressField.parentElement.style.position = 'relative';
+          addressField.parentElement.appendChild(indicator);
+        }
+        
+        // Show indicator
+        setTimeout(() => {
+          indicator.style.opacity = '1';
+        }, 100);
+        
+        // Gradually remove visual indicators
+        setTimeout(() => {
+          addressField.style.backgroundColor = '';
+          addressField.style.border = '';
+          indicator.style.opacity = '0';
+          
+          setTimeout(() => {
+            if (indicator && indicator.parentNode) {
+              indicator.parentNode.removeChild(indicator);
+            }
+          }, 300);
+        }, 3000);
+        
+        // Focus briefly to show user the field was filled
+        addressField.focus();
+        setTimeout(() => addressField.blur(), 500);
+      }
+    }
+
+    // Undo address auto-fill
+    function undoAddressFill() {
+      const addressField = document.getElementById('address');
+      const undoBtn = document.getElementById('undoAddressBtn');
+      
+      if (addressField) {
+        const originalValue = addressField.getAttribute('data-original') || '';
+        addressField.value = originalValue;
+        
+        // Hide undo button
+        if (undoBtn) {
+          undoBtn.style.display = 'none';
+        }
+        
+        // Remove the original data attribute
+        addressField.removeAttribute('data-original');
+        
+        // Trigger validation
+        addressField.dispatchEvent(new Event('input'));
+        addressField.dispatchEvent(new Event('blur'));
+        
+        // Show feedback
+        showToast('Address auto-fill undone', 'info');
+        
+        // Focus the field for user to edit
+        addressField.focus();
+      }
+    }
+
+    // Toast notification system optimized for mobile
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      const bgColor = type === 'success' ? '#10B981' : type === 'warning' ? '#F59E0B' : '#6B7280';
+      
+      toast.style.cssText = `
         position: fixed;
-        top: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, #10B981, #059669);
+        top: calc(20px + env(safe-area-inset-top, 0px));
+        left: 50%;
+        transform: translateX(-50%);
+        background: ${bgColor};
         color: white;
-        padding: 15px 20px;
-        border-radius: 15px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-        z-index: 1000;
+        padding: 12px 20px;
+        border-radius: 25px;
+        font-size: 14px;
         font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        z-index: 10000;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        opacity: 0;
         transition: opacity 0.3s ease;
+        max-width: 90%;
+        text-align: center;
+        line-height: 1.3;
       `;
-      successDiv.innerHTML = '✅ Location captured successfully!';
-      document.body.appendChild(successDiv);
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => toast.style.opacity = '1', 100);
       
       setTimeout(() => {
-        successDiv.style.opacity = '0';
+        toast.style.opacity = '0';
         setTimeout(() => {
-          if (document.body.contains(successDiv)) {
-            document.body.removeChild(successDiv);
+          if (document.body.contains(toast)) {
+            document.body.removeChild(toast);
           }
         }, 300);
-      }, 3000);
+      }, 4000);
     }
 
-    // Form submission with loading state
-    form.addEventListener('submit', function(e) {
-      const button = document.getElementById('submitButton');
-      const icon = document.getElementById('submitIcon');
-      const text = document.getElementById('submitText');
-      
-      // Check terms agreement
-      const termsCheckbox = document.getElementById('terms');
-      if (!termsCheckbox.checked) {
-        e.preventDefault();
-        alert('Please agree to the Terms of Service and Privacy Policy to continue.');
-        return;
-      }
-
-      // Handle custom working hours
-      const workingHoursSelect = document.getElementById('working_hours');
-      const customHours = document.getElementById('custom_working_hours');
-      
-      if (workingHoursSelect.value === 'custom') {
-        if (!customHours.value.trim()) {
-          e.preventDefault();
-          alert('Please enter your custom working hours.');
-          customHours.focus();
-          return;
-        }
-        // Set the select value to the custom input value for submission
-        workingHoursSelect.value = customHours.value;
-      }
-      
-      // Show loading state
-      button.disabled = true;
-      icon.className = 'fas fa-spinner fa-spin mr-3';
-      text.textContent = 'Creating Account...';
-      
-      // Re-enable after 15 seconds as fallback
-      setTimeout(() => {
-        button.disabled = false;
-        icon.className = 'fas fa-store mr-3';
-        text.textContent = 'Register Business';
-      }, 15000);
+    // Handle network connectivity for mobile users
+    window.addEventListener('online', function() {
+      showToast('Connection restored', 'success');
     });
 
-    // Initialize progress on page load
-    updateProgress();
-    
-    // Auto-hide success messages after 5 seconds
-    setTimeout(() => {
-      const successMessages = document.querySelectorAll('#successAlert');
-      successMessages.forEach(msg => {
-        msg.style.opacity = '0';
-        msg.style.transition = 'opacity 0.5s ease';
-        setTimeout(() => msg.remove(), 500);
-      });
-    }, 5000);
+    window.addEventListener('offline', function() {
+      showToast('No internet connection', 'warning');
+    });
   </script>
 </body>
 </html>

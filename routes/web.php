@@ -1,105 +1,211 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SellerAuthController;
 use App\Http\Controllers\SellerController;
-use App\Http\Controllers\SellerDashboardController;
-use App\Http\Controllers\SellerAccountController;
-use App\Http\Controllers\SellerPhotoController;
-use App\Http\Controllers\SellerQRController;
+use App\Http\Controllers\ReceiptController;
 use Illuminate\Support\Facades\Auth;
-
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Web Routes - Clean Version
 |--------------------------------------------------------------------------
 */
 
-// Guest routes (not authenticated)
-Route::middleware(['guest:seller'])->group(function () {
-    Route::get('/', function () {
-        return redirect()->route('login');
-    });
-    
-    Route::get('/login', [SellerController::class, 'showLogin'])->name('login');
-    Route::post('/login', [SellerController::class, 'login'])->name('login.store');
-    
-    Route::get('/register', [SellerController::class, 'create'])->name('sellers.create');
-    Route::post('/register', [SellerController::class, 'store'])->name('sellers.store');
+// Redirect root to login
+Route::get('/', function () {
+    return redirect()->route('login');
 });
 
-// Logout route (available for authenticated users)
-Route::post('/logout', [SellerController::class, 'logout'])->name('logout')->middleware('auth:seller');
+/*
+|--------------------------------------------------------------------------
+| Guest Routes (Authentication)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['guest:seller'])->group(function () {
+    // Authentication routes
+    Route::get('/login', [SellerAuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [SellerAuthController::class, 'login'])->name('login.store');
+    
+    // Registration routes
+    Route::get('/register', [SellerAuthController::class, 'create'])->name('sellers.create');
+    Route::post('/register', [SellerAuthController::class, 'store'])->name('sellers.store');
+});
 
-// Authenticated seller routes
+/*
+|--------------------------------------------------------------------------
+| Logout Route (Available for authenticated users)
+|--------------------------------------------------------------------------
+*/
+Route::post('/logout', [SellerAuthController::class, 'logout'])
+     ->name('logout')
+     ->middleware('auth:seller');
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Seller Routes
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth:seller'])->group(function () {
-    // Dashboard
-    Route::get('/dashboard', [SellerDashboardController::class, 'dashboard'])->name('dashboard');
-    Route::get('/api/dashboard-data', [SellerDashboardController::class, 'getDashboardData'])->name('dashboard.data');
+    
+    // Dashboard Routes
+    Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('dashboard');
+    Route::get('/api/dashboard-data', [SellerController::class, 'getDashboardData'])->name('dashboard.data');
     
     // Seller-specific routes
     Route::prefix('seller')->name('seller.')->group(function () {
-        // Account routes
-        Route::get('/account', [SellerAccountController::class, 'index'])->name('account');
-        Route::get('/account/transaction/{id}', [SellerAccountController::class, 'getTransactionDetail'])->name('account.transaction');
-        Route::get('/account/download-receipt/{id}', [SellerAccountController::class, 'downloadReceipt'])->name('account.download-receipt');
-        Route::get('/account/export', [SellerAccountController::class, 'exportTransactions'])->name('account.export');
         
-        // Profile routes
-        Route::get('/profile', [SellerAccountController::class, 'profile'])->name('profile');
-        Route::put('/profile', [SellerAccountController::class, 'updateProfile'])->name('profile.update');
+        /*
+        |--------------------------------------------------------------------------
+        | Account & Profile Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/account', [SellerController::class, 'account'])->name('account');
+        Route::get('/account/transaction/{id}', [SellerController::class, 'getTransactionDetail'])->name('account.transaction');
+        Route::get('/account/download-receipt/{id}', [SellerController::class, 'downloadReceipt'])->name('account.download-receipt');
+        Route::get('/account/export', [SellerController::class, 'exportTransactions'])->name('account.export');
         
-        // Photo gallery routes
-        Route::get('/photos', [SellerPhotoController::class, 'index'])->name('photos');
-        Route::post('/photos', [SellerPhotoController::class, 'store'])->name('photos.store');
-        Route::get('/photos/{id}', [SellerPhotoController::class, 'show'])->name('photos.show');
-        Route::put('/photos/{id}', [SellerPhotoController::class, 'update'])->name('photos.update');
-        Route::delete('/photos/{id}', [SellerPhotoController::class, 'destroy'])->name('photos.destroy');
-        Route::post('/photos/reorder', [SellerPhotoController::class, 'reorder'])->name('photos.reorder');
-        Route::get('/api/photo-stats', [SellerPhotoController::class, 'getPhotoStats'])->name('api.photo-stats');
+        Route::get('/profile', [SellerController::class, 'profile'])->name('profile');
+        Route::put('/profile', [SellerController::class, 'updateProfile'])->name('profile.update');
         
-        // Location route
-        Route::put('/location', [SellerPhotoController::class, 'updateLocation'])->name('location.update');
+        /*
+        |--------------------------------------------------------------------------
+        | Photo Gallery Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/photos', [SellerController::class, 'photos'])->name('photos');
+        Route::post('/photos', [SellerController::class, 'storePhoto'])->name('photos.store');
+        Route::get('/photos/{id}', [SellerController::class, 'showPhoto'])->name('photos.show');
+        Route::put('/photos/{id}', [SellerController::class, 'updatePhoto'])->name('photos.update');
+        Route::delete('/photos/{id}', [SellerController::class, 'destroyPhoto'])->name('photos.destroy');
+        Route::post('/photos/reorder', [SellerController::class, 'reorderPhotos'])->name('photos.reorder');
+        Route::get('/api/photo-stats', [SellerController::class, 'getPhotoStats'])->name('api.photo-stats');
         
-        // QR Scanner routes
-        Route::get('/scanner', [SellerQRController::class, 'index'])->name('scanner');
-        Route::post('/qr/process-consumer', [SellerQRController::class, 'processConsumer'])->name('qr.process-consumer');
-        Route::post('/qr/award-points', [SellerQRController::class, 'awardPoints'])->name('qr.award-points');
-        Route::get('/qr/recent-transactions', [SellerQRController::class, 'recentTransactions'])->name('qr.recent-transactions');
-        Route::post('/qr/process-redemption', [SellerQRController::class, 'processRedemption'])->name('qr.process-redemption');
+        /*
+        |--------------------------------------------------------------------------
+        | Location Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::put('/location', [SellerController::class, 'updateLocation'])->name('location.update');
+        
+        /*
+        |--------------------------------------------------------------------------
+        | QR Scanner Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/scanner', [SellerController::class, 'scanner'])->name('scanner');
+        Route::post('/qr/process-consumer', [SellerController::class, 'processConsumer'])->name('qr.process-consumer');
+        Route::post('/qr/award-points', [SellerController::class, 'awardPoints'])->name('qr.award-points');
+        Route::get('/qr/recent-transactions', [SellerController::class, 'recentTransactions'])->name('qr.recent-transactions');
+        Route::post('/qr/process-redemption', [SellerController::class, 'processRedemption'])->name('qr.process-redemption');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Receipt Management Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/receipts', [SellerController::class, 'receipts'])->name('receipts');
+        Route::get('/receipts/create', [SellerController::class, 'createReceipt'])->name('receipts.create');
+        Route::post('/receipts', [SellerController::class, 'storeReceipt'])->name('receipts.store');
+        Route::get('/receipts/{id}', [SellerController::class, 'showReceipt'])->name('receipts.show');
+        Route::delete('/receipts/{id}', [SellerController::class, 'cancelReceipt'])->name('receipts.cancel');
+        Route::get('/receipts/{id}/qr', [SellerController::class, 'printReceipt'])->name('receipts.qr');
+        Route::get('/receipts/export', [SellerController::class, 'exportReceipts'])->name('receipts.export');
+        Route::get('/api/receipt-stats', [SellerController::class, 'getReceiptStats'])->name('api.receipt-stats');
     });
 });
 
-// Test routes (development only - remove in production)
+/*
+|--------------------------------------------------------------------------
+| Consumer API Routes (for receipt scanning)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('api')->name('api.')->group(function () {
+    // Receipt API routes for consumer app integration
+    // These will be implemented when you build the consumer mobile app
+    Route::post('/receipt/check', function() {
+        return response()->json(['message' => 'Consumer API not implemented yet']);
+    })->name('receipt.check');
+    
+    Route::post('/receipt/claim', function() {
+        return response()->json(['message' => 'Consumer API not implemented yet']);
+    })->name('receipt.claim');
+    
+    Route::get('/receipt/history', function() {
+        return response()->json(['message' => 'Consumer API not implemented yet']);
+    })->name('receipt.history');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Development/Testing Routes (Local Environment Only)
+|--------------------------------------------------------------------------
+*/
 if (app()->environment('local')) {
-    Route::get('/test-dashboard', function () {
-        $seller = \App\Models\Seller::first();
-        if ($seller) {
-            Auth::guard('seller')->login($seller);
-            return redirect()->route('dashboard');
-        }
-        return redirect()->route('login')->with('error', 'No seller found for testing.');
-    })->name('test.dashboard');
-    
-    Route::get('/test-account', function () {
-        $seller = \App\Models\Seller::first();
-        if ($seller) {
-            Auth::guard('seller')->login($seller);
-            return redirect()->route('seller.account');
-        }
-        return redirect()->route('login')->with('error', 'No seller found for testing.');
-    })->name('test.account');
-    
-    Route::get('/test-photos', function () {
-        $seller = \App\Models\Seller::first();
-        if ($seller) {
-            Auth::guard('seller')->login($seller);
-            return redirect()->route('seller.photos');
-        }
-        return redirect()->route('login')->with('error', 'No seller found for testing.');
-    })->name('test.photos');
+    Route::prefix('test')->name('test.')->group(function () {
+        // Quick login as first seller for testing
+        Route::get('/login', function () {
+            $seller = \App\Models\Seller::first();
+            if ($seller) {
+                Auth::guard('seller')->login($seller);
+                return redirect()->route('dashboard')->with('success', 'Test login successful!');
+            }
+            return redirect()->route('login')->with('error', 'No seller found for testing. Please register first.');
+        })->name('login');
+        
+        // Quick access to main features
+        Route::get('/dashboard', function () {
+            $seller = \App\Models\Seller::first();
+            if ($seller) {
+                Auth::guard('seller')->login($seller);
+                return redirect()->route('dashboard');
+            }
+            return redirect()->route('login');
+        })->name('dashboard');
+        
+        Route::get('/receipts', function () {
+            $seller = \App\Models\Seller::first();
+            if ($seller) {
+                Auth::guard('seller')->login($seller);
+                return redirect()->route('seller.receipts');
+            }
+            return redirect()->route('login');
+        })->name('receipts');
+        
+        Route::get('/scanner', function () {
+            $seller = \App\Models\Seller::first();
+            if ($seller) {
+                Auth::guard('seller')->login($seller);
+                return redirect()->route('seller.scanner');
+            }
+            return redirect()->route('login');
+        })->name('scanner');
+        
+        // Database info route
+        Route::get('/db-info', function() {
+            $tables = [
+                'sellers' => \App\Models\Seller::count(),
+                'consumers' => DB::table('consumers')->count(),
+                'items' => DB::table('items')->count(),
+                'pending_transactions' => DB::table('pending_transactions')->count(),
+                'point_transactions' => DB::table('point_transactions')->count(),
+                'ranks' => DB::table('ranks')->count(),
+            ];
+            
+            return response()->json([
+                'message' => 'Database Status',
+                'tables' => $tables,
+                'environment' => app()->environment(),
+                'timestamp' => now(),
+            ]);
+        })->name('db-info');
+    });
 }
 
-// Fallback route - must be last
+/*
+|--------------------------------------------------------------------------
+| Fallback Route
+|--------------------------------------------------------------------------
+*/
 Route::fallback(function () {
     return redirect()->route('login')->with('error', 'Page not found. Please log in to access the application.');
 });
