@@ -372,28 +372,47 @@ class SellerController extends Controller
     /**
      * Display the photo gallery management page
      */
-    public function photos()
-    {
-        try {
-            $seller = Auth::guard('seller')->user();
+public function photos()
+{
+    try {
+        $seller = Auth::guard('seller')->user();
 
-            if (!$seller) {
-                return redirect()->route('login')->with('error', 'Please log in to access photos.');
-            }
-
-            $photos = $seller->photos()
-                ->orderByDesc('is_featured')
-                ->orderBy('sort_order')
-                ->orderByDesc('created_at')
-                ->get();
-
-            return view('sellers.photo', compact('seller', 'photos'));
-
-        } catch (\Exception $e) {
-            Log::error('Error loading photo gallery: ' . $e->getMessage());
-            return redirect()->route('dashboard')->with('error', 'Unable to load photo gallery.');
+        if (!$seller) {
+            return redirect()->route('login')->with('error', 'Please log in to access photos.');
         }
+
+        $photos = $seller->photos()
+            ->orderByDesc('is_featured')
+            ->orderBy('sort_order')
+            ->orderByDesc('created_at')
+            ->get();
+
+        // FIXED: Group photos in controller instead of blade template
+        $groupedPhotos = collect();
+        $processedIds = collect();
+        
+        foreach($photos as $photo) {
+            if ($processedIds->contains($photo->id)) {
+                continue;
+            }
+            
+            // Find all photos uploaded within 10 seconds of each other
+            $sessionPhotos = $photos->filter(function($p) use ($photo, $processedIds) {
+                return !$processedIds->contains($p->id) && 
+                       abs($photo->created_at->diffInSeconds($p->created_at)) <= 10;
+            });
+            
+            $groupedPhotos->push($sessionPhotos);
+            $processedIds = $processedIds->merge($sessionPhotos->pluck('id'));
+        }
+
+        return view('sellers.photo', compact('seller', 'photos', 'groupedPhotos'));
+
+    } catch (\Exception $e) {
+        Log::error('Error loading photo gallery: ' . $e->getMessage());
+        return redirect()->route('dashboard')->with('error', 'Unable to load photo gallery.');
     }
+}
 
     /**
      * Store a newly uploaded photo
@@ -815,112 +834,114 @@ class SellerController extends Controller
     /**
      * Award points to consumer for multiple items with quantities
      */
-    public function awardPoints(Request $request)
-    {
-        $request->validate([
-            'consumer_id' => 'required|integer|exists:consumers,id',
-            'items' => 'required|array|min:1',
-            'items.*.item_id' => 'required|integer|exists:items,id',
-            'items.*.quantity' => 'required|integer|min:1|max:3'
+public function awardPoints(Request $request)
+{
+    $request->validate([
+        'consumer_id' => 'required|integer|exists:consumers,id',
+        'items' => 'required|array|min:1',
+        'items.*.item_id' => 'required|integer|exists:items,id',
+        'items.*.quantity' => 'required|integer|min:1|max:3'
+    ]);
+
+    $seller = Auth::guard('seller')->user();
+
+    if (!$seller) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Authentication required'
+        ], 401);
+    }
+
+    try {
+        DB::beginTransaction();
+
+        $consumerId = $request->input('consumer_id');
+        $itemsData = $request->input('items');
+
+        // Get consumer
+        $consumer = DB::table('consumers')
+            ->where('id', $consumerId)
+            ->first();
+
+        if (!$consumer) {
+            throw new \Exception('Consumer not found');
+        }
+
+        // Process each item
+        $totalPointsAwarded = 0;
+        $totalUnitsScanned = 0;
+        $transactionDetails = [];
+
+        foreach ($itemsData as $itemData) {
+            $item = DB::table('items')->where('id', $itemData['item_id'])->first();
+            if (!$item) continue;
+
+            $quantity = $itemData['quantity'];
+            $pointsForItem = $item->points_per_unit * $quantity;
+
+            // Create QR code record for this transaction
+            $qrCodeId = DB::table('qr_codes')->insertGetId([
+                'seller_id' => $seller->id,
+                'item_id' => $item->id,
+                'consumer_id' => null,
+                'type' => 'seller_item',
+                'code' => 'SELLER_SCAN_' . uniqid() . '_' . $item->id,
+                'active' => true,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            // Create transaction record
+            DB::table('point_transactions')->insert([
+                'consumer_id' => $consumerId,
+                'seller_id' => $seller->id,
+                'qr_code_id' => $qrCodeId,
+                'units_scanned' => $quantity,
+                'points' => $pointsForItem,
+                'type' => 'earn',
+                'description' => "Scanned {$quantity}x {$item->name} at {$seller->business_name}",
+                'scanned_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            $totalPointsAwarded += $pointsForItem;
+            $totalUnitsScanned += $quantity;
+            $transactionDetails[] = "{$quantity}x {$item->name}";
+        }
+
+        // IMPORTANT: Manually update seller's total_points
+        $seller->updateTotalPoints();
+
+        // Update rank if needed
+        $seller->updateRank();
+
+        // Get consumer's new total points
+        $consumerTotalPoints = DB::table('point_transactions')
+            ->where('consumer_id', $consumerId)
+            ->sum(DB::raw('CASE WHEN type = "earn" THEN points ELSE -points END'));
+
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Points awarded successfully!',
+            'total_points_awarded' => $totalPointsAwarded,
+            'total_quantity' => $totalUnitsScanned,
+            'consumer_total_points' => $consumerTotalPoints,
+            'seller_points_gained' => $totalPointsAwarded,
+            'transaction_details' => implode(', ', $transactionDetails)
         ]);
 
-        $seller = Auth::guard('seller')->user();
+    } catch (\Exception $e) {
+        DB::rollBack();
 
-        if (!$seller) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Authentication required'
-            ], 401);
-        }
-
-        try {
-            DB::beginTransaction();
-
-            $consumerId = $request->input('consumer_id');
-            $itemsData = $request->input('items');
-
-            // Get consumer
-            $consumer = DB::table('consumers')
-                ->where('id', $consumerId)
-                ->first();
-
-            if (!$consumer) {
-                throw new \Exception('Consumer not found');
-            }
-
-            // Process each item
-            $totalPointsAwarded = 0;
-            $totalUnitsScanned = 0;
-            $transactionDetails = [];
-
-            foreach ($itemsData as $itemData) {
-                $item = DB::table('items')->where('id', $itemData['item_id'])->first();
-                if (!$item)
-                    continue;
-
-                $quantity = $itemData['quantity'];
-                $pointsForItem = $item->points_per_unit * $quantity;
-
-                // Create QR code record for this transaction
-                $qrCodeId = DB::table('qr_codes')->insertGetId([
-                    'seller_id' => $seller->id,
-                    'item_id' => $item->id,
-                    'consumer_id' => null,
-                    'type' => 'seller_item',
-                    'code' => 'SELLER_SCAN_' . uniqid() . '_' . $item->id,
-                    'active' => true,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-
-                // Create transaction record
-                DB::table('point_transactions')->insert([
-                    'consumer_id' => $consumerId,
-                    'seller_id' => $seller->id,
-                    'qr_code_id' => $qrCodeId,
-                    'units_scanned' => $quantity,
-                    'points' => $pointsForItem,
-                    'type' => 'earn',
-                    'description' => "Scanned {$quantity}x {$item->name} at {$seller->business_name}",
-                    'scanned_at' => now(),
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-
-                $totalPointsAwarded += $pointsForItem;
-                $totalUnitsScanned += $quantity;
-                $transactionDetails[] = "{$quantity}x {$item->name}";
-            }
-
-            // Get consumer's new total points
-            $consumerTotalPoints = DB::table('point_transactions')
-                ->where('consumer_id', $consumerId)
-                ->sum(DB::raw('CASE WHEN type = "earn" THEN points ELSE -points END'));
-
-            // Get seller's updated total points
-            $seller = DB::table('sellers')->where('id', $seller->id)->first();
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Points awarded successfully!',
-                'total_points_awarded' => $totalPointsAwarded,
-                'total_quantity' => $totalUnitsScanned,
-                'consumer_total_points' => $consumerTotalPoints,
-                'seller_points_gained' => $totalPointsAwarded,
-                'transaction_details' => implode(', ', $transactionDetails)
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
-        }
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage()
+        ]);
     }
+}
 
     /**
      * Get recent transactions for the seller

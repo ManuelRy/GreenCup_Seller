@@ -32,7 +32,6 @@ class Seller extends Authenticatable
     ];
 
     protected $casts = [
-        // Remove 'password' => 'hashed' - this is causing the issue
         'is_active' => 'boolean',
         'latitude' => 'decimal:7',
         'longitude' => 'decimal:7',
@@ -63,16 +62,29 @@ class Seller extends Authenticatable
         return $this->hasMany(SellerRankHistory::class);
     }
 
-    /**
-     * Get the photos for the seller.
-     * THIS IS THE METHOD YOU WERE MISSING!
-     */
     public function photos()
     {
         return $this->hasMany(SellerPhoto::class);
     }
 
-    // Rank methods
+    // === FIXED POINT METHODS ===
+
+    /**
+     * Manually update seller's total_points after transactions
+     * Call this after creating new transactions
+     */
+    public function updateTotalPoints()
+    {
+        $correctTotal = $this->pointTransactions()
+            ->where('type', 'earn')
+            ->sum('points') ?? 0;
+            
+        $this->update(['total_points' => $correctTotal]);
+        return $correctTotal;
+    }
+
+    // === RANK METHODS ===
+
     public function getCurrentRank()
     {
         return Rank::where('min_points', '<=', $this->total_points)
@@ -87,39 +99,40 @@ class Seller extends Authenticatable
             ->first();
     }
 
-    // Helper methods for dashboard metrics
+    // === DASHBOARD METRICS ===
+
     public function getPointsGivenAttribute()
     {
         return $this->pointTransactions()
             ->where('type', 'earn')
-            ->sum('points');
+            ->sum('points') ?? 0;
     }
 
     public function getPointsFromRedemptionsAttribute()
     {
         return $this->pointTransactions()
             ->where('type', 'spend')
-            ->sum('points');
+            ->sum('points') ?? 0;
     }
 
     public function getTotalCustomersAttribute()
     {
         return $this->pointTransactions()
             ->distinct('consumer_id')
-            ->count('consumer_id');
+            ->count('consumer_id') ?? 0;
     }
 
     public function getTotalTransactionsAttribute()
     {
-        return $this->pointTransactions()->count();
+        return $this->pointTransactions()->count() ?? 0;
     }
 
-    // Method to update rank when points change
+    // === RANK UPDATE METHOD ===
+
     public function updateRank()
     {
         $newRank = $this->getCurrentRank();
         if ($newRank) {
-            // Check if this rank hasn't been achieved before
             $existingHistory = SellerRankHistory::where('seller_id', $this->id)
                 ->where('rank_id', $newRank->id)
                 ->exists();
