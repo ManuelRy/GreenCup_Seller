@@ -41,9 +41,9 @@ return [
             'provider' => 'users',
         ],
         'seller' => [
-        'driver' => 'session',
-        'provider' => 'sellers',
-    ],
+            'driver' => 'session',
+            'provider' => 'sellers',
+        ],
     ],
 
     /*
@@ -68,9 +68,9 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
-    'sellers' => [
-        'driver' => 'eloquent',
-        'model' => App\Models\Seller::class,
+        'sellers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Seller::class,
         ],
 
         // 'users' => [

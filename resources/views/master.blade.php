@@ -10,14 +10,15 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Green Cup App</title>
     <link href="{{ asset('dashboard.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+      @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> --}}
 </head>
 
 <body>
     @yield('content')
 
     {{-- Your JavaScript --}}
-    <script src="{{ asset('js/app.js') }}"></script>
+    {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
     <script src="{{ asset('dashboard.js') }}"></script>
 </body>
 

@@ -16,6 +16,10 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::get('/unauthorize', function () {
+    return view('sellers.inactive');
+})->name('sellers.inactive');
+
 /*
 |--------------------------------------------------------------------------
 | Guest Routes (Authentication)
@@ -25,7 +29,7 @@ Route::middleware(['guest:seller'])->group(function () {
     // Authentication routes
     Route::get('/login', [SellerAuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [SellerAuthController::class, 'login'])->name('login.store');
-    
+
     // Registration routes
     Route::get('/register', [SellerAuthController::class, 'create'])->name('sellers.create');
     Route::post('/register', [SellerAuthController::class, 'store'])->name('sellers.store');
@@ -37,8 +41,8 @@ Route::middleware(['guest:seller'])->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::post('/logout', [SellerAuthController::class, 'logout'])
-     ->name('logout')
-     ->middleware('auth:seller');
+    ->name('logout')
+    ->middleware('auth:seller');
 
 /*
 |--------------------------------------------------------------------------
@@ -46,14 +50,14 @@ Route::post('/logout', [SellerAuthController::class, 'logout'])
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth:seller', 'seller.active'])->group(function () {
-    
+
     // Dashboard Routes
     Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('dashboard');
     Route::get('/api/dashboard-data', [SellerController::class, 'getDashboardData'])->name('dashboard.data');
-    
+
     // Seller-specific routes
     Route::prefix('seller')->name('seller.')->group(function () {
-        
+
         /*
         |--------------------------------------------------------------------------
         | Account & Profile Routes
@@ -63,10 +67,10 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
         Route::get('/account/transaction/{id}', [SellerController::class, 'getTransactionDetail'])->name('account.transaction');
         Route::get('/account/download-receipt/{id}', [SellerController::class, 'downloadReceipt'])->name('account.download-receipt');
         Route::get('/account/export', [SellerController::class, 'exportTransactions'])->name('account.export');
-        
+
         Route::get('/profile', [SellerController::class, 'profile'])->name('profile');
         Route::put('/profile', [SellerController::class, 'updateProfile'])->name('profile.update');
-        
+
         /*
         |--------------------------------------------------------------------------
         | Photo Gallery Routes
@@ -79,14 +83,14 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
         Route::delete('/photos/{id}', [SellerController::class, 'destroyPhoto'])->name('photos.destroy');
         Route::post('/photos/reorder', [SellerController::class, 'reorderPhotos'])->name('photos.reorder');
         Route::get('/api/photo-stats', [SellerController::class, 'getPhotoStats'])->name('api.photo-stats');
-        
+
         /*
         |--------------------------------------------------------------------------
         | Location Routes
         |--------------------------------------------------------------------------
         */
         Route::put('/location', [SellerController::class, 'updateLocation'])->name('location.update');
-        
+
         /*
         |--------------------------------------------------------------------------
         | QR Scanner Routes
@@ -122,15 +126,15 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
 Route::prefix('api')->name('api.')->group(function () {
     // Receipt API routes for consumer app integration
     // These will be implemented when you build the consumer mobile app
-    Route::post('/receipt/check', function() {
+    Route::post('/receipt/check', function () {
         return response()->json(['message' => 'Consumer API not implemented yet']);
     })->name('receipt.check');
-    
-    Route::post('/receipt/claim', function() {
+
+    Route::post('/receipt/claim', function () {
         return response()->json(['message' => 'Consumer API not implemented yet']);
     })->name('receipt.claim');
-    
-    Route::get('/receipt/history', function() {
+
+    Route::get('/receipt/history', function () {
         return response()->json(['message' => 'Consumer API not implemented yet']);
     })->name('receipt.history');
 });
@@ -140,66 +144,66 @@ Route::prefix('api')->name('api.')->group(function () {
 | Development/Testing Routes (Local Environment Only)
 |--------------------------------------------------------------------------
 */
-if (app()->environment('local')) {
-    Route::prefix('test')->name('test.')->group(function () {
-        // Quick login as first seller for testing
-        Route::get('/login', function () {
-            $seller = \App\Models\Seller::first();
-            if ($seller) {
-                Auth::guard('seller')->login($seller);
-                return redirect()->route('dashboard')->with('success', 'Test login successful!');
-            }
-            return redirect()->route('login')->with('error', 'No seller found for testing. Please register first.');
-        })->name('login');
-        
-        // Quick access to main features
-        Route::get('/dashboard', function () {
-            $seller = \App\Models\Seller::first();
-            if ($seller) {
-                Auth::guard('seller')->login($seller);
-                return redirect()->route('dashboard');
-            }
-            return redirect()->route('login');
-        })->name('dashboard');
-        
-        Route::get('/receipts', function () {
-            $seller = \App\Models\Seller::first();
-            if ($seller) {
-                Auth::guard('seller')->login($seller);
-                return redirect()->route('seller.receipts');
-            }
-            return redirect()->route('login');
-        })->name('receipts');
-        
-        Route::get('/scanner', function () {
-            $seller = \App\Models\Seller::first();
-            if ($seller) {
-                Auth::guard('seller')->login($seller);
-                return redirect()->route('seller.scanner');
-            }
-            return redirect()->route('login');
-        })->name('scanner');
-        
-        // Database info route
-        Route::get('/db-info', function() {
-            $tables = [
-                'sellers' => \App\Models\Seller::count(),
-                'consumers' => DB::table('consumers')->count(),
-                'items' => DB::table('items')->count(),
-                'pending_transactions' => DB::table('pending_transactions')->count(),
-                'point_transactions' => DB::table('point_transactions')->count(),
-                'ranks' => DB::table('ranks')->count(),
-            ];
-            
-            return response()->json([
-                'message' => 'Database Status',
-                'tables' => $tables,
-                'environment' => app()->environment(),
-                'timestamp' => now(),
-            ]);
-        })->name('db-info');
-    });
-}
+// if (app()->environment('local')) {
+//     Route::prefix('test')->name('test.')->group(function () {
+//         // Quick login as first seller for testing
+//         Route::get('/login', function () {
+//             $seller = \App\Models\Seller::first();
+//             if ($seller) {
+//                 Auth::guard('seller')->login($seller);
+//                 return redirect()->route('dashboard')->with('success', 'Test login successful!');
+//             }
+//             return redirect()->route('login')->with('error', 'No seller found for testing. Please register first.');
+//         })->name('login');
+
+//         // Quick access to main features
+//         Route::get('/dashboard', function () {
+//             $seller = \App\Models\Seller::first();
+//             if ($seller) {
+//                 Auth::guard('seller')->login($seller);
+//                 return redirect()->route('dashboard');
+//             }
+//             return redirect()->route('login');
+//         })->name('dashboard');
+
+//         Route::get('/receipts', function () {
+//             $seller = \App\Models\Seller::first();
+//             if ($seller) {
+//                 Auth::guard('seller')->login($seller);
+//                 return redirect()->route('seller.receipts');
+//             }
+//             return redirect()->route('login');
+//         })->name('receipts');
+
+//         Route::get('/scanner', function () {
+//             $seller = \App\Models\Seller::first();
+//             if ($seller) {
+//                 Auth::guard('seller')->login($seller);
+//                 return redirect()->route('seller.scanner');
+//             }
+//             return redirect()->route('login');
+//         })->name('scanner');
+
+//         // Database info route
+//         Route::get('/db-info', function () {
+//             $tables = [
+//                 'sellers' => \App\Models\Seller::count(),
+//                 'consumers' => DB::table('consumers')->count(),
+//                 'items' => DB::table('items')->count(),
+//                 'pending_transactions' => DB::table('pending_transactions')->count(),
+//                 'point_transactions' => DB::table('point_transactions')->count(),
+//                 'ranks' => DB::table('ranks')->count(),
+//             ];
+
+//             return response()->json([
+//                 'message' => 'Database Status',
+//                 'tables' => $tables,
+//                 'environment' => app()->environment(),
+//                 'timestamp' => now(),
+//             ]);
+//         })->name('db-info');
+//     });
+// }
 
 /*
 |--------------------------------------------------------------------------

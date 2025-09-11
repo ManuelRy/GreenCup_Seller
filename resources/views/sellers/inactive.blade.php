@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('master')
 
 @section('title', 'Account Pending Approval')
 
@@ -75,9 +75,9 @@
                                 <i class="bi bi-envelope me-2"></i>
                                 Contact Support
                             </a>
-                            <a href="{{ route('home') }}" class="btn btn-outline-secondary">
+                            <a href="{{ route('login') }}" class="btn btn-outline-secondary">
                                 <i class="bi bi-house me-2"></i>
-                                Back to Home
+                                Back to Login
                             </a>
                         </div>
 

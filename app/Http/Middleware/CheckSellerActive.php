@@ -19,9 +19,10 @@ class CheckSellerActive
         $seller = Auth::user();
 
         if (!$seller || !$seller->is_active) {
-            return response()->json([
-                'message' => 'Seller account is not active.'
-            ], 403);
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('sellers.inactive');
         }
 
         return $next($request);
