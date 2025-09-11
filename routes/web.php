@@ -45,7 +45,7 @@ Route::post('/logout', [SellerAuthController::class, 'logout'])
 | Authenticated Seller Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth:seller'])->group(function () {
+Route::middleware(['auth:seller', 'seller.active'])->group(function () {
     
     // Dashboard Routes
     Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('dashboard');
