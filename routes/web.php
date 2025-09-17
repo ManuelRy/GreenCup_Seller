@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SellerAuthController;
 use App\Http\Controllers\SellerController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ReceiptController;
 use Illuminate\Support\Facades\Auth;
 /*
@@ -58,6 +59,7 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
     // Seller-specific routes
     Route::prefix('seller')->name('seller.')->group(function () {
 
+        Route::resource('items', ItemController::class)->names('item');
         /*
         |--------------------------------------------------------------------------
         | Account & Profile Routes
