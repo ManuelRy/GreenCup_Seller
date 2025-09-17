@@ -138,6 +138,13 @@ body {
     text-align: center;
 }
 
+/* Profile Picture Input Styles */
+.profile-picture-input-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
 .profile-avatar {
     width: 100px;
     height: 100px;
@@ -153,6 +160,100 @@ body {
     color: white;
     border: 4px solid rgba(0, 176, 155, 0.2);
     box-shadow: 0 8px 25px rgba(0, 176, 155, 0.3);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(0, 176, 155, 0.4);
+    border-color: rgba(0, 176, 155, 0.4);
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.profile-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+}
+
+.profile-avatar:hover .profile-overlay {
+    opacity: 1;
+}
+
+.overlay-content {
+    color: white;
+    text-align: center;
+}
+
+.overlay-icon {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.overlay-text {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.profile-file-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.upload-instructions {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.change-picture-btn {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+}
+
+.change-picture-btn:hover {
+    background: linear-gradient(135deg, #5a6268, #545b62);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
 }
 
 .business-name {
@@ -737,17 +838,17 @@ body {
     .main-content {
         padding: 16px 12px;
     }
-    
+
     .stats-grid {
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 16px;
     }
-    
+
     .transaction-details {
         grid-template-columns: 1fr;
         gap: 8px;
     }
-    
+
     .modal-detail-grid {
         grid-template-columns: 1fr;
         gap: 12px;
@@ -760,36 +861,36 @@ body {
         gap: 16px;
         text-align: center;
     }
-    
+
     .header-left {
         justify-content: center;
     }
-    
+
     .app-title {
         font-size: 20px;
     }
-    
+
     .business-profile-card {
         padding: 24px 16px;
     }
-    
+
     .business-name {
         font-size: 24px;
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .modal-content {
         margin: 10px;
         max-height: 95vh;
     }
-    
+
     .modal-header {
         padding: 20px 24px;
     }
-    
+
     .modal-body {
         padding: 24px;
     }
@@ -847,12 +948,32 @@ body {
 
         <!-- Business Profile Card -->
         <div class="business-profile-card fade-in">
-            <div class="profile-avatar">
-                {{ substr($seller->business_name, 0, 2) }}
+            <div class="profile-picture-input-wrapper">
+                <div class="profile-avatar" onclick="document.getElementById('profilePictureInput').click();">
+                    <img id="profileImage" src="" alt="Profile" style="display: none;">
+                    <span id="profileInitials">{{ substr($seller->business_name, 0, 2) }}</span>
+                    <div class="profile-overlay">
+                        <div class="overlay-content">
+                            <div class="overlay-icon">📷</div>
+                            <div class="overlay-text">Change Photo</div>
+                        </div>
+                    </div>
+                    <input type="file" id="profilePictureInput" class="profile-file-input" accept="image/*">
+                </div>
             </div>
+
+            <div class="upload-instructions">
+                <span>📤</span>
+                <span>Click on the avatar to upload a profile picture (JPG, PNG, max 5MB)</span>
+            </div>
+
+            <button class="change-picture-btn" onclick="document.getElementById('profilePictureInput').click();">
+                📷 Change Picture
+            </button>
+
             <h2 class="business-name">{{ $seller->business_name }}</h2>
             <p class="business-email">{{ $seller->email }}</p>
-            
+
             <div class="rank-badge-container">
                 <div class="rank-badge {{ strtolower($currentRank->name) }}">
                     <span class="rank-icon">
@@ -1036,7 +1157,7 @@ body {
             <h3 class="modal-title">📧 Transaction Details</h3>
             <button class="modal-close" onclick="closeTransactionModal()">×</button>
         </div>
-        
+
         <div class="modal-body">
             <!-- Transaction Summary -->
             <div class="modal-section">
@@ -1134,6 +1255,39 @@ body {
 </div>
 
 <script>
+// Profile picture upload handling
+document.getElementById('profilePictureInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        // Validate file size (5MB limit)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('File size must be less than 5MB');
+            return;
+        }
+
+        // Validate file type
+        if (!file.type.match('image.*')) {
+            alert('Please select an image file');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const profileImage = document.getElementById('profileImage');
+            const profileInitials = document.getElementById('profileInitials');
+
+            profileImage.src = e.target.result;
+            profileImage.style.display = 'block';
+            profileInitials.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+
+        // Here you would typically upload the file to your server
+        // Example: uploadProfilePicture(file);
+        console.log('Profile picture selected:', file.name);
+    }
+});
+
 // Show transaction modal
 function showTransactionModal(transaction) {
     // Debug: Log the transaction data to see what we're getting
@@ -1141,10 +1295,10 @@ function showTransactionModal(transaction) {
     console.log('QR Code ID:', transaction.qr_code_id);
     console.log('Receipt Code:', transaction.receipt_code);
     console.log('Description:', transaction.description);
-    
+
     // Populate modal fields
     document.getElementById('modalTransactionId').textContent = '#' + String(transaction.id).padStart(6, '0');
-    
+
     // Determine transaction type display
     let transactionType = 'Points Given';
     if (transaction.type === 'earn') {
@@ -1159,10 +1313,10 @@ function showTransactionModal(transaction) {
     document.getElementById('modalTransactionType').textContent = transactionType;
     document.getElementById('modalPoints').textContent = (transaction.type === 'earn' ? '-' : '+') + transaction.points + ' points';
     document.getElementById('modalDateTime').textContent = new Date(transaction.scanned_at || transaction.created_at).toLocaleString();
-    
+
     document.getElementById('modalCustomerName').textContent = transaction.consumer_name || 'Customer #' + transaction.consumer_id;
     document.getElementById('modalCustomerId').textContent = '#' + String(transaction.consumer_id).padStart(6, '0');
-    
+
     // Handle item information with better fallbacks
     let itemName = 'Direct Transaction';
     if (transaction.item_name) {
@@ -1184,11 +1338,11 @@ function showTransactionModal(transaction) {
         itemName = 'Item #' + transaction.qr_code_id;
     }
     document.getElementById('modalItemName').textContent = itemName;
-    
+
     // Show quantity with clear labeling
     const quantity = transaction.units_scanned || 1;
     document.getElementById('modalUnitsScanned').textContent = quantity + ' unit' + (quantity > 1 ? 's' : '');
-    
+
     // Calculate and show points per unit
     let pointsPerUnit = 0;
     if (transaction.points_per_unit) {
@@ -1197,14 +1351,14 @@ function showTransactionModal(transaction) {
         pointsPerUnit = Math.round((transaction.points / quantity) * 10) / 10; // Round to 1 decimal
     }
     document.getElementById('modalPointsPerUnit').textContent = pointsPerUnit + ' points/unit';
-    
+
     document.getElementById('modalTotalPoints').textContent = transaction.points + ' points';
     document.getElementById('modalQRCodeId').textContent = transaction.qr_code_id ? '#' + transaction.qr_code_id : 'N/A';
-    
+
     // Handle receipt code with better fallback
     let receiptCode = 'N/A';
     let transactionSource = 'Unknown';
-    
+
     if (transaction.receipt_code) {
         receiptCode = transaction.receipt_code;
         transactionSource = 'Receipt System';
@@ -1223,14 +1377,14 @@ function showTransactionModal(transaction) {
     } else {
         transactionSource = 'Direct Entry';
     }
-    
+
     document.getElementById('modalReceiptCode').textContent = receiptCode;
     document.getElementById('modalTransactionSource').textContent = transactionSource;
-    
+
     document.getElementById('modalDescription').textContent = transaction.description || 'No description available';
-    
+
     document.getElementById('modalRankImpact').textContent = '+' + transaction.points + ' points';
-    
+
     // Show modal
     document.getElementById('transactionModal').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -1254,13 +1408,13 @@ function filterTransactions(type) {
 // Export transactions
 function exportTransactions() {
     const url = new URL('{{ route("seller.account.export") }}', window.location.origin);
-    
+
     // Add current filter if any
     const currentFilter = new URLSearchParams(window.location.search).get('filter');
     if (currentFilter && currentFilter !== 'all') {
         url.searchParams.set('filter', currentFilter);
     }
-    
+
     window.location.href = url.toString();
 }
 
@@ -1274,14 +1428,14 @@ document.addEventListener('DOMContentLoaded', function() {
             el.style.opacity = '1';
         }, index * 100);
     });
-    
+
     // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeTransactionModal();
         }
     });
-    
+
     console.log('Account page initialized');
 });
 </script>
