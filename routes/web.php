@@ -68,6 +68,7 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
         Route::get('/account/download-receipt/{id}', [SellerController::class, 'downloadReceipt'])->name('account.download-receipt');
         Route::get('/account/export', [SellerController::class, 'exportTransactions'])->name('account.export');
 
+        Route::post('/profile/photo', [SellerController::class, 'updateProfilePhoto'])->name('photo.update');
         Route::get('/profile', [SellerController::class, 'profile'])->name('profile');
         Route::put('/profile', [SellerController::class, 'updateProfile'])->name('profile.update');
 

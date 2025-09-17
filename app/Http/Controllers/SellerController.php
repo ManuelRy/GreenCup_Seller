@@ -6,17 +6,27 @@ use App\Models\Seller;
 use App\Models\SellerPhoto;
 use App\Models\PointTransaction;
 use App\Models\Rank;
+use App\Repository\FileRepository;
+use App\Repository\SellerRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Schema;
 use Exception;
 
 
 class SellerController extends Controller
 {
+    private SellerRepository $sRepo;
+    private FileRepository $fRepo;
+
+    public function __construct(SellerRepository $sRepo, FileRepository $fRepo)
+    {
+        $this->sRepo = $sRepo;
+        $this->fRepo = $fRepo;
+    }
+
     /**
      * ========================================
      * DASHBOARD METHODS
@@ -110,7 +120,6 @@ class SellerController extends Controller
                 'redemptionPercentage',
                 'topItems'
             ));
-
         } catch (Exception $e) {
             Log::error('Dashboard error for seller ' . (Auth::guard('seller')->id() ?? 'unknown') . ': ' . $e->getMessage());
             return redirect()->route('login')->with('error', 'Unable to load dashboard. Please try logging in again.');
@@ -159,12 +168,6 @@ class SellerController extends Controller
     public function account(Request $request)
     {
         $seller = Auth::guard('seller')->user();
-
-        if (!$seller) {
-            return redirect()->route('login')->with('error', 'Please log in to access your account.');
-        }
-
-        $seller->refresh();
 
         // Get seller's rank information
         $currentRank = $seller->getCurrentRank();
@@ -348,6 +351,29 @@ class SellerController extends Controller
         return redirect()->route('seller.account');
     }
 
+    public function updateProfilePhoto(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB = 5120KB
+        ], [
+            'image.max' => 'The image size must not exceed 5MB.',
+            'image.image' => 'The uploaded file must be a valid image.',
+            'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif.',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $response = $this->fRepo->upload("profiles", $file);
+            if ($response->successful()) {
+                $data = $response->json();
+
+                $this->sRepo->update(Auth::id(), [
+                    'photo_url'  => $this->fRepo->get($data['path'] ?? null),
+                ]);
+            }
+        }
+        return redirect()->back()->with('success', 'Photo uploaded successfully! 📷');
+    }
     /**
      * Update the seller's profile
      */
@@ -372,47 +398,46 @@ class SellerController extends Controller
     /**
      * Display the photo gallery management page
      */
-public function photos()
-{
-    try {
-        $seller = Auth::guard('seller')->user();
+    public function photos()
+    {
+        try {
+            $seller = Auth::guard('seller')->user();
 
-        if (!$seller) {
-            return redirect()->route('login')->with('error', 'Please log in to access photos.');
-        }
-
-        $photos = $seller->photos()
-            ->orderByDesc('is_featured')
-            ->orderBy('sort_order')
-            ->orderByDesc('created_at')
-            ->get();
-
-        // FIXED: Group photos in controller instead of blade template
-        $groupedPhotos = collect();
-        $processedIds = collect();
-        
-        foreach($photos as $photo) {
-            if ($processedIds->contains($photo->id)) {
-                continue;
+            if (!$seller) {
+                return redirect()->route('login')->with('error', 'Please log in to access photos.');
             }
-            
-            // Find all photos uploaded within 10 seconds of each other
-            $sessionPhotos = $photos->filter(function($p) use ($photo, $processedIds) {
-                return !$processedIds->contains($p->id) && 
-                       abs($photo->created_at->diffInSeconds($p->created_at)) <= 10;
-            });
-            
-            $groupedPhotos->push($sessionPhotos);
-            $processedIds = $processedIds->merge($sessionPhotos->pluck('id'));
+
+            $photos = $seller->photos()
+                ->orderByDesc('is_featured')
+                ->orderBy('sort_order')
+                ->orderByDesc('created_at')
+                ->get();
+
+            // FIXED: Group photos in controller instead of blade template
+            $groupedPhotos = collect();
+            $processedIds = collect();
+
+            foreach ($photos as $photo) {
+                if ($processedIds->contains($photo->id)) {
+                    continue;
+                }
+
+                // Find all photos uploaded within 10 seconds of each other
+                $sessionPhotos = $photos->filter(function ($p) use ($photo, $processedIds) {
+                    return !$processedIds->contains($p->id) &&
+                        abs($photo->created_at->diffInSeconds($p->created_at)) <= 10;
+                });
+
+                $groupedPhotos->push($sessionPhotos);
+                $processedIds = $processedIds->merge($sessionPhotos->pluck('id'));
+            }
+
+            return view('sellers.photo', compact('seller', 'photos', 'groupedPhotos'));
+        } catch (\Exception $e) {
+            Log::error('Error loading photo gallery: ' . $e->getMessage());
+            return redirect()->route('dashboard')->with('error', 'Unable to load photo gallery.');
         }
-
-        return view('sellers.photo', compact('seller', 'photos', 'groupedPhotos'));
-
-    } catch (\Exception $e) {
-        Log::error('Error loading photo gallery: ' . $e->getMessage());
-        return redirect()->route('dashboard')->with('error', 'Unable to load photo gallery.');
     }
-}
 
     /**
      * Store a newly uploaded photo
@@ -483,7 +508,6 @@ public function photos()
             }
 
             return redirect()->route('seller.photos')->with('success', 'Photo uploaded successfully! 📷');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
@@ -551,7 +575,6 @@ public function photos()
             }
 
             return redirect()->route('seller.photos')->with('success', 'Photo updated successfully! ✏️');
-
         } catch (\Exception $e) {
             Log::error('Error updating photo: ' . $e->getMessage());
             return redirect()->back()->with('error', 'An error occurred while updating the photo.');
@@ -604,7 +627,6 @@ public function photos()
             $photo->delete();
 
             return redirect()->route('seller.photos')->with('success', 'Photo deleted successfully! 🗑️');
-
         } catch (\Exception $e) {
             Log::error('Error deleting photo: ' . $e->getMessage());
             return redirect()->back()->with('error', 'An error occurred while deleting the photo.');
@@ -637,7 +659,6 @@ public function photos()
                     'created_at' => $photo->created_at->format('M j, Y g:i A')
                 ]
             ]);
-
         } catch (\Exception $e) {
             Log::error('Error fetching photo details: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'An error occurred.'], 500);
@@ -666,7 +687,6 @@ public function photos()
             }
 
             return response()->json(['success' => true, 'message' => 'Photos reordered successfully!']);
-
         } catch (\Exception $e) {
             Log::error('Error reordering photos: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'An error occurred.'], 500);
@@ -814,7 +834,6 @@ public function photos()
                 ],
                 'items' => $items
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -834,114 +853,113 @@ public function photos()
     /**
      * Award points to consumer for multiple items with quantities
      */
-public function awardPoints(Request $request)
-{
-    $request->validate([
-        'consumer_id' => 'required|integer|exists:consumers,id',
-        'items' => 'required|array|min:1',
-        'items.*.item_id' => 'required|integer|exists:items,id',
-        'items.*.quantity' => 'required|integer|min:1|max:3'
-    ]);
-
-    $seller = Auth::guard('seller')->user();
-
-    if (!$seller) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Authentication required'
-        ], 401);
-    }
-
-    try {
-        DB::beginTransaction();
-
-        $consumerId = $request->input('consumer_id');
-        $itemsData = $request->input('items');
-
-        // Get consumer
-        $consumer = DB::table('consumers')
-            ->where('id', $consumerId)
-            ->first();
-
-        if (!$consumer) {
-            throw new \Exception('Consumer not found');
-        }
-
-        // Process each item
-        $totalPointsAwarded = 0;
-        $totalUnitsScanned = 0;
-        $transactionDetails = [];
-
-        foreach ($itemsData as $itemData) {
-            $item = DB::table('items')->where('id', $itemData['item_id'])->first();
-            if (!$item) continue;
-
-            $quantity = $itemData['quantity'];
-            $pointsForItem = $item->points_per_unit * $quantity;
-
-            // Create QR code record for this transaction
-            $qrCodeId = DB::table('qr_codes')->insertGetId([
-                'seller_id' => $seller->id,
-                'item_id' => $item->id,
-                'consumer_id' => null,
-                'type' => 'seller_item',
-                'code' => 'SELLER_SCAN_' . uniqid() . '_' . $item->id,
-                'active' => true,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-
-            // Create transaction record
-            DB::table('point_transactions')->insert([
-                'consumer_id' => $consumerId,
-                'seller_id' => $seller->id,
-                'qr_code_id' => $qrCodeId,
-                'units_scanned' => $quantity,
-                'points' => $pointsForItem,
-                'type' => 'earn',
-                'description' => "Scanned {$quantity}x {$item->name} at {$seller->business_name}",
-                'scanned_at' => now(),
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-
-            $totalPointsAwarded += $pointsForItem;
-            $totalUnitsScanned += $quantity;
-            $transactionDetails[] = "{$quantity}x {$item->name}";
-        }
-
-        // IMPORTANT: Manually update seller's total_points
-        $seller->updateTotalPoints();
-
-        // Update rank if needed
-        $seller->updateRank();
-
-        // Get consumer's new total points
-        $consumerTotalPoints = DB::table('point_transactions')
-            ->where('consumer_id', $consumerId)
-            ->sum(DB::raw('CASE WHEN type = "earn" THEN points ELSE -points END'));
-
-        DB::commit();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Points awarded successfully!',
-            'total_points_awarded' => $totalPointsAwarded,
-            'total_quantity' => $totalUnitsScanned,
-            'consumer_total_points' => $consumerTotalPoints,
-            'seller_points_gained' => $totalPointsAwarded,
-            'transaction_details' => implode(', ', $transactionDetails)
+    public function awardPoints(Request $request)
+    {
+        $request->validate([
+            'consumer_id' => 'required|integer|exists:consumers,id',
+            'items' => 'required|array|min:1',
+            'items.*.item_id' => 'required|integer|exists:items,id',
+            'items.*.quantity' => 'required|integer|min:1|max:3'
         ]);
 
-    } catch (\Exception $e) {
-        DB::rollBack();
+        $seller = Auth::guard('seller')->user();
 
-        return response()->json([
-            'success' => false,
-            'message' => $e->getMessage()
-        ]);
+        if (!$seller) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Authentication required'
+            ], 401);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $consumerId = $request->input('consumer_id');
+            $itemsData = $request->input('items');
+
+            // Get consumer
+            $consumer = DB::table('consumers')
+                ->where('id', $consumerId)
+                ->first();
+
+            if (!$consumer) {
+                throw new \Exception('Consumer not found');
+            }
+
+            // Process each item
+            $totalPointsAwarded = 0;
+            $totalUnitsScanned = 0;
+            $transactionDetails = [];
+
+            foreach ($itemsData as $itemData) {
+                $item = DB::table('items')->where('id', $itemData['item_id'])->first();
+                if (!$item) continue;
+
+                $quantity = $itemData['quantity'];
+                $pointsForItem = $item->points_per_unit * $quantity;
+
+                // Create QR code record for this transaction
+                $qrCodeId = DB::table('qr_codes')->insertGetId([
+                    'seller_id' => $seller->id,
+                    'item_id' => $item->id,
+                    'consumer_id' => null,
+                    'type' => 'seller_item',
+                    'code' => 'SELLER_SCAN_' . uniqid() . '_' . $item->id,
+                    'active' => true,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+
+                // Create transaction record
+                DB::table('point_transactions')->insert([
+                    'consumer_id' => $consumerId,
+                    'seller_id' => $seller->id,
+                    'qr_code_id' => $qrCodeId,
+                    'units_scanned' => $quantity,
+                    'points' => $pointsForItem,
+                    'type' => 'earn',
+                    'description' => "Scanned {$quantity}x {$item->name} at {$seller->business_name}",
+                    'scanned_at' => now(),
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+
+                $totalPointsAwarded += $pointsForItem;
+                $totalUnitsScanned += $quantity;
+                $transactionDetails[] = "{$quantity}x {$item->name}";
+            }
+
+            // IMPORTANT: Manually update seller's total_points
+            $seller->updateTotalPoints();
+
+            // Update rank if needed
+            $seller->updateRank();
+
+            // Get consumer's new total points
+            $consumerTotalPoints = DB::table('point_transactions')
+                ->where('consumer_id', $consumerId)
+                ->sum(DB::raw('CASE WHEN type = "earn" THEN points ELSE -points END'));
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Points awarded successfully!',
+                'total_points_awarded' => $totalPointsAwarded,
+                'total_quantity' => $totalUnitsScanned,
+                'consumer_total_points' => $consumerTotalPoints,
+                'seller_points_gained' => $totalPointsAwarded,
+                'transaction_details' => implode(', ', $transactionDetails)
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
     }
-}
 
     /**
      * Get recent transactions for the seller
@@ -1015,7 +1033,6 @@ public function awardPoints(Request $request)
                 'success' => true,
                 'message' => 'Redemption feature coming soon!'
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -1079,7 +1096,6 @@ public function awardPoints(Request $request)
                 'success' => true,
                 'stats' => $stats
             ]);
-
         } catch (\Exception $e) {
             Log::error('Error fetching photo stats: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'An error occurred.'], 500);
@@ -1114,7 +1130,6 @@ public function awardPoints(Request $request)
                 'success' => true,
                 'message' => 'Location updated successfully!'
             ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
@@ -1205,7 +1220,6 @@ public function awardPoints(Request $request)
 
 
             return view('receipts.index', compact('receipts', 'stats', 'status', 'search', 'dateFrom', 'dateTo'));
-
         } catch (Exception $e) {
             // Instead of redirecting, show the actual error
             echo "<h1 style='color: red;'>ERROR CAUGHT:</h1>";
@@ -1237,7 +1251,6 @@ public function awardPoints(Request $request)
                 ->get();
 
             return view('sellers.receipts.create', compact('seller', 'items'));
-
         } catch (Exception $e) {
             Log::error('Receipt creation form error: ' . $e->getMessage());
             return view('receipts.create', compact('seller', 'items'));
@@ -1341,7 +1354,6 @@ public function awardPoints(Request $request)
                     'qr_url' => route('seller.receipts.qr', $receiptId)
                 ]
             ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
 
@@ -1350,7 +1362,6 @@ public function awardPoints(Request $request)
                 'message' => 'Validation failed',
                 'errors' => $e->errors()
             ], 422);
-
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -1408,7 +1419,6 @@ public function awardPoints(Request $request)
             }
 
             return view('receipts.show', compact('receipt', 'consumer', 'seller'));
-
         } catch (Exception $e) {
             Log::error('Receipt show error: ' . $e->getMessage());
             return redirect()->route('seller.receipts')->with('error', 'Unable to load receipt details.');
@@ -1467,7 +1477,6 @@ public function awardPoints(Request $request)
                 'success' => true,
                 'message' => 'Receipt cancelled successfully'
             ]);
-
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -1506,7 +1515,6 @@ public function awardPoints(Request $request)
             $receipt->items = json_decode($receipt->items, true) ?? [];
 
             return view('receipts.qr-print', compact('receipt', 'seller'));
-
         } catch (Exception $e) {
             Log::error('Receipt QR print error: ' . $e->getMessage());
             return redirect()->route('seller.receipts')->with('error', 'Unable to generate QR code.');
@@ -1569,7 +1577,6 @@ public function awardPoints(Request $request)
                 'success' => true,
                 'stats' => $stats
             ]);
-
         } catch (Exception $e) {
             Log::error('Receipt stats error: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Error fetching stats'], 500);
@@ -1591,7 +1598,6 @@ public function awardPoints(Request $request)
             $exists = DB::table('pending_transactions')
                 ->where('receipt_code', $code)
                 ->exists();
-
         } while ($exists);
 
         return $code;
@@ -1679,7 +1685,6 @@ public function awardPoints(Request $request)
             };
 
             return response()->stream($callback, 200, $headers);
-
         } catch (Exception $e) {
             Log::error('Receipt export error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Unable to export receipts.');
