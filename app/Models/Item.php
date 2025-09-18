@@ -13,6 +13,7 @@ class Item extends Model
     protected $fillable = [
         'name',
         'points_per_unit',
+        'seller_id',
         'image_url',
     ];
     protected $casts = [

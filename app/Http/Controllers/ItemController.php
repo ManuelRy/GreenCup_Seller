@@ -3,27 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
+use App\Repository\FileRepository;
+use App\Repository\ItemRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class ItemController extends Controller
 {
+    private ItemRepository $iRepo;
+    private FileRepository $fRepo;
+
+    public function __construct(ItemRepository $iRepo, FileRepository $fRepo)
+    {
+        $this->iRepo = $iRepo;
+        $this->fRepo = $fRepo;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $query = Item::query();
 
-        // Search functionality
-        if ($request->has('search') && $request->search) {
-            $query->where('name', 'like', '%' . $request->search . '%');
-        }
-
-        // Sort by name by default
-        $items = $query->orderBy('name')->paginate(15);
-
+        $items = $this->iRepo->list(Auth::id(), $request->search);
         return view('items.index', compact('items'));
     }
 
@@ -45,17 +48,21 @@ class ItemController extends Controller
             'points_per_unit' => 'required|integer|min:1|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
-
         // Handle image upload
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('items', 'public');
-            $validated['image_url'] = '/storage/' . $imagePath;
+            $file = $request->file('image');
+            $response = $this->fRepo->upload("items", $file);
+            if ($response->successful()) {
+                $data = $response->json();
+                $imageUrl = $this->fRepo->get($data['path']);
+            }
         }
 
-        // Remove 'image' from validated data since we use 'image_url' in database
-        unset($validated['image']);
-
-        Item::create($validated);
+        $this->iRepo->create([
+            ...$request->all(),
+            'seller_id' => Auth::id(),
+            'image_url' => $imageUrl
+        ]);
 
         return redirect()->route('item.index')
             ->with('success', 'Item created successfully!');
@@ -66,48 +73,46 @@ class ItemController extends Controller
      */
     public function show(Item $item)
     {
-        return view('items.show', compact('item'));
+        // return view('item.show', compact('item'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Item $item)
+    public function edit($id)
     {
+        $item = $this->iRepo->get($id, Auth::id());
         return view('items.edit', compact('item'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Item $item)
+    public function update(Request $request,  $id)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => [
                 'required',
                 'string',
-                'max:255',
-                Rule::unique('items', 'name')->ignore($item->id)
+                'max:255'
             ],
             'points_per_unit' => 'required|integer|min:1|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
-        // Handle image upload
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($item->image_url && file_exists(public_path($item->image_url))) {
-                unlink(public_path($item->image_url));
+            $file = $request->file('image');
+            $response = $this->fRepo->upload("items", $file);
+            if ($response->successful()) {
+                $data = $response->json();
+                $imageUrl = $this->fRepo->get($data['path']);
             }
-
-            $imagePath = $request->file('image')->store('items', 'public');
-            $validated['image_url'] = '/storage/' . $imagePath;
         }
 
-        // Remove 'image' from validated data since we use 'image_url' in database
-        unset($validated['image']);
-
-        $item->update($validated);
+        $this->iRepo->update($id, Auth::id(), [
+            ...$request->all(),
+            'image_url' => $imageUrl
+        ]);
 
         return redirect()->route('item.index')
             ->with('success', 'Item updated successfully!');
@@ -116,15 +121,9 @@ class ItemController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Item $item)
+    public function destroy($id)
     {
-        // Delete associated image file if exists
-        if ($item->image_url && file_exists(public_path($item->image_url))) {
-            unlink(public_path($item->image_url));
-        }
-
-        $item->delete();
-
+        $this->iRepo->delete($id, Auth::id());
         return redirect()->route('item.index')
             ->with('success', 'Item deleted successfully!');
     }

@@ -512,7 +512,7 @@ body {
                     <label class="form-label">Current Image</label>
                     <div class="current-image">
                         @if($reward->image_path)
-                            <img src="{{ asset('storage/' . $reward->image_path) }}" alt="{{ $reward->name }}">
+                            <img src="{{  $reward->image_path}}" alt="{{ $reward->name }}">
                         @else
                             <div class="no-image">🎁</div>
                         @endif

@@ -60,7 +60,7 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
     Route::get('/api/dashboard-data', [SellerController::class, 'getDashboardData'])->name('dashboard.data');
 
     // Items Management Routes (outside seller prefix for cleaner URLs)
-    Route::resource('items', ItemController::class)->names('item');
+    Route::resource('items', ItemController::class)->names('item')->except(['show']);
     Route::resource('reports', ReportController::class)->names('report')->only(['index', 'create', 'store']);
     Route::resource('rewards', RewardController::class)->names('reward')->only(['index', 'create', 'store', 'edit', 'update']);
 

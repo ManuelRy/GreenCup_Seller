@@ -87,32 +87,7 @@ class Consumer extends Authenticatable
     }
 }
 
-// app/Models/Item.php
 
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class Item extends Model
-{
-    use HasFactory;
-
-    protected $fillable = [
-        'name',
-        'points_per_unit',
-    ];
-
-    protected $casts = [
-        'points_per_unit' => 'integer',
-    ];
-
-    // Relationships
-    public function qrCodes()
-    {
-        return $this->hasMany(QrCode::class);
-    }
-}
 
 // app/Models/QrCode.php
 

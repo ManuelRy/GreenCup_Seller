@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reward;
+use App\Repository\FileRepository;
+use App\Repository\RewardRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -10,22 +12,21 @@ use Illuminate\Support\Facades\Log;
 
 class RewardController extends Controller
 {
+    private RewardRepository $rRepo;
+    private FileRepository $fRepo;
+
+    public function __construct(RewardRepository $rRepo, FileRepository $fRepo)
+    {
+        $this->rRepo = $rRepo;
+        $this->fRepo = $fRepo;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $seller = Auth::guard('seller')->user();
-
-        if (!$seller) {
-            return redirect()->route('login')->with('error', 'Please log in to manage rewards.');
-        }
-
-        $rewards = Reward::where('seller_id', $seller->id)
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(12);
-
-        return view('rewards.index', compact('rewards', 'seller'));
+        $rewards = $this->rRepo->list(Auth::id());
+        return view('rewards.index', compact('rewards'));
     }
 
     /**
@@ -33,13 +34,7 @@ class RewardController extends Controller
      */
     public function create()
     {
-        $seller = Auth::guard('seller')->user();
-
-        if (!$seller) {
-            return redirect()->route('login')->with('error', 'Please log in to create rewards.');
-        }
-
-        return view('rewards.create', compact('seller'));
+        return view('rewards.create');
     }
 
     /**
@@ -47,12 +42,6 @@ class RewardController extends Controller
      */
     public function store(Request $request)
     {
-        $seller = Auth::guard('seller')->user();
-
-        if (!$seller) {
-            return redirect()->route('login')->with('error', 'Please log in to create rewards.');
-        }
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
@@ -64,28 +53,24 @@ class RewardController extends Controller
         ]);
 
         try {
-            $imagePath = null;
             if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $imagePath = $image->store('rewards', 'public');
+                $file = $request->file('image');
+                $response = $this->fRepo->upload("rewards", $file);
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $imagePath = $this->fRepo->get($data['path']);
+                }
             }
 
-            Reward::create([
-                'name' => $validated['name'],
-                'description' => $validated['description'],
-                'points_required' => $validated['points_required'],
-                'quantity' => $validated['quantity'],
-                'valid_from' => $validated['valid_from'],
-                'valid_until' => $validated['valid_until'],
+            $this->rRepo->create([
+                ...$request->all(),
                 'image_path' => $imagePath,
-                'seller_id' => $seller->id,
+                'seller_id' => Auth::id(),
             ]);
 
             return redirect()->route('reward.index')
                 ->with('success', 'Reward created successfully!');
-
         } catch (\Exception $e) {
-            Log::error('Reward creation failed: ' . $e->getMessage());
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Failed to create reward. Please try again.');
@@ -95,16 +80,10 @@ class RewardController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Reward $reward)
+    public function edit($id)
     {
-        $seller = Auth::guard('seller')->user();
-
-        if (!$seller || $reward->seller_id !== $seller->id) {
-            return redirect()->route('reward.index')
-                ->with('error', 'You can only edit your own rewards.');
-        }
-
-        return view('rewards.edit', compact('reward', 'seller'));
+        $reward = $this->rRepo->get($id, Auth::id());
+        return view('rewards.edit', compact('reward'));
     }
 
     /**
@@ -112,13 +91,6 @@ class RewardController extends Controller
      */
     public function update(Request $request, Reward $reward)
     {
-        $seller = Auth::guard('seller')->user();
-
-        if (!$seller || $reward->seller_id !== $seller->id) {
-            return redirect()->route('reward.index')
-                ->with('error', 'You can only update your own rewards.');
-        }
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
@@ -131,32 +103,21 @@ class RewardController extends Controller
         ]);
 
         try {
-            $imagePath = $reward->image_path;
-            
             if ($request->hasFile('image')) {
-                // Delete old image if exists
-                if ($reward->image_path) {
-                    Storage::disk('public')->delete($reward->image_path);
+                $file = $request->file('image');
+                $response = $this->fRepo->upload("items", $file);
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $imagePath = $this->fRepo->get($data['path']);
                 }
-                
-                $image = $request->file('image');
-                $imagePath = $image->store('rewards', 'public');
             }
-
-            $reward->update([
-                'name' => $validated['name'],
-                'description' => $validated['description'],
-                'points_required' => $validated['points_required'],
-                'quantity' => $validated['quantity'],
-                'valid_from' => $validated['valid_from'],
-                'valid_until' => $validated['valid_until'],
+            $this->rRepo->update($reward->id, Auth::id(), [
+                ...$request->all(),
                 'image_path' => $imagePath,
-                'is_active' => $request->has('is_active'),
             ]);
 
             return redirect()->route('reward.index')
                 ->with('success', 'Reward updated successfully!');
-
         } catch (\Exception $e) {
             Log::error('Reward update failed: ' . $e->getMessage());
             return redirect()->back()
