@@ -3,11 +3,16 @@
 namespace App\Repository;
 
 use App\Models\Item;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class ItemRepository
 {
-  public function list($seller_id, $query = null)
+  public function list($seller_id): Collection
+  {
+    return Item::where('seller_id', $seller_id)->orderBy('name')->get();
+  }
+  public function listQuery($seller_id, $query = null)
   {
     $items = Item::query();
     if ($query) {

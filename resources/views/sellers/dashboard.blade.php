@@ -955,7 +955,7 @@ body {
             </div>
 
             <div class="receipt-actions">
-                <a href="{{ route('seller.receipts') }}" class="receipt-btn receipt-btn-secondary">
+                <a href="{{ route('seller.receipts.index') }}" class="receipt-btn receipt-btn-secondary">
                     <span>📋</span>
                     View All Receipts
                 </a>
@@ -1036,7 +1036,7 @@ body {
                 <div class="action-label">Account</div>
             </a>
 
-            <a href="{{ route('seller.receipts') }}" class="action-card receipt-action">
+            <a href="{{ route('seller.receipts.index') }}" class="action-card receipt-action">
                 <div class="action-icon">📄</div>
                 <div class="action-label">Receipts</div>
             </a>

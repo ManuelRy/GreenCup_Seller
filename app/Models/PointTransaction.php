@@ -45,47 +45,6 @@ class PointTransaction extends Model
     }
 }
 
-// app/Models/Consumer.php
-
-namespace App\Models;
-
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-
-class Consumer extends Authenticatable
-{
-    use HasFactory;
-
-    protected $fillable = [
-        'full_name',
-        'email',
-        'phone_number',
-        'gender',
-        'date_of_birth',
-        'password',
-    ];
-
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    protected $casts = [
-        'password' => 'hashed',
-        'date_of_birth' => 'date',
-    ];
-
-    // Relationships
-    public function pointTransactions()
-    {
-        return $this->hasMany(PointTransaction::class);
-    }
-
-    public function qrCodes()
-    {
-        return $this->hasMany(QrCode::class);
-    }
-}
 
 
 

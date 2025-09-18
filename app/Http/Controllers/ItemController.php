@@ -26,7 +26,7 @@ class ItemController extends Controller
     public function index(Request $request)
     {
 
-        $items = $this->iRepo->list(Auth::id(), $request->search);
+        $items = $this->iRepo->listQuery(Auth::id(), $request->search);
         return view('items.index', compact('items'));
     }
 
@@ -49,6 +49,7 @@ class ItemController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
         // Handle image upload
+        $imageUrl = null;
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $response = $this->fRepo->upload("items", $file);
@@ -99,7 +100,7 @@ class ItemController extends Controller
             'points_per_unit' => 'required|integer|min:1|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
-
+        $imageUrl = null;
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $response = $this->fRepo->upload("items", $file);

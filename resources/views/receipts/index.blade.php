@@ -88,7 +88,7 @@
             <div class="filter-group">
                 <label for="search">Search:</label>
                 <input type="text" name="search" id="search" placeholder="Receipt code..." 
-                       value="{{ $search }}" onchange="this.form.submit()">
+                       onchange="this.form.submit()">
             </div>
 
             <div class="filter-group">
@@ -104,8 +104,8 @@
             </div>
 
             <div class="filter-actions">
-                <a href="{{ route('seller.receipts') }}" class="clear-filters">Clear</a>
-                <a href="{{ route('seller.receipts.export', request()->query()) }}" class="export-btn">
+                <a href="{{ route('seller.receipts.index') }}" class="clear-filters">Clear</a>
+                <a href="{{ route('seller.receipts.export') }}" class="export-btn">
                     <span class="btn-icon">📊</span>
                     Export CSV
                 </a>
@@ -158,18 +158,18 @@
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">Created:</span>
-                                <span class="detail-value">{{ $receipt->created_at_formatted }}</span>
+                                <span class="detail-value">{{ $receipt->created_at }}</span>
                             </div>
                             @if($receipt->expires_at)
                                 <div class="detail-row">
                                     <span class="detail-label">Expires:</span>
-                                    <span class="detail-value">{{ $receipt->expires_at_formatted }}</span>
+                                    <span class="detail-value">{{ $receipt->expires_at }}</span>
                                 </div>
                             @endif
                             @if($receipt->claimed_at)
                                 <div class="detail-row">
                                     <span class="detail-label">Claimed:</span>
-                                    <span class="detail-value">{{ $receipt->claimed_at_formatted }}</span>
+                                    <span class="detail-value">{{ $receipt->claimed_at }}</span>
                                 </div>
                             @endif
                         </div>
@@ -200,13 +200,8 @@
             <div class="empty-state">
                 <div class="empty-icon">📄</div>
                 <h3>No receipts found</h3>
-                @if($status !== 'all' || $search || $dateFrom || $dateTo)
-                    <p>No receipts match your current filters.</p>
-                    <a href="{{ route('seller.receipts') }}" class="btn-secondary">Clear Filters</a>
-                @else
-                    <p>You haven't created any receipts yet.</p>
-                    <a href="{{ route('seller.receipts.create') }}" class="btn-primary">Create Your First Receipt</a>
-                @endif
+                <p>You haven't created any receipts yet.</p>
+                <a href="{{ route('seller.receipts.create') }}" class="btn-primary">Create Your First Receipt</a>
             </div>
         @endif
     </div>

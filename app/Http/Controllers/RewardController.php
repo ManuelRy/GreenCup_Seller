@@ -42,7 +42,7 @@ class RewardController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'points_required' => 'required|integer|min:1',
@@ -53,6 +53,7 @@ class RewardController extends Controller
         ]);
 
         try {
+            $imagePath = null;
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
                 $response = $this->fRepo->upload("rewards", $file);
@@ -91,7 +92,7 @@ class RewardController extends Controller
      */
     public function update(Request $request, Reward $reward)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'points_required' => 'required|integer|min:1',
@@ -103,6 +104,7 @@ class RewardController extends Controller
         ]);
 
         try {
+            $imagePath = null;
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
                 $response = $this->fRepo->upload("items", $file);

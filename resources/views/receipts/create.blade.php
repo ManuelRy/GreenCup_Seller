@@ -7,7 +7,7 @@
     <!-- Header -->
     <div class="create-header">
         <div class="header-content">
-            <a href="{{ route('seller.receipts') }}" class="back-button">
+            <a href="{{ route('seller.receipts.index') }}" class="back-button">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
                 </svg>
@@ -1134,7 +1134,7 @@ function createAnother() {
 
 // Go to receipts list
 function goToReceipts() {
-    window.location.href = '{{ route("seller.receipts") }}';
+    window.location.href = '{{ route("seller.receipts.index") }}';
 }
 
 // Toast notification function

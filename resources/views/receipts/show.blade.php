@@ -5,7 +5,7 @@
     <!-- Header -->
     <div class="detail-header">
         <div class="header-content">
-            <a href="{{ route('seller.receipts') }}" class="back-button">
+            <a href="{{ route('seller.receipts.index') }}" class="back-button">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
                 </svg>
@@ -82,27 +82,27 @@
 
                     <div class="info-item">
                         <label>Created</label>
-                        <div class="info-value">{{ $receipt->created_at_formatted }}</div>
+                        <div class="info-value">{{ $receipt->created_at }}</div>
                     </div>
 
-                    @if($receipt->expires_at_formatted)
+                    @if($receipt->expires_at)
                         <div class="info-item">
                             <label>Expires</label>
-                            <div class="info-value">{{ $receipt->expires_at_formatted }}</div>
+                            <div class="info-value">{{ $receipt->expires_at }}</div>
                         </div>
                     @endif
 
-                    @if($receipt->claimed_at_formatted)
+                    @if($receipt->claimed_at)
                         <div class="info-item">
                             <label>Claimed</label>
-                            <div class="info-value">{{ $receipt->claimed_at_formatted }}</div>
+                            <div class="info-value">{{ $receipt->claimed_at }}</div>
                         </div>
                     @endif
                 </div>
             </div>
 
             <!-- Customer Information (if claimed) -->
-            @if($consumer)
+            @if($receipt->consumer)
                 <div class="info-card">
                     <div class="card-header">
                         <h2>👤 Customer Information</h2>
@@ -110,11 +110,11 @@
 
                     <div class="customer-info">
                         <div class="customer-avatar">
-                            {{ substr($consumer->full_name, 0, 1) }}
+                            {{ substr($receipt->consumer->full_name, 0, 1) }}
                         </div>
                         <div class="customer-details">
-                            <div class="customer-name">{{ $consumer->full_name }}</div>
-                            <div class="customer-email">{{ $consumer->email }}</div>
+                            <div class="customer-name">{{ $receipt->consumer->full_name }}</div>
+                            <div class="customer-email">{{ $receipt->consumer->email }}</div>
                         </div>
                     </div>
                 </div>
@@ -182,7 +182,7 @@
     <div class="actions-footer">
         <div class="footer-content">
             <div class="action-buttons">
-                <a href="{{ route('seller.receipts') }}" class="btn-secondary">
+                <a href="{{ route('seller.receipts.index') }}" class="btn-secondary">
                     <span class="btn-icon">📋</span>
                     Back to Receipts
                 </a>
@@ -897,7 +897,7 @@ async function cancelReceipt(receiptId) {
             
             // Redirect to receipts list after delay
             setTimeout(() => {
-                window.location.href = '{{ route("seller.receipts") }}';
+                window.location.href = '{{ route("seller.receipts.index") }}';
             }, 2000);
         } else {
             showToast(data.message || 'Failed to cancel receipt', 'error');

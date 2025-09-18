@@ -61,7 +61,9 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
 
     // Items Management Routes (outside seller prefix for cleaner URLs)
     Route::resource('items', ItemController::class)->names('item')->except(['show']);
+
     Route::resource('reports', ReportController::class)->names('report')->only(['index', 'create', 'store']);
+
     Route::resource('rewards', RewardController::class)->names('reward')->only(['index', 'create', 'store', 'edit', 'update']);
 
     // Location Management Routes  
@@ -122,19 +124,10 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
         Route::get('/qr/recent-transactions', [SellerController::class, 'recentTransactions'])->name('qr.recent-transactions');
         Route::post('/qr/process-redemption', [SellerController::class, 'processRedemption'])->name('qr.process-redemption');
 
-        /*
-        |--------------------------------------------------------------------------
-        | Receipt Management Routes
-        |--------------------------------------------------------------------------
-        */
-        Route::get('/receipts', [SellerController::class, 'receipts'])->name('receipts');
-        Route::get('/receipts/create', [SellerController::class, 'createReceipt'])->name('receipts.create');
-        Route::post('/receipts', [SellerController::class, 'storeReceipt'])->name('receipts.store');
-        Route::get('/receipts/{id}', [SellerController::class, 'showReceipt'])->name('receipts.show');
-        Route::delete('/receipts/{id}', [SellerController::class, 'cancelReceipt'])->name('receipts.cancel');
-        Route::get('/receipts/{id}/qr', [SellerController::class, 'printReceipt'])->name('receipts.qr');
-        Route::get('/receipts/export', [SellerController::class, 'exportReceipts'])->name('receipts.export');
-        Route::get('/api/receipt-stats', [SellerController::class, 'getReceiptStats'])->name('api.receipt-stats');
+        // Receipt route
+        Route::get('/receipts/export', [ReceiptController::class, 'export'])->name('receipts.export');
+        Route::get('/receipts/{id}/qr', [ReceiptController::class, 'print'])->name('receipts.qr');
+        Route::resource('receipts', ReceiptController::class)->names('receipts');
     });
 });
 
@@ -159,71 +152,6 @@ Route::prefix('api')->name('api.')->group(function () {
     })->name('receipt.history');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Development/Testing Routes (Local Environment Only)
-|--------------------------------------------------------------------------
-*/
-// if (app()->environment('local')) {
-//     Route::prefix('test')->name('test.')->group(function () {
-//         // Quick login as first seller for testing
-//         Route::get('/login', function () {
-//             $seller = \App\Models\Seller::first();
-//             if ($seller) {
-//                 Auth::guard('seller')->login($seller);
-//                 return redirect()->route('dashboard')->with('success', 'Test login successful!');
-//             }
-//             return redirect()->route('login')->with('error', 'No seller found for testing. Please register first.');
-//         })->name('login');
-
-//         // Quick access to main features
-//         Route::get('/dashboard', function () {
-//             $seller = \App\Models\Seller::first();
-//             if ($seller) {
-//                 Auth::guard('seller')->login($seller);
-//                 return redirect()->route('dashboard');
-//             }
-//             return redirect()->route('login');
-//         })->name('dashboard');
-
-//         Route::get('/receipts', function () {
-//             $seller = \App\Models\Seller::first();
-//             if ($seller) {
-//                 Auth::guard('seller')->login($seller);
-//                 return redirect()->route('seller.receipts');
-//             }
-//             return redirect()->route('login');
-//         })->name('receipts');
-
-//         Route::get('/scanner', function () {
-//             $seller = \App\Models\Seller::first();
-//             if ($seller) {
-//                 Auth::guard('seller')->login($seller);
-//                 return redirect()->route('seller.scanner');
-//             }
-//             return redirect()->route('login');
-//         })->name('scanner');
-
-//         // Database info route
-//         Route::get('/db-info', function () {
-//             $tables = [
-//                 'sellers' => \App\Models\Seller::count(),
-//                 'consumers' => DB::table('consumers')->count(),
-//                 'items' => DB::table('items')->count(),
-//                 'pending_transactions' => DB::table('pending_transactions')->count(),
-//                 'point_transactions' => DB::table('point_transactions')->count(),
-//                 'ranks' => DB::table('ranks')->count(),
-//             ];
-
-//             return response()->json([
-//                 'message' => 'Database Status',
-//                 'tables' => $tables,
-//                 'environment' => app()->environment(),
-//                 'timestamp' => now(),
-//             ]);
-//         })->name('db-info');
-//     });
-// }
 
 /*
 |--------------------------------------------------------------------------
