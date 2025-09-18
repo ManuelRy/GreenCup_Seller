@@ -269,6 +269,105 @@
       margin: 0 0 24px;
     }
 
+    /* Profile Edit Form Styles */
+    .edit-profile-btn {
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 10px 0;
+      box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    }
+
+    .edit-profile-btn:hover {
+      background: linear-gradient(135deg, #0056b3, #004085);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+    }
+
+    #profile-edit-form {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #e9ecef;
+      margin-top: 15px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .form-actions .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .form-actions .btn-primary {
+      background: linear-gradient(135deg, #28a745, #1e7e34);
+      color: white;
+      box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    }
+
+    .form-actions .btn-primary:hover {
+      background: linear-gradient(135deg, #1e7e34, #155724);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+    }
+
+    .form-actions .btn-secondary {
+      background: linear-gradient(135deg, #6c757d, #5a6268);
+      color: white;
+      box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+    }
+
+    .form-actions .btn-secondary:hover {
+      background: linear-gradient(135deg, #5a6268, #545b62);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+    }
+
     .rank-badge-container {
       display: flex;
       justify-content: center;
@@ -912,6 +1011,63 @@
         transform: translateY(0);
       }
     }
+
+    /* Quick Action Buttons */
+    .profile-quick-actions {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .quick-action-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 2px solid transparent;
+    }
+
+    .quick-action-btn.location-btn {
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      color: #065f46;
+      border-color: rgba(34, 197, 94, 0.2);
+    }
+
+    .quick-action-btn.location-btn:hover {
+      background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+      border-color: #22c55e;
+      color: #064e3b;
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+
+    .quick-action-btn.dashboard-btn {
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+      color: #0c4a6e;
+      border-color: rgba(14, 165, 233, 0.2);
+    }
+
+    .quick-action-btn.dashboard-btn:hover {
+      background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+      border-color: #0ea5e9;
+      color: #0c4a6e;
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      .profile-quick-actions {
+        flex-direction: column;
+      }
+    }
   </style>
 
   <div class="dashboard-container">
@@ -975,8 +1131,59 @@
           <input type="file" name="image" accept="image/*">
           <button type="submit" class="btn btn-secondary">Save</button>
         </form>
-        <h2 class="business-name">{{ $seller->business_name }}</h2>
-        <p class="business-email">{{ $seller->email }}</p>
+        
+        <div class="profile-info-section">
+          <h2 class="business-name">{{ $seller->business_name }}</h2>
+          <p class="business-email">{{ $seller->email }}</p>
+          
+          <!-- Edit Profile Button -->
+          <button type="button" class="edit-profile-btn" onclick="toggleProfileEdit()">
+            ✏️ Edit Profile
+          </button>
+
+          <!-- Quick Actions -->
+          <div class="profile-quick-actions" style="margin-top: 15px; display: flex; gap: 10px;">
+            <a href="{{ route('location.show') }}" class="quick-action-btn location-btn">
+              📍 Shop Location
+            </a>
+            <a href="{{ route('dashboard') }}" class="quick-action-btn dashboard-btn">
+              🏠 Dashboard
+            </a>
+          </div>
+          
+          <!-- Edit Profile Form (initially hidden) -->
+          <div id="profile-edit-form" style="display: none; margin-top: 20px;">
+            <form action="{{ route('seller.profile.update') }}" method="POST">
+              @csrf
+              @method('PUT')
+              
+              <div class="form-group">
+                <label for="business_name">Business Name:</label>
+                <input type="text" id="business_name" name="business_name" value="{{ $seller->business_name }}" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="{{ $seller->email }}" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="text" id="phone" name="phone" value="{{ $seller->phone }}">
+              </div>
+              
+              <div class="form-group">
+                <label for="address">Address:</label>
+                <textarea id="address" name="address" rows="3">{{ $seller->address }}</textarea>
+              </div>
+              
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <button type="button" class="btn btn-secondary" onclick="toggleProfileEdit()">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
 
         <div class="rank-badge-container">
           <div class="rank-badge {{ strtolower($currentRank->name) }}">
@@ -1423,6 +1630,20 @@
 
       console.log('Account page initialized');
     });
+
+    // Toggle profile edit form
+    function toggleProfileEdit() {
+      const editForm = document.getElementById('profile-edit-form');
+      const editBtn = document.querySelector('.edit-profile-btn');
+      
+      if (editForm.style.display === 'none') {
+        editForm.style.display = 'block';
+        editBtn.textContent = '❌ Cancel Edit';
+      } else {
+        editForm.style.display = 'none';
+        editBtn.textContent = '✏️ Edit Profile';
+      }
+    }
   </script>
 
 @endsection

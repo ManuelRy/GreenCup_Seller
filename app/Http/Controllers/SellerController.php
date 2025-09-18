@@ -385,8 +385,25 @@ class SellerController extends Controller
             return redirect()->route('login')->with('error', 'Please log in to update your profile.');
         }
 
-        return redirect()->route('seller.account')
-            ->with('info', 'Profile editing feature coming soon!');
+        // Validate the input
+        $validated = $request->validate([
+            'business_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:sellers,email,' . $seller->id,
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:500',
+        ]);
+
+        try {
+            // Update the seller's profile
+            $seller->update($validated);
+
+            return redirect()->route('seller.account')
+                ->with('success', 'Profile updated successfully!');
+        } catch (Exception $e) {
+            Log::error('Profile update error: ' . $e->getMessage());
+            return redirect()->route('seller.account')
+                ->with('error', 'Failed to update profile. Please try again.');
+        }
     }
 
     /**
@@ -1250,7 +1267,7 @@ class SellerController extends Controller
                 ->orderBy('name', 'asc')
                 ->get();
 
-            return view('sellers.receipts.create', compact('seller', 'items'));
+            return view('receipts.create', compact('seller', 'items'));
         } catch (Exception $e) {
             Log::error('Receipt creation form error: ' . $e->getMessage());
             return view('receipts.create', compact('seller', 'items'));

@@ -486,19 +486,19 @@ body {
     color: #999;
 }
 
-/* Quick Actions Grid - Now 5 items */
+/* Quick Actions Grid - Now 6 items */
 .actions-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Changed from 5 to 4 to match 2x2 layout */
+    grid-template-columns: repeat(6, 1fr); /* Updated to handle 6 items */
     gap: 16px; /* Changed from 12px to 16px to match stats-grid */
     margin-bottom: 24px;
 }
 
 @media (max-width: 768px) {
     .actions-grid {
-        grid-template-columns: repeat(2, 1fr); /* 2x2 on tablet */
+        grid-template-columns: repeat(3, 1fr); /* 3 columns on tablet for better spacing */
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr; /* Stack stats vertically on tablet */
         gap: 12px;
@@ -510,7 +510,7 @@ body {
         grid-template-columns: repeat(2, 1fr); /* Keep 2x2 on mobile */
         gap: 12px;
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr; /* Stack stats vertically on mobile */
         gap: 12px;
@@ -555,6 +555,36 @@ body {
 .action-card.scanner-action:hover {
     background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);
     border-color: #8b5cf6;
+}
+
+.action-card.rewards-action {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 2px solid rgba(245, 158, 11, 0.2);
+}
+
+.action-card.rewards-action:hover {
+    background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+    border-color: #f59e0b;
+}
+
+.action-card.reports-action {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 2px solid rgba(14, 165, 233, 0.2);
+}
+
+.action-card.reports-action:hover {
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    border-color: #0ea5e9;
+}
+
+.action-card.location-action {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 2px solid rgba(34, 197, 94, 0.2);
+}
+
+.action-card.location-action:hover {
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+    border-color: #22c55e;
 }
 
 .action-icon {
@@ -744,31 +774,31 @@ body {
     .main-content {
         padding: 16px 12px;
     }
-    
+
     .points-value {
         font-size: 48px;
     }
-    
+
     .stat-value {
         font-size: 28px;
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .chart-legend {
         gap: 20px;
     }
-    
+
     .receipt-stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .receipt-actions {
         flex-direction: column;
     }
-    
+
     .progress-header {
         flex-direction: column;
         gap: 8px;
@@ -842,7 +872,7 @@ body {
     <header class="dashboard-header">
         <div class="header-content">
             <h1 class="app-title">🌱 Green Cup Seller</h1>
-            
+
             <div class="user-section" onclick="showLogoutConfirm()">
                 <span class="user-name">{{ $seller->business_name }}</span>
                 <div class="user-avatar" title="Click to logout">{{ substr($seller->business_name, 0, 1) }}</div>
@@ -874,7 +904,7 @@ body {
                         @endif
                     </span>
                 </div>
-                
+
                 @if($nextRank)
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: {{ min(100, (($totalRankPoints - $currentRank->min_points) / ($nextRank->min_points - $currentRank->min_points)) * 100) }}%"></div>
@@ -896,7 +926,7 @@ body {
                     Receipt Management
                 </div>
             </div>
-            
+
             <div class="receipt-stats-grid">
                 @php
                     try {
@@ -923,7 +953,7 @@ body {
                     <div class="receipt-stat-label">Claimed Today</div>
                 </div>
             </div>
-            
+
             <div class="receipt-actions">
                 <a href="{{ route('seller.receipts') }}" class="receipt-btn receipt-btn-secondary">
                     <span>📋</span>
@@ -942,18 +972,18 @@ body {
             <div class="analytics-header">
                 <h3 class="analytics-title">📊 Points Analytics</h3>
             </div>
-            
+
             <div class="chart-container">
                 <svg class="donut-chart" viewBox="0 0 200 200">
                     <circle cx="100" cy="100" r="80" fill="none" stroke="#e5e7eb" stroke-width="20"/>
-                    <circle cx="100" cy="100" r="80" fill="none" 
-                            stroke="#10b981" 
+                    <circle cx="100" cy="100" r="80" fill="none"
+                            stroke="#10b981"
                             stroke-width="20"
                             stroke-dasharray="{{ ($givingPercentage / 100) * 502.65 }} 502.65"
                             stroke-dashoffset="0"
                             transform="rotate(-90 100 100)"/>
-                    <circle cx="100" cy="100" r="80" fill="none" 
-                            stroke="#ef4444" 
+                    <circle cx="100" cy="100" r="80" fill="none"
+                            stroke="#ef4444"
                             stroke-width="20"
                             stroke-dasharray="{{ ($redemptionPercentage / 100) * 502.65 }} 502.65"
                             stroke-dashoffset="-{{ ($givingPercentage / 100) * 502.65 }}"
@@ -964,7 +994,7 @@ body {
                     <div class="chart-label">Total Activity</div>
                 </div>
             </div>
-            
+
             <div class="chart-legend">
                 <div class="legend-item">
                     <span class="legend-dot green"></span>
@@ -999,7 +1029,7 @@ body {
             </div>
         </div>
 
-        <!-- Quick Actions - All 5 main features -->
+        <!-- Quick Actions - All 6 main features -->
         <div class="actions-grid fade-in">
             <a href="{{ route('seller.account') }}" class="action-card">
                 <div class="action-icon">👤</div>
@@ -1011,15 +1041,24 @@ body {
                 <div class="action-label">Receipts</div>
             </a>
 
-
-            <a href="{{ route('seller.photos') }}" class="action-card">
-                <div class="action-icon">📷</div>
-                <div class="action-label">Gallery</div>
+            <a href="{{ route('item.index') }}" class="action-card">
+                <div class="action-icon">📦</div>
+                <div class="action-label">Items</div>
             </a>
 
-            <a href="{{ route('seller.account') }}#transactions" class="action-card">
+            <a href="{{ route('reward.index') }}" class="action-card rewards-action">
+                <div class="action-icon">🎁</div>
+                <div class="action-label">Rewards</div>
+            </a>
+
+            <a href="{{ route('location.show') }}" class="action-card location-action">
+                <div class="action-icon">�</div>
+                <div class="action-label">Location</div>
+            </a>
+
+            <a href="{{ route('report.index') }}" class="action-card reports-action">
                 <div class="action-icon">📊</div>
-                <div class="action-label">History</div>
+                <div class="action-label">Reports</div>
             </a>
         </div>
 
@@ -1031,7 +1070,7 @@ body {
                 <a href="{{ route('seller.account') }}" class="view-all">View All →</a>
                 @endif
             </div>
-            
+
             @if($totalTransactions > 0)
                 @php
                     // Get recent transactions for display
@@ -1057,7 +1096,7 @@ body {
                         $recentTransactions = collect();
                     }
                 @endphp
-                
+
                 @if($recentTransactions->count() > 0)
                 <div class="activity-list">
                     @foreach($recentTransactions as $transaction)
@@ -1148,14 +1187,14 @@ function showLogoutConfirm() {
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     const messageEl = document.getElementById('toast-message');
-    
+
     messageEl.textContent = message;
     toast.className = `toast ${type}`;
     toast.style.display = 'block';
-    
+
     // Show toast
     setTimeout(() => toast.classList.add('show'), 100);
-    
+
     // Hide toast
     setTimeout(() => {
         toast.classList.remove('show');
@@ -1166,7 +1205,7 @@ function showToast(message, type = 'success') {
 // Animate numbers on page load
 function animateValue(element, start, end, duration) {
     if (!element) return;
-    
+
     let startTimestamp = null;
     const step = (timestamp) => {
         if (!startTimestamp) startTimestamp = timestamp;
@@ -1183,29 +1222,29 @@ function animateValue(element, start, end, duration) {
 // Refresh dashboard data
 async function refreshDashboardData() {
     if (isRefreshing) return;
-    
+
     isRefreshing = true;
-    
+
     try {
         const response = await fetch('{{ route("dashboard.data") }}');
         if (!response.ok) throw new Error('Network response was not ok');
-        
+
         const data = await response.json();
-        
+
         // Update total points with animation
         const totalPointsEl = document.getElementById('totalPoints');
         if (totalPointsEl && data.total_rank_points !== undefined) {
             const currentValue = parseInt(totalPointsEl.textContent.replace(/,/g, ''));
             const newValue = data.total_rank_points;
-            
+
             if (currentValue !== newValue) {
                 animateValue(totalPointsEl, currentValue, newValue, 1000);
             }
         }
-        
+
         // Update other dashboard stats if needed
         console.log('Dashboard data refreshed successfully');
-        
+
     } catch (error) {
         console.error('Error refreshing dashboard data:', error);
     } finally {
@@ -1216,7 +1255,7 @@ async function refreshDashboardData() {
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Dashboard initialized');
-    
+
     // Animate total points on load
     const totalPointsEl = document.getElementById('totalPoints');
     if (totalPointsEl) {
@@ -1273,13 +1312,13 @@ document.addEventListener('keydown', function(e) {
         refreshDashboardData();
         showToast('Dashboard refreshed!');
     }
-    
+
     // Alt + N: New receipt
     if (e.altKey && e.key === 'n') {
         e.preventDefault();
         window.location.href = '{{ route("seller.receipts.create") }}';
     }
-    
+
     // Alt + S: Scanner
     if (e.altKey && e.key === 's') {
         e.preventDefault();

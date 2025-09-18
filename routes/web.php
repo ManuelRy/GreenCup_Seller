@@ -5,6 +5,9 @@ use App\Http\Controllers\SellerAuthController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ReceiptController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RewardController;
+use App\Http\Controllers\LocationController;
 use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
@@ -56,10 +59,24 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
     Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('dashboard');
     Route::get('/api/dashboard-data', [SellerController::class, 'getDashboardData'])->name('dashboard.data');
 
+    // Items Management Routes (outside seller prefix for cleaner URLs)
+    Route::resource('items', ItemController::class)->names('item');
+    Route::resource('reports', ReportController::class)->names('report')->only(['index', 'create', 'store']);
+    Route::resource('rewards', RewardController::class)->names('reward')->only(['index', 'create', 'store', 'edit', 'update']);
+
+    // Location Management Routes  
+    Route::prefix('location')->name('location.')->group(function () {
+        Route::get('/', [LocationController::class, 'show'])->name('show');
+        Route::get('/edit', [LocationController::class, 'edit'])->name('edit');
+        Route::put('/update', [LocationController::class, 'update'])->name('update');
+        Route::post('/reverse-geocode', [LocationController::class, 'reverseGeocode'])->name('reverse-geocode');
+        Route::post('/search-address', [LocationController::class, 'searchAddress'])->name('search-address');
+        Route::get('/approximate-location', [LocationController::class, 'getApproximateLocation'])->name('approximate-location');
+    });
+
     // Seller-specific routes
     Route::prefix('seller')->name('seller.')->group(function () {
 
-        Route::resource('items', ItemController::class)->names('item');
         /*
         |--------------------------------------------------------------------------
         | Account & Profile Routes
