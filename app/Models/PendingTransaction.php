@@ -29,4 +29,8 @@ class PendingTransaction extends Model
     {
         return $this->belongsTo(Consumer::class, 'claimed_by_consumer_id');
     }
+
+    public function seller() {
+        return $this->belongsTo(Seller::class);
+    }
 }
