@@ -312,22 +312,22 @@ body {
         grid-template-columns: 1fr;
         gap: 20px;
     }
-    
+
     .header-content {
         flex-direction: column;
         gap: 15px;
         text-align: center;
     }
-    
+
     .header-actions {
         flex-direction: column;
         width: 100%;
     }
-    
+
     .coordinates {
         grid-template-columns: 1fr;
     }
-    
+
     #map {
         height: 400px;
     }
@@ -471,7 +471,7 @@ body {
                 <h3 class="map-title">Shop Location on Map</h3>
                 <p class="map-subtitle">Interactive map showing your business location</p>
             </div>
-            
+
             @if($seller->latitude && $seller->longitude)
                 <div id="map"></div>
             @else

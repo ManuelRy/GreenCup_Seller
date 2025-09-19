@@ -66,7 +66,7 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
 
     Route::resource('rewards', RewardController::class)->names('reward')->only(['index', 'create', 'store', 'edit', 'update']);
 
-    // Location Management Routes  
+    // Location Management Routes
     Route::prefix('location')->name('location.')->group(function () {
         Route::get('/', [LocationController::class, 'show'])->name('show');
         Route::get('/edit', [LocationController::class, 'edit'])->name('edit');

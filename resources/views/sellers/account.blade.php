@@ -1131,11 +1131,11 @@
           <input type="file" name="image" accept="image/*">
           <button type="submit" class="btn btn-secondary">Save</button>
         </form>
-        
+
         <div class="profile-info-section">
           <h2 class="business-name">{{ $seller->business_name }}</h2>
           <p class="business-email">{{ $seller->email }}</p>
-          
+
           <!-- Edit Profile Button -->
           <button type="button" class="edit-profile-btn" onclick="toggleProfileEdit()">
             ✏️ Edit Profile
@@ -1150,33 +1150,33 @@
               🏠 Dashboard
             </a>
           </div>
-          
+
           <!-- Edit Profile Form (initially hidden) -->
           <div id="profile-edit-form" style="display: none; margin-top: 20px;">
             <form action="{{ route('seller.profile.update') }}" method="POST">
               @csrf
               @method('PUT')
-              
+
               <div class="form-group">
                 <label for="business_name">Business Name:</label>
                 <input type="text" id="business_name" name="business_name" value="{{ $seller->business_name }}" required>
               </div>
-              
+
               <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" value="{{ $seller->email }}" required>
               </div>
-              
+
               <div class="form-group">
                 <label for="phone">Phone:</label>
                 <input type="text" id="phone" name="phone" value="{{ $seller->phone }}">
               </div>
-              
+
               <div class="form-group">
                 <label for="address">Address:</label>
                 <textarea id="address" name="address" rows="3">{{ $seller->address }}</textarea>
               </div>
-              
+
               <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Save Changes</button>
                 <button type="button" class="btn btn-secondary" onclick="toggleProfileEdit()">Cancel</button>
@@ -1635,7 +1635,7 @@
     function toggleProfileEdit() {
       const editForm = document.getElementById('profile-edit-form');
       const editBtn = document.querySelector('.edit-profile-btn');
-      
+
       if (editForm.style.display === 'none') {
         editForm.style.display = 'block';
         editBtn.textContent = '❌ Cancel Edit';

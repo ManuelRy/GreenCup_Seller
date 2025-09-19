@@ -14,7 +14,7 @@ class LocationController extends Controller
     public function show()
     {
         $seller = Auth::guard('seller')->user();
-        
+
         if (!$seller) {
             return redirect()->route('seller.login');
         }
@@ -28,7 +28,7 @@ class LocationController extends Controller
     public function edit()
     {
         $seller = Auth::guard('seller')->user();
-        
+
         if (!$seller) {
             return redirect()->route('seller.login');
         }
@@ -42,7 +42,7 @@ class LocationController extends Controller
     public function update(Request $request)
     {
         $seller = Auth::guard('seller')->user();
-        
+
         if (!$seller) {
             return redirect()->route('seller.login');
         }
@@ -86,7 +86,7 @@ class LocationController extends Controller
             if ($response->successful()) {
                 $data = $response->json();
                 $address = $data['display_name'] ?? 'Address not found';
-                
+
                 return response()->json([
                     'success' => true,
                     'address' => $address,
@@ -127,7 +127,7 @@ class LocationController extends Controller
 
             if ($response->successful()) {
                 $results = $response->json();
-                
+
                 $formatted = collect($results)->map(function ($item) {
                     return [
                         'display_name' => $item['display_name'],
@@ -164,10 +164,10 @@ class LocationController extends Controller
         try {
             // Using a free IP geolocation service as fallback
             $response = Http::get('http://ip-api.com/json/');
-            
+
             if ($response->successful()) {
                 $data = $response->json();
-                
+
                 if ($data['status'] === 'success') {
                     return response()->json([
                         'success' => true,

@@ -374,21 +374,21 @@ body {
         grid-template-columns: 1fr;
         gap: 20px;
     }
-    
+
     .header-content {
         flex-direction: column;
         gap: 15px;
         text-align: center;
     }
-    
+
     .coordinate-inputs {
         grid-template-columns: 1fr;
     }
-    
+
     .form-actions {
         flex-direction: column;
     }
-    
+
     #map {
         height: 400px;
     }
@@ -445,7 +445,7 @@ body {
             <div class="search-section">
                 <div class="form-group">
                     <label class="form-label">🔍 Search Address</label>
-                    <input type="text" id="addressSearch" class="form-input search-input" 
+                    <input type="text" id="addressSearch" class="form-input search-input"
                            placeholder="Search for an address or place...">
                     <div class="helper-text">Type an address to search and click on a result</div>
                 </div>
@@ -459,7 +459,7 @@ body {
 
                 <div class="form-group">
                     <label for="address" class="form-label">Business Address *</label>
-                    <textarea id="address" name="address" class="form-textarea" required 
+                    <textarea id="address" name="address" class="form-textarea" required
                               placeholder="Enter your business address">{{ old('address', $seller->address) }}</textarea>
                     @error('address')
                         <div class="form-error">{{ $message }}</div>
@@ -471,7 +471,7 @@ body {
                     <label class="form-label">Coordinates *</label>
                     <div class="coordinate-inputs">
                         <div>
-                            <input type="number" id="latitude" name="latitude" class="form-input coordinate-input" 
+                            <input type="number" id="latitude" name="latitude" class="form-input coordinate-input"
                                    step="any" required placeholder="Latitude"
                                    value="{{ old('latitude', $seller->latitude) }}">
                             @error('latitude')
@@ -479,7 +479,7 @@ body {
                             @enderror
                         </div>
                         <div>
-                            <input type="number" id="longitude" name="longitude" class="form-input coordinate-input" 
+                            <input type="number" id="longitude" name="longitude" class="form-input coordinate-input"
                                    step="any" required placeholder="Longitude"
                                    value="{{ old('longitude', $seller->longitude) }}">
                             @error('longitude')
@@ -552,7 +552,7 @@ function initializeMap() {
     map.on('click', function(e) {
         const lat = e.latlng.lat;
         const lng = e.latlng.lng;
-        
+
         setLocation(lat, lng);
         reverseGeocode(lat, lng);
     });
@@ -571,7 +571,7 @@ function addMarker(lat, lng) {
     if (marker) {
         map.removeLayer(marker);
     }
-    
+
     marker = L.marker([lat, lng], {
         draggable: true
     }).addTo(map);
@@ -588,13 +588,13 @@ function addMarker(lat, lng) {
 function setLocation(lat, lng) {
     currentLatitude = lat;
     currentLongitude = lng;
-    
+
     document.getElementById('latitude').value = lat.toFixed(6);
     document.getElementById('longitude').value = lng.toFixed(6);
-    
+
     addMarker(lat, lng);
     map.setView([lat, lng], 15);
-    
+
     showStatus('Location updated! Remember to save your changes.', 'success');
 }
 
@@ -604,7 +604,7 @@ function showStatus(message, type = 'info') {
     statusEl.textContent = message;
     statusEl.className = `status-message status-${type}`;
     statusEl.style.display = 'block';
-    
+
     // Auto-hide after 5 seconds
     setTimeout(() => {
         statusEl.style.display = 'none';
@@ -617,7 +617,7 @@ function getCurrentLocation() {
     btn.textContent = '📱 Getting location...';
     btn.disabled = true;
     btn.classList.add('loading');
-    
+
     if (!navigator.geolocation) {
         showStatus('Geolocation is not supported by this browser.', 'error');
         resetButton(btn, '📱 Use Current Location');
@@ -628,7 +628,7 @@ function getCurrentLocation() {
         function(position) {
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
-            
+
             setLocation(lat, lng);
             reverseGeocode(lat, lng);
             showStatus('Current location detected successfully!', 'success');
@@ -667,7 +667,7 @@ function getApproximateLocation() {
     btn.textContent = '🌍 Getting location...';
     btn.disabled = true;
     btn.classList.add('loading');
-    
+
     fetch('{{ route("location.approximate-location") }}')
         .then(response => response.json())
         .then(data => {
@@ -731,13 +731,13 @@ function searchAddress(query) {
         hideSearchResults();
         return;
     }
-    
+
     const csrfToken = document.querySelector('meta[name="csrf-token"]');
     if (!csrfToken) {
         console.error('CSRF token not found');
         return;
     }
-    
+
     fetch('{{ route("location.search-address") }}', {
         method: 'POST',
         headers: {
@@ -767,7 +767,7 @@ function searchAddress(query) {
 function showSearchResults(results) {
     const resultsEl = document.getElementById('searchResults');
     resultsEl.innerHTML = '';
-    
+
     results.forEach(result => {
         const div = document.createElement('div');
         div.className = 'search-result';
@@ -781,7 +781,7 @@ function showSearchResults(results) {
         });
         resultsEl.appendChild(div);
     });
-    
+
     resultsEl.style.display = 'block';
 }
 
@@ -794,11 +794,11 @@ function hideSearchResults() {
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize map
     initializeMap();
-    
+
     // Location tools
     document.getElementById('getCurrentLocation').addEventListener('click', getCurrentLocation);
     document.getElementById('getApproximateLocation').addEventListener('click', getApproximateLocation);
-    
+
     // Address search
     let searchTimeout;
     document.getElementById('addressSearch').addEventListener('input', function(e) {
@@ -807,14 +807,14 @@ document.addEventListener('DOMContentLoaded', function() {
             searchAddress(e.target.value);
         }, 500);
     });
-    
+
     // Hide search results when clicking outside
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.search-section')) {
             hideSearchResults();
         }
     });
-    
+
     // Coordinate input changes
     document.getElementById('latitude').addEventListener('change', function() {
         const lat = parseFloat(this.value);
@@ -825,7 +825,7 @@ document.addEventListener('DOMContentLoaded', function() {
             reverseGeocode(lat, lng);
         }
     });
-    
+
     document.getElementById('longitude').addEventListener('change', function() {
         const lat = parseFloat(document.getElementById('latitude').value);
         const lng = parseFloat(this.value);
