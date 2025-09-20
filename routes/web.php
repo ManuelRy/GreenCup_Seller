@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GalleryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SellerAuthController;
 use App\Http\Controllers\SellerController;
@@ -8,7 +9,6 @@ use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RewardController;
 use App\Http\Controllers\LocationController;
-use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
 | Web Routes - Clean Version
@@ -98,11 +98,13 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
         | Photo Gallery Routes
         |--------------------------------------------------------------------------
         */
-        Route::get('/photos', [SellerController::class, 'photos'])->name('photos');
-        Route::post('/photos', [SellerController::class, 'storePhoto'])->name('photos.store');
-        Route::get('/photos/{id}', [SellerController::class, 'showPhoto'])->name('photos.show');
-        Route::put('/photos/{id}', [SellerController::class, 'updatePhoto'])->name('photos.update');
-        Route::delete('/photos/{id}', [SellerController::class, 'destroyPhoto'])->name('photos.destroy');
+
+        Route::get('/photos', [GalleryController::class, 'index'])->name('photos');
+        Route::post('/photos', [GalleryController::class, 'store'])->name('photos.store');
+        Route::get('/photos/{id}', [GalleryController::class, 'show'])->name('photos.show');
+        Route::put('/photos/{id}', [GalleryController::class, 'update'])->name('photos.update');
+        Route::delete('/photos/{id}', [GalleryController::class, 'destroy'])->name('photos.destroy');
+        
         Route::post('/photos/reorder', [SellerController::class, 'reorderPhotos'])->name('photos.reorder');
         Route::get('/api/photo-stats', [SellerController::class, 'getPhotoStats'])->name('api.photo-stats');
 
