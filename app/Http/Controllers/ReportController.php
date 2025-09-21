@@ -23,36 +23,19 @@ class ReportController extends Controller
 
     public function index()
     {
-        $seller = Auth::guard('seller')->user();
 
-        if (!$seller) {
-            return redirect()->route('login')->with('error', 'Please log in to view reports.');
-        }
-
-        $reports = $this->rRepo->getByReporterId($seller->id);
+        $reports = $this->rRepo->getByReporterId(Auth::id());
         return view('report.index', compact('reports'));
     }
 
     public function create()
     {
-        $seller = Auth::guard('seller')->user();
-
-        if (!$seller) {
-            return redirect()->route('login')->with('error', 'Please log in to create reports.');
-        }
-
         return view('report.create');
     }
 
     public function store(Request $request)
     {
         try {
-            $seller = Auth::guard('seller')->user();
-
-            if (!$seller) {
-                return redirect()->route('login')->with('error', 'Please log in to create reports.');
-            }
-
             $request->validate([
                 'title' => 'required|string|max:100',
                 'priority' => 'required|string', // adjust values to match Report::$priorities
@@ -70,14 +53,13 @@ class ReportController extends Controller
                 'priority'     => $request->priority,
                 'tag'           => $request->tag,
                 'description'  => $request->description,
-                'reporter_id'  => $seller->id, // Use seller ID instead of Auth::id()
+                'reporter_id'  => Auth::id(),
             ]);
 
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
 
-                $response = $this->fRepo->upload($file);
-                // dd($response);
+                $response = $this->fRepo->upload('report_evidences',$file);
                 if ($response->successful()) {
                     $data = $response->json();
 
