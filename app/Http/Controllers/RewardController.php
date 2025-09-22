@@ -127,4 +127,68 @@ class RewardController extends Controller
                 ->with('error', 'Failed to update reward. Please try again.');
         }
     }
+
+    /**
+     * Display pending reward redemptions for the seller
+     */
+    public function redemptions()
+    {
+        // For now, we'll create mock data for the design
+        // This will be replaced with actual database queries later
+        $redemptions = collect([
+            (object)[
+                'id' => 1,
+                'consumer_name' => 'John Doe',
+                'consumer_email' => 'john@example.com',
+                'reward_name' => 'Free Coffee',
+                'points_required' => 100,
+                'status' => 'pending',
+                'requested_at' => now()->subHours(2),
+                'consumer_phone' => '+1234567890'
+            ],
+            (object)[
+                'id' => 2,
+                'consumer_name' => 'Jane Smith',
+                'consumer_email' => 'jane@example.com',
+                'reward_name' => '10% Discount',
+                'points_required' => 50,
+                'status' => 'pending',
+                'requested_at' => now()->subHours(5),
+                'consumer_phone' => '+0987654321'
+            ],
+            (object)[
+                'id' => 3,
+                'consumer_name' => 'Bob Johnson',
+                'consumer_email' => 'bob@example.com',
+                'reward_name' => 'Free Pastry',
+                'points_required' => 75,
+                'status' => 'approved',
+                'requested_at' => now()->subDays(1),
+                'approved_at' => now()->subHours(12),
+                'consumer_phone' => '+1122334455'
+            ]
+        ]);
+
+        return view('rewards.redemptions', compact('redemptions'));
+    }
+
+    /**
+     * Approve a reward redemption
+     */
+    public function approveRedemption($id)
+    {
+        // Mock implementation for now
+        return redirect()->route('reward.redemptions')
+            ->with('success', 'Redemption approved successfully!');
+    }
+
+    /**
+     * Reject a reward redemption
+     */
+    public function rejectRedemption($id)
+    {
+        // Mock implementation for now
+        return redirect()->route('reward.redemptions')
+            ->with('success', 'Redemption rejected successfully!');
+    }
 }

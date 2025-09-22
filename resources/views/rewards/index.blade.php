@@ -410,9 +410,14 @@
     <div class="page-header">
       <h2 class="page-title">Your Rewards</h2>
       <p class="page-subtitle">Create and manage rewards that customers can redeem with their points</p>
-      <a href="{{ route('reward.create') }}" class="create-btn">
-        ➕ Create New Reward
-      </a>
+      <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <a href="{{ route('reward.create') }}" class="create-btn">
+          ➕ Create New Reward
+        </a>
+        <a href="{{ route('reward.redemptions') }}" class="create-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+          🎁 Manage Redemptions
+        </a>
+      </div>
     </div>
 
     <!-- Stats Cards -->

@@ -65,6 +65,11 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
     Route::resource('reports', ReportController::class)->names('report')->only(['index', 'create', 'store']);
 
     Route::resource('rewards', RewardController::class)->names('reward')->only(['index', 'create', 'store', 'edit', 'update']);
+    
+    // Reward Redemption Management Routes
+    Route::get('/redemptions', [RewardController::class, 'redemptions'])->name('reward.redemptions');
+    Route::post('/redemptions/{id}/approve', [RewardController::class, 'approveRedemption'])->name('reward.redemptions.approve');
+    Route::post('/redemptions/{id}/reject', [RewardController::class, 'rejectRedemption'])->name('reward.redemptions.reject');
 
     // Location Management Routes
     Route::prefix('location')->name('location.')->group(function () {
