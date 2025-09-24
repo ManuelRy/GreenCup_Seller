@@ -44,7 +44,7 @@ class ItemController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:items,name',
-            'points_per_unit' => 'required|integer|min:1|max:1000',
+            // 'points_per_unit' => 'required|integer|min:1|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
         // Handle image upload
@@ -60,6 +60,7 @@ class ItemController extends Controller
 
         $this->iRepo->create([
             ...$request->all(),
+            'points_per_unit' => 1, // Default value
             'seller_id' => Auth::id(),
             'image_url' => $imageUrl
         ]);
@@ -96,7 +97,7 @@ class ItemController extends Controller
                 'string',
                 'max:255'
             ],
-            'points_per_unit' => 'required|integer|min:1|max:1000',
+            // 'points_per_unit' => 'required|integer|min:1|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
         $imageUrl = null;
@@ -111,6 +112,7 @@ class ItemController extends Controller
 
         $this->iRepo->update($id, Auth::id(), [
             ...$request->all(),
+            'points_per_unit' => 1, // Default value
             'image_url' => $imageUrl
         ]);
 
