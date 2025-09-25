@@ -17,4 +17,13 @@ class SellerRepository
     $seller = $this->get($id);
     return $seller ? $seller->update($data) : false;
   }
+   public function addPoints($id, $points): bool
+  {
+    $seller = $this->get($id);
+    if (!$seller) return false;
+
+    $seller->total_points += $points;
+    $seller->save();
+    return true;
+  }
 }

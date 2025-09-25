@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reward;
+use App\Repository\ConsumerPointRepository;
 use App\Repository\FileRepository;
+use App\Repository\RedeemHistoryRepository;
 use App\Repository\RewardRepository;
+use App\Repository\SellerRepository;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -13,12 +17,18 @@ use Illuminate\Support\Facades\Log;
 class RewardController extends Controller
 {
     private RewardRepository $rRepo;
+    private RedeemHistoryRepository $rHRepo;
+    private SellerRepository $sRepo;
     private FileRepository $fRepo;
+    private ConsumerPointRepository $cPRepo;
 
-    public function __construct(RewardRepository $rRepo, FileRepository $fRepo)
+    public function __construct(RewardRepository $rRepo, RedeemHistoryRepository $rHRepo, SellerRepository $sRepo, FileRepository $fRepo,    ConsumerPointRepository $cPRepo)
     {
         $this->rRepo = $rRepo;
+        $this->rHRepo = $rHRepo;
+        $this->sRepo = $sRepo;
         $this->fRepo = $fRepo;
+        $this->cPRepo = $cPRepo;
     }
     /**
      * Display a listing of the resource.
@@ -133,42 +143,43 @@ class RewardController extends Controller
      */
     public function redemptions()
     {
+
         // For now, we'll create mock data for the design
         // This will be replaced with actual database queries later
-        $redemptions = collect([
-            (object)[
-                'id' => 1,
-                'consumer_name' => 'John Doe',
-                'consumer_email' => 'john@example.com',
-                'reward_name' => 'Free Coffee',
-                'points_required' => 100,
-                'status' => 'pending',
-                'requested_at' => now()->subHours(2),
-                'consumer_phone' => '+1234567890'
-            ],
-            (object)[
-                'id' => 2,
-                'consumer_name' => 'Jane Smith',
-                'consumer_email' => 'jane@example.com',
-                'reward_name' => '10% Discount',
-                'points_required' => 50,
-                'status' => 'pending',
-                'requested_at' => now()->subHours(5),
-                'consumer_phone' => '+0987654321'
-            ],
-            (object)[
-                'id' => 3,
-                'consumer_name' => 'Bob Johnson',
-                'consumer_email' => 'bob@example.com',
-                'reward_name' => 'Free Pastry',
-                'points_required' => 75,
-                'status' => 'approved',
-                'requested_at' => now()->subDays(1),
-                'approved_at' => now()->subHours(12),
-                'consumer_phone' => '+1122334455'
-            ]
-        ]);
-
+        // $redemptions = collect([
+        //     (object)[
+        //         'id' => 1,
+        //         'consumer_name' => 'John Doe',
+        //         'consumer_email' => 'john@example.com',
+        //         'reward_name' => 'Free Coffee',
+        //         'points_required' => 100,
+        //         'status' => 'pending',
+        //         'requested_at' => now()->subHours(2),
+        //         'consumer_phone' => '+1234567890'
+        //     ],
+        //     (object)[
+        //         'id' => 2,
+        //         'consumer_name' => 'Jane Smith',
+        //         'consumer_email' => 'jane@example.com',
+        //         'reward_name' => '10% Discount',
+        //         'points_required' => 50,
+        //         'status' => 'pending',
+        //         'requested_at' => now()->subHours(5),
+        //         'consumer_phone' => '+0987654321'
+        //     ],
+        //     (object)[
+        //         'id' => 3,
+        //         'consumer_name' => 'Bob Johnson',
+        //         'consumer_email' => 'bob@example.com',
+        //         'reward_name' => 'Free Pastry',
+        //         'points_required' => 75,
+        //         'status' => 'approved',
+        //         'requested_at' => now()->subDays(1),
+        //         'approved_at' => now()->subHours(12),
+        //         'consumer_phone' => '+1122334455'
+        //     ]
+        // ]);
+        $redemptions = $this->rHRepo->pending(Auth::id());
         return view('rewards.redemptions', compact('redemptions'));
     }
 
@@ -177,9 +188,22 @@ class RewardController extends Controller
      */
     public function approveRedemption($id)
     {
-        // Mock implementation for now
-        return redirect()->route('reward.redemptions')
-            ->with('success', 'Redemption approved successfully!');
+        try {
+            $rh = $this->rHRepo->get($id);
+            if (!$rh || !$rh->reward) {
+                throw new Exception('Redemption could not be found!');
+            }
+            // add point to seller
+            $this->sRepo->addPoints(Auth::id(), $rh->reward->points_required);
+            // update the status to redeem
+            $this->rHRepo->approve($id);
+            return redirect()->route('reward.redemptions')
+                ->with('success', 'Redemption approved successfully!');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Failed to create reward. Please try again.');
+        }
     }
 
     /**
@@ -187,7 +211,17 @@ class RewardController extends Controller
      */
     public function rejectRedemption($id)
     {
-        // Mock implementation for now
+        $rh = $this->rHRepo->get($id);
+        if (!$rh || !$rh->reward) {
+            return redirect()->route('reward.redemptions')
+                ->with('error', 'Redemption could not be found!');
+        }
+        $consumer_id = $rh->consumer_id;
+        $reward_points = $rh->reward->points_required;
+        // return the point to consumer
+        $this->cPRepo->refund($consumer_id, Auth::id(), $reward_points);
+        // delete the redeem history
+        $this->rHRepo->reject($id);
         return redirect()->route('reward.redemptions')
             ->with('success', 'Redemption rejected successfully!');
     }

@@ -390,13 +390,13 @@
     </div>
 
     <!-- Alert Messages -->
-    @if(session('success'))
+    @if (session('success'))
       <div class="alert alert-success">
         ✅ {{ session('success') }}
       </div>
     @endif
 
-    @if(session('error'))
+    @if (session('error'))
       <div class="alert alert-error">
         ❌ {{ session('error') }}
       </div>
@@ -411,11 +411,11 @@
     <!-- Stats Cards -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-number">{{ $redemptions->where('status', 'pending')->count() }}</div>
+        <div class="stat-number">{{ $redemptions->where('is_redeemed', false)->count() }}</div>
         <div class="stat-label">Pending Requests</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number">{{ $redemptions->where('status', 'approved')->count() }}</div>
+        <div class="stat-number">{{ $redemptions->where('is_redeemed', true)->count() }}</div>
         <div class="stat-label">Approved Today</div>
       </div>
       <div class="stat-card">
@@ -430,9 +430,9 @@
         📋 Redemption Requests
       </div>
 
-      @if($redemptions->count() > 0)
+      @if ($redemptions->count() > 0)
         <div class="redemptions-grid">
-          @foreach($redemptions as $redemption)
+          @foreach ($redemptions as $redemption)
             <div class="redemption-card {{ $redemption->status }}">
               <!-- Redemption Header -->
               <div class="redemption-header">
@@ -444,24 +444,24 @@
 
               <!-- Consumer Information -->
               <div class="consumer-info">
-                <div class="consumer-name">{{ $redemption->consumer_name }}</div>
-                <div class="consumer-contact">📧 {{ $redemption->consumer_email }}</div>
-                <div class="consumer-contact">📱 {{ $redemption->consumer_phone }}</div>
+                <div class="consumer-name">{{ $redemption->consumer->name }}</div>
+                <div class="consumer-contact">📧 {{ $redemption->consumer->email }}</div>
+                <div class="consumer-contact">📱 {{ $redemption->consumer->phone_number }}</div>
               </div>
 
               <!-- Reward Information -->
               <div class="reward-info">
-                <div class="reward-name">{{ $redemption->reward_name }}</div>
-                <div class="reward-points">💎 {{ $redemption->points_required }} points required</div>
+                <div class="reward-name">{{ $redemption->reward->name }}</div>
+                <div class="reward-points">💎 {{ $redemption->reward->points_required }} points required</div>
               </div>
 
               <!-- Request Time -->
               <div class="redemption-time">
-                🕒 Requested {{ $redemption->requested_at->diffForHumans() }}
+                🕒 Requested {{ $redemption->created_at->diffForHumans() }}
               </div>
 
               <!-- Actions -->
-              @if($redemption->status === 'pending')
+              @if ($redemption->is_redeemed == false)
                 <div class="redemption-actions">
                   <form method="POST" action="{{ route('reward.redemptions.approve', $redemption->id) }}" style="flex: 1;">
                     @csrf
@@ -476,7 +476,7 @@
                     </button>
                   </form>
                 </div>
-              @elseif($redemption->status === 'approved')
+              @elseif($redemption->is_redeemed === true)
                 <div class="approved-info">
                   ✅ Approved {{ isset($redemption->approved_at) ? $redemption->approved_at->diffForHumans() : 'recently' }}
                 </div>

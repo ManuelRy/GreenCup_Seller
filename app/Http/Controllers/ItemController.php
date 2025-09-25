@@ -92,11 +92,7 @@ class ItemController extends Controller
     public function update(Request $request,  $id)
     {
         $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255'
-            ],
+            'name' => 'required|string|max:255',
             // 'points_per_unit' => 'required|integer|min:1|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
