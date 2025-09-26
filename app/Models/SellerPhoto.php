@@ -47,4 +47,8 @@ class SellerPhoto extends Model
     {
         return $this->belongsTo(Seller::class);
     }
+    public function trimCaption(): string
+    {
+        return preg_replace('/^\[frozen\]\s*/i', '', $this->caption);
+    }
 }

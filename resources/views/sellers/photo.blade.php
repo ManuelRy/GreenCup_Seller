@@ -144,6 +144,10 @@
       align-items: start;
     }
 
+    .blurred {
+      filter: blur(8px);
+    }
+
     @media (max-width: 1024px) {
       .two-column-layout {
         grid-template-columns: 1fr;
@@ -1670,29 +1674,29 @@
               @endphp
 
               @foreach ($photos as $index => $photo)
+                @php
+                  $isFrozen = preg_match('/^\[frozen\]/i', $photo->caption ?? '');
+                @endphp
                 <div class="photo-post-thumbnail" onclick="showPostDetails({{ $photo->id }})">
                   <div class="post-thumbnail-container">
                     <div class="post-thumbnail-image">
-                      <img src="{{ $photo->photo_url }}" alt="{{ $photo->caption ?: 'Store photo' }}"
+                      <img src="{{ $photo->photo_url }}" alt="{{ $photo->trimCaption() ?: 'Store photo' }}" class="{{ $isFrozen ? 'blurred' : '' }}"
                         onerror="this.style.display='none'; this.parentElement.classList.add('img-error');">
-                      {{-- @if (count($photo) > 1)
-                                        <div class="thumbnail-count">+{{ count($photo) - 1 }}</div>
-                                    @endif --}}
+
                       @if ($photo->is_featured)
                         <div class="thumbnail-featured">⭐</div>
                       @endif
                     </div>
                     <div class="post-thumbnail-info">
                       <div class="thumbnail-title">
-                        @if ($photo->caption)
-                          {{ limitString($photo->caption, 40) }}
+                        @if ($photo->trimCaption())
+                          {{ limitString($photo->trimCaption(), 40) }}
                         @else
                           Store Photos
                         @endif
                       </div>
                       <div class="thumbnail-meta">
-                        📅 {{ $photo->created_at->format('M j, Y') }} •
-                        {{-- {{ count($photo) }} photo{{ count($photo) > 1 ? 's' : '' }} --}}
+                        📅 {{ $photo->created_at->format('M j, Y') }}
                         @if ($photo->where('is_featured', true)->count() > 0)
                           • ⭐ Featured
                         @endif
@@ -1700,19 +1704,13 @@
                     </div>
                   </div>
                   <div class="thumbnail-actions">
-                    <button class="thumbnail-action-btn" onclick="showPostDetails({{ $photo->id }}, event)" title="View Details">
-                      👁️
-                    </button>
-                    <button class="thumbnail-action-btn" onclick="editPhoto({{ $photo->id }}, event)" title="Edit">
-                      ✏️
-                    </button>
+                    <button class="thumbnail-action-btn" onclick="showPostDetails({{ $photo->id }}, event)" title="View Details">👁️</button>
+                    <button class="thumbnail-action-btn" onclick="editPhoto({{ $photo->id }}, event)" title="Edit">✏️</button>
                     <form action="{{ route('seller.photos.destroy', $photo->id) }}" method="POST" style="display: inline;"
                       onsubmit="return confirm('Are you sure you want to delete this photo?')">
                       @csrf
                       @method('DELETE')
-                      <button type="submit" class="thumbnail-action-btn delete-btn" onclick="event.stopPropagation();" title="Delete">
-                        🗑️
-                      </button>
+                      <button type="submit" class="thumbnail-action-btn delete-btn" onclick="event.stopPropagation();" title="Delete">🗑️</button>
                     </form>
                   </div>
                 </div>
@@ -2418,7 +2416,7 @@
         </div>
         <div class="post-detail-meta-item">
             <span class="post-detail-meta-label">⭐ Featured Photos</span>
-            <span class="post-detail-meta-value">${photo.featured_count} featured</span>
+            <span class="post-detail-meta-value">${photo.is_featured} featured</span>
         </div>
         <div class="post-detail-meta-item">
             <span class="post-detail-meta-label">📂 Category</span>
@@ -2455,21 +2453,21 @@
       imageGrid.className = `post-detail-image-grid ${gridClass}`;
       imageGrid.innerHTML = '';
 
-    //   photo.photos.slice(0, photoCount === 3 ? 3 : photoCount > 4 ? 4 : photoCount).forEach((photo, index) => {
-    //     const imageDiv = document.createElement('div');
-    //     imageDiv.className = `post-detail-image-item ${photoCount === 3 && index === 0 ? 'large' : ''}`;
+      //   photo.photos.slice(0, photoCount === 3 ? 3 : photoCount > 4 ? 4 : photoCount).forEach((photo, index) => {
+      //     const imageDiv = document.createElement('div');
+      //     imageDiv.className = `post-detail-image-item ${photoCount === 3 && index === 0 ? 'large' : ''}`;
 
-    //     imageDiv.innerHTML = `
+      //     imageDiv.innerHTML = `
     //         <img src="${photo.url}" alt="${photo.caption || 'Store photo'}" onclick="viewPhoto('${photo.url}', event)">
     //         ${photoCount > 4 && index === 3 ? `<div class="post-detail-more-images">+${photoCount - 4}</div>` : ''}
     //     `;
 
-    //     imageGrid.appendChild(imageDiv);
-    //   });
+      //     imageGrid.appendChild(imageDiv);
+      //   });
 
       // Set caption
       if (photo.caption) {
-        captionContent.textContent = photo.caption;
+        captionContent.textContent = photo.caption.replace(/^\[frozen\]\s*/i, "");
         captionSection.style.display = 'block';
       } else {
         captionSection.style.display = 'none';
