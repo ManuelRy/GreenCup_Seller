@@ -4,25 +4,6 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <div class="create-receipt-container">
-    <!-- Header -->
-    <div class="create-header">
-        <div class="header-content">
-            <a href="{{ route('seller.receipts.index') }}" class="back-button">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
-            </a>
-            <div class="header-title">
-                <h1>Create Receipt</h1>
-                <p>Generate a receipt for customer purchase</p>
-            </div>
-            <div class="store-info">
-                <div class="store-name">{{ $seller->business_name }}</div>
-                <div class="store-location">📍 {{ Str::limit($seller->address, 30) }}</div>
-            </div>
-        </div>
-    </div>
-
     <!-- Receipt Builder -->
     <div class="receipt-builder">
         <!-- Items Selection -->
@@ -39,16 +20,16 @@
                             <div class="item-icon">{{ getItemIcon($item->name) }}</div>
                             <div class="item-name">{{ $item->name }}</div>
                             <div class="item-points">{{ $item->points_per_unit }} pts each</div>
-                            
+
                             <!-- Quantity Controls (initially hidden) -->
                             <div class="item-quantity-controls" id="qty-controls-{{ $item->id }}" style="display: none;">
                                 <button type="button" class="qty-btn" onclick="changeQuantity({{ $item->id }}, -1)">-</button>
                                 <span class="qty-display" id="qty-{{ $item->id }}">0</span>
                                 <button type="button" class="qty-btn" onclick="changeQuantity({{ $item->id }}, 1)">+</button>
                             </div>
-                            
+
                             <!-- Add Button (initially visible) -->
-                            <button type="button" class="add-item-btn" id="add-btn-{{ $item->id }}" 
+                            <button type="button" class="add-item-btn" id="add-btn-{{ $item->id }}"
                                     onclick="addFirstItem({{ $item->id }}, '{{ addslashes($item->name) }}', {{ $item->points_per_unit }})">
                                 <span class="btn-icon">+</span>
                                 Add
@@ -147,14 +128,14 @@
             <h2>✅ Receipt Generated!</h2>
             <button type="button" onclick="closeModal()" class="close-modal">×</button>
         </div>
-        
+
         <div class="modal-body">
             <div class="success-info">
                 <div class="receipt-code-display">
                     <label>Receipt Code:</label>
                     <div class="code-value" id="generated-code">Loading...</div>
                 </div>
-                
+
                 <div class="receipt-summary">
                     <div class="summary-item">
                         <span>Total Points:</span>
@@ -171,7 +152,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="modal-actions">
             <button type="button" onclick="showQRCode()" class="btn-qr">
                 <span class="btn-icon">📱</span>
@@ -822,7 +803,7 @@ body {
         grid-template-columns: 1fr;
         gap: 2rem;
     }
-    
+
     .receipt-preview {
         position: static;
         order: -1;
@@ -833,30 +814,30 @@ body {
     .create-header {
         padding: 1rem;
     }
-    
+
     .header-content {
         flex-direction: column;
         gap: 1rem;
         text-align: center;
     }
-    
+
     .receipt-builder {
         padding: 1rem;
         gap: 1.5rem;
     }
-    
+
     .items-section {
         padding: 1.5rem;
     }
-    
+
     .items-grid {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     }
-    
+
     .receipt-paper {
         padding: 1.5rem;
     }
-    
+
     .modal-actions {
         flex-direction: column;
     }
@@ -894,7 +875,7 @@ function getItemIcon(itemName) {
 // Add first item (when clicking Add button)
 function addFirstItem(itemId, itemName, pointsPerUnit) {
     console.log('Adding first item:', itemId, itemName, pointsPerUnit);
-    
+
     // Add to selected items
     selectedItems[itemId] = {
         id: itemId,
@@ -902,7 +883,7 @@ function addFirstItem(itemId, itemName, pointsPerUnit) {
         pointsPerUnit: pointsPerUnit,
         quantity: 1
     };
-    
+
     // Update UI
     updateItemCard(itemId);
     updateReceiptPreview();
@@ -912,11 +893,11 @@ function addFirstItem(itemId, itemName, pointsPerUnit) {
 // Change quantity (+ or - buttons)
 function changeQuantity(itemId, change) {
     console.log('Changing quantity for item:', itemId, 'change:', change);
-    
+
     if (!selectedItems[itemId]) return;
-    
+
     const newQuantity = selectedItems[itemId].quantity + change;
-    
+
     if (newQuantity <= 0) {
         // Remove item
         delete selectedItems[itemId];
@@ -929,7 +910,7 @@ function changeQuantity(itemId, change) {
         showToast('Maximum quantity (10) reached!', 'error');
         return;
     }
-    
+
     updateReceiptPreview();
     updateButtons();
 }
@@ -940,7 +921,7 @@ function updateItemCard(itemId) {
     const addBtn = document.getElementById(`add-btn-${itemId}`);
     const qtyControls = document.getElementById(`qty-controls-${itemId}`);
     const qtyDisplay = document.getElementById(`qty-${itemId}`);
-    
+
     if (selectedItems[itemId]) {
         // Item is selected - show quantity controls
         card.classList.add('selected');
@@ -960,9 +941,9 @@ function updateItemCard(itemId) {
 function updateReceiptPreview() {
     const itemsContainer = document.getElementById('receipt-items');
     const selectedItemsArray = Object.values(selectedItems);
-    
+
     console.log('Updating receipt preview with items:', selectedItemsArray);
-    
+
     if (selectedItemsArray.length === 0) {
         itemsContainer.innerHTML = '<div class="no-items-text">No items selected</div>';
     } else {
@@ -975,15 +956,15 @@ function updateReceiptPreview() {
                 <div class="receipt-item-points">${item.quantity * item.pointsPerUnit} pts</div>
             </div>
         `).join('');
-        
+
         itemsContainer.innerHTML = html;
     }
-    
+
     // Update totals
     const totalItems = selectedItemsArray.length;
     const totalQuantity = selectedItemsArray.reduce((sum, item) => sum + item.quantity, 0);
     const totalPoints = selectedItemsArray.reduce((sum, item) => sum + (item.quantity * item.pointsPerUnit), 0);
-    
+
     document.getElementById('total-items').textContent = totalItems;
     document.getElementById('total-quantity').textContent = totalQuantity;
     document.getElementById('total-points').textContent = totalPoints + ' pts';
@@ -992,7 +973,7 @@ function updateReceiptPreview() {
 // Update button states
 function updateButtons() {
     const hasItems = Object.keys(selectedItems).length > 0;
-    
+
     document.getElementById('clear-btn').disabled = !hasItems;
     document.getElementById('generate-btn').disabled = !hasItems || isGenerating;
 }
@@ -1000,14 +981,14 @@ function updateButtons() {
 // Clear all items
 function clearAll() {
     if (Object.keys(selectedItems).length === 0) return;
-    
+
     if (confirm('Are you sure you want to clear all selected items?')) {
         // Reset all item cards
         Object.keys(selectedItems).forEach(itemId => {
             delete selectedItems[itemId];
             updateItemCard(parseInt(itemId));
         });
-        
+
         updateReceiptPreview();
         updateButtons();
         showToast('All items cleared!', 'success');
@@ -1018,23 +999,23 @@ function clearAll() {
 async function generateReceipt() {
     const selectedItemsArray = Object.values(selectedItems);
     if (selectedItemsArray.length === 0 || isGenerating) return;
-    
+
     console.log('Generating receipt with items:', selectedItemsArray);
-    
+
     isGenerating = true;
-    
+
     // Update button state
     const generateBtn = document.getElementById('generate-btn');
     const btnText = generateBtn.querySelector('.btn-text');
     const btnLoading = generateBtn.querySelector('.btn-loading');
-    
+
     generateBtn.disabled = true;
     btnText.style.display = 'none';
     btnLoading.style.display = 'flex';
-    
+
     try {
         const expiresHours = document.getElementById('expires_hours').value;
-        
+
         const requestData = {
             items: selectedItemsArray.map(item => ({
                 item_id: item.id,
@@ -1042,9 +1023,9 @@ async function generateReceipt() {
             })),
             expires_hours: parseInt(expiresHours)
         };
-        
+
         console.log('Sending request:', requestData);
-        
+
         const response = await fetch('{{ route("seller.receipts.store") }}', {
             method: 'POST',
             headers: {
@@ -1054,12 +1035,12 @@ async function generateReceipt() {
             },
             body: JSON.stringify(requestData)
         });
-        
+
         console.log('Response status:', response.status);
-        
+
         const data = await response.json();
         console.log('Response data:', data);
-        
+
         if (data.success) {
             generatedReceiptId = data.receipt.id;
             showSuccessModal(data.receipt);
@@ -1072,13 +1053,13 @@ async function generateReceipt() {
                 showToast(data.message || 'Failed to generate receipt', 'error');
             }
         }
-        
+
     } catch (error) {
         console.error('Generate receipt error:', error);
         showToast('Network error. Please try again.', 'error');
     } finally {
         isGenerating = false;
-        
+
         // Reset button state
         generateBtn.disabled = Object.keys(selectedItems).length === 0;
         btnText.style.display = 'flex';
@@ -1092,7 +1073,7 @@ function showSuccessModal(receipt) {
     document.getElementById('generated-points').textContent = receipt.total_points + ' pts';
     document.getElementById('generated-quantity').textContent = receipt.total_quantity + ' items';
     document.getElementById('generated-expires').textContent = receipt.expires_at;
-    
+
     document.getElementById('success-modal').style.display = 'block';
 }
 
@@ -1115,18 +1096,18 @@ function showQRCode() {
 // Create another receipt
 function createAnother() {
     closeModal();
-    
+
     // Clear current selection
     Object.keys(selectedItems).forEach(itemId => {
         delete selectedItems[itemId];
         updateItemCard(parseInt(itemId));
     });
     generatedReceiptId = null;
-    
+
     // Reset displays
     updateReceiptPreview();
     updateButtons();
-    
+
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
     showToast('Ready to create another receipt!', 'success');
@@ -1141,13 +1122,13 @@ function goToReceipts() {
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     const messageEl = document.getElementById('toast-message');
-    
+
     messageEl.textContent = message;
     toast.className = `toast ${type === 'error' ? 'error' : ''}`;
     toast.style.display = 'block';
-    
+
     setTimeout(() => toast.classList.add('show'), 100);
-    
+
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => toast.style.display = 'none', 300);
@@ -1158,14 +1139,14 @@ function showToast(message, type = 'success') {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Create Receipt page loaded');
     updateButtons();
-    
+
     // Handle escape key for modal
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeModal();
         }
     });
-    
+
     console.log('Initialization complete');
 });
 
