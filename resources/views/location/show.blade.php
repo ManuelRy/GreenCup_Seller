@@ -1,526 +1,322 @@
-@extends('master')
+@extends('layouts.app')
 
-@section('content')
+@section('title', 'Business Location - Green Cup')
+
+@push('styles')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 <style>
-/* Reset and Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+.glass-effect {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-    background: linear-gradient(135deg, #00b09b 0%, #00cdac 50%, #00dfa8 100%);
-    min-height: 100vh;
-    color: #333333;
-}
-
-.location-container {
-    min-height: 100vh;
-    padding: 20px;
-}
-
-/* Header */
-.header {
-    background: #374151;
-    padding: 20px;
-    margin: -20px -20px 30px -20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header-title {
-    color: white;
-    font-size: 24px;
-    font-weight: 700;
-}
-
-.header-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.back-btn, .edit-btn {
-    background: linear-gradient(135deg, #6b7280, #4b5563);
-    color: white;
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.edit-btn {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-}
-
-.back-btn:hover, .edit-btn:hover {
-    transform: translateY(-1px);
-    color: white;
-    text-decoration: none;
-}
-
-.back-btn:hover {
-    background: linear-gradient(135deg, #4b5563, #374151);
-}
-
-.edit-btn:hover {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-}
-
-/* Alert Messages */
-.alert {
-    padding: 15px 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-weight: 600;
-}
-
-.alert-success {
-    background: #d1fae5;
-    color: #065f46;
-    border: 1px solid #10b981;
-}
-
-/* Main Content */
-.main-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-}
-
-/* Shop Info Card */
-.shop-info-card {
-    background: white;
-    border-radius: 16px;
-    padding: 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    height: fit-content;
-}
-
-.shop-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.shop-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    color: white;
-}
-
-.shop-details h2 {
-    font-size: 24px;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 5px;
-}
-
-.shop-status {
-    color: #059669;
-    font-size: 14px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.info-section {
-    margin-bottom: 25px;
-}
-
-.info-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: #6b7280;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
-}
-
-.info-value {
-    font-size: 16px;
-    color: #374151;
-    line-height: 1.4;
-}
-
-.address-value {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-}
-
-.coordinates {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-top: 15px;
-}
-
-.coordinate-item {
-    background: #f8fafc;
-    padding: 12px;
-    border-radius: 8px;
-    text-align: center;
-}
-
-.coordinate-label {
-    font-size: 10px;
-    font-weight: 600;
-    color: #64748b;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-}
-
 .coordinate-value {
-    font-size: 14px;
-    font-weight: 700;
-    color: #1e293b;
-    font-family: monospace;
+    font-family: 'Courier New', monospace;
 }
-
-/* Map Container */
-.map-container {
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.map-header {
-    background: #f8fafc;
-    padding: 20px;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.map-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 5px;
-}
-
-.map-subtitle {
-    font-size: 14px;
-    color: #6b7280;
-}
-
 #map {
     height: 500px;
-    width: 100%;
 }
-
-/* Loading State */
-.map-loading {
-    height: 500px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f8fafc;
-    color: #6b7280;
-    font-size: 16px;
+.custom-business-marker {
+    background: none !important;
+    border: none !important;
 }
-
-.loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #e2e8f0;
-    border-top: 4px solid #3b82f6;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-right: 15px;
+.leaflet-popup-content-wrapper {
+    border-radius: 1rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Quick Actions */
-.quick-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.quick-btn {
-    flex: 1;
-    padding: 12px 16px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.quick-btn-primary {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: white;
-}
-
-.quick-btn-secondary {
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #e2e8f0;
-}
-
-.quick-btn:hover {
-    transform: translateY(-1px);
-    text-decoration: none;
-}
-
-.quick-btn-primary:hover {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    color: white;
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-}
-
-.quick-btn-secondary:hover {
-    background: #e2e8f0;
-    color: #334155;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
-    .main-content {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-
-    .header-content {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-
-    .header-actions {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .coordinates {
-        grid-template-columns: 1fr;
-    }
-
     #map {
-        height: 400px;
+        height: 350px !important;
     }
-}
-
-/* Error State */
-.map-error {
-    height: 500px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: #fef2f2;
-    color: #dc2626;
-    text-align: center;
-    padding: 20px;
-}
-
-.error-icon {
-    font-size: 48px;
-    margin-bottom: 15px;
-}
-
-.error-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-.error-message {
-    font-size: 14px;
-    color: #7f1d1d;
 }
 </style>
+@endpush
 
-<div class="location-container">
-    <!-- Header -->
-    <div class="header">
-        <div class="header-content">
-            <h1 class="header-title">📍 Shop Location</h1>
-            <div class="header-actions">
-                <a href="{{ route('dashboard') }}" class="back-btn">← Back to Dashboard</a>
-                <a href="{{ route('location.edit') }}" class="edit-btn">✏️ Edit Location</a>
+@section('content')
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="card shadow-lg glass-effect mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                <div>
+                    <h1 class="h3 fw-bold text-dark mb-2">
+                        <i class="bi bi-geo-alt text-primary me-2"></i>
+                        Business Location
+                    </h1>
+                    <p class="text-muted mb-0">Manage your business location and help customers find you</p>
+                </div>
+                <div class="d-flex gap-2 mt-3 mt-md-0">
+                    <a href="{{ route('location.edit') }}"
+                       class="btn btn-primary d-inline-flex align-items-center">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Edit Location
+                    </a>
+                    <a href="{{ route('seller.account') }}"
+                       class="btn btn-outline-secondary d-inline-flex align-items-center">
+                        <i class="bi bi-person-gear me-2"></i>
+                        Account
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-
     <!-- Alert Messages -->
     @if(session('success'))
-        <div class="alert alert-success">
-            ✅ {{ session('success') }}
-        </div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <strong>Success!</strong> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     @endif
 
     <!-- Main Content -->
-    <div class="main-content">
-        <!-- Shop Information -->
-        <div class="shop-info-card">
-            <div class="shop-header">
-                <div class="shop-icon">🏪</div>
-                <div class="shop-details">
-                    <h2>{{ $seller->business_name }}</h2>
-                    <div class="shop-status">
-                        <span>●</span>
-                        {{ $seller->is_active ? 'Active' : 'Inactive' }}
+    <div class="row g-4">
+        <!-- Business Information Card -->
+        <div class="col-lg-4">
+            <div class="card h-100 shadow-lg glass-effect">
+                <div class="card-body p-4">
+                    <!-- Business Header -->
+                    <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+                        <div class="bg-primary rounded-3 p-3 me-3">
+                            <i class="bi bi-shop text-white fs-2"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h2 class="card-title h4 mb-1">{{ $seller->business_name }}</h2>
+                            <span class="badge {{ $seller->is_active ? 'bg-success' : 'bg-secondary' }}">
+                                <i class="bi bi-circle-fill me-1"></i>
+                                {{ $seller->is_active ? 'Active' : 'Inactive' }}
+                            </span>
+                        </div>
                     </div>
+
+                    @if($seller->latitude && $seller->longitude)
+                        <!-- Business Address -->
+                        <div class="mb-4">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-2">
+                                <i class="bi bi-geo-alt me-1"></i>Business Address
+                            </h6>
+                            <div class="bg-light p-3 rounded border-start border-primary border-4">
+                                <span class="text-dark">{{ $seller->address ?: 'No address provided' }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Coordinates -->
+                        <div class="mb-4">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-2">
+                                <i class="bi bi-crosshair me-1"></i>Coordinates
+                            </h6>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="bg-light p-3 rounded text-center">
+                                        <small class="text-muted d-block text-uppercase fw-bold">Latitude</small>
+                                        <span class="coordinate-value fw-bold text-dark">
+                                            {{ number_format($seller->latitude, 6) }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-light p-3 rounded text-center">
+                                        <small class="text-muted d-block text-uppercase fw-bold">Longitude</small>
+                                        <span class="coordinate-value fw-bold text-dark">
+                                            {{ number_format($seller->longitude, 6) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        @if($seller->description)
+                        <div class="mb-4">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-2">
+                                <i class="bi bi-info-circle me-1"></i>Description
+                            </h6>
+                            <p class="text-dark mb-0">{{ $seller->description }}</p>
+                        </div>
+                        @endif
+
+                        @if($seller->working_hours)
+                        <div class="mb-4">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-2">
+                                <i class="bi bi-clock me-1"></i>Working Hours
+                            </h6>
+                            <p class="text-dark mb-0">{{ $seller->working_hours }}</p>
+                        </div>
+                        @endif
+
+                        @if($seller->phone)
+                        <div class="mb-4">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-2">
+                                <i class="bi bi-telephone me-1"></i>Phone
+                            </h6>
+                            <p class="text-dark mb-0">
+                                <a href="tel:{{ $seller->phone }}" class="text-decoration-none">
+                                    {{ $seller->phone }}
+                                </a>
+                            </p>
+                        </div>
+                        @endif
+
+                        <!-- Action Buttons -->
+                        <div class="d-grid gap-2">
+                            <a href="{{ route('location.edit') }}" class="btn btn-primary">
+                                <i class="bi bi-pencil-square me-2"></i>Update Location
+                            </a>
+                        </div>
+                    @else
+                        <!-- No Location Set -->
+                        <div class="text-center py-4">
+                            <i class="bi bi-geo-alt display-1 text-muted mb-3"></i>
+                            <h5 class="text-dark mb-3">Location Not Set</h5>
+                            <p class="text-muted mb-4">Set your business location to help customers find you easily</p>
+
+                            <div class="alert alert-warning mb-4" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <strong>Action Required:</strong> Please set your location to appear in customer searches.
+                            </div>
+
+                            <a href="{{ route('location.edit') }}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-geo-alt me-2"></i>Set Location Now
+                            </a>
+                        </div>
+                    @endif
                 </div>
             </div>
-
-            <div class="info-section">
-                <div class="info-label">Business Address</div>
-                <div class="info-value address-value">
-                    <span>📍</span>
-                    <span>{{ $seller->address ?: 'No address set' }}</span>
-                </div>
-            </div>
-
-            @if($seller->description)
-            <div class="info-section">
-                <div class="info-label">Description</div>
-                <div class="info-value">{{ $seller->description }}</div>
-            </div>
-            @endif
-
-            @if($seller->working_hours)
-            <div class="info-section">
-                <div class="info-label">Working Hours</div>
-                <div class="info-value">{{ $seller->working_hours }}</div>
-            </div>
-            @endif
-
-            @if($seller->phone)
-            <div class="info-section">
-                <div class="info-label">Phone</div>
-                <div class="info-value">{{ $seller->phone }}</div>
-            </div>
-            @endif
-
-            @if($seller->latitude && $seller->longitude)
-            <div class="info-section">
-                <div class="info-label">Coordinates</div>
-                <div class="coordinates">
-                    <div class="coordinate-item">
-                        <div class="coordinate-label">Latitude</div>
-                        <div class="coordinate-value">{{ number_format($seller->latitude, 6) }}</div>
-                    </div>
-                    <div class="coordinate-item">
-                        <div class="coordinate-label">Longitude</div>
-                        <div class="coordinate-value">{{ number_format($seller->longitude, 6) }}</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="quick-actions">
-                <a href="{{ route('location.edit') }}" class="quick-btn quick-btn-primary">
-                    ✏️ Edit Location
-                </a>
-                <a href="{{ route('seller.account') }}" class="quick-btn quick-btn-secondary">
-                    👤 Account Settings
-                </a>
-            </div>
-            @else
-            <div class="info-section">
-                <div class="info-label">Location Status</div>
-                <div class="info-value" style="color: #dc2626;">
-                    ⚠️ Location not set
-                </div>
-            </div>
-
-            <div class="quick-actions">
-                <a href="{{ route('location.edit') }}" class="quick-btn quick-btn-primary">
-                    📍 Set Location
-                </a>
-            </div>
-            @endif
         </div>
-
-        <!-- Map -->
-        <div class="map-container">
-            <div class="map-header">
-                <h3 class="map-title">Shop Location on Map</h3>
-                <p class="map-subtitle">Interactive map showing your business location</p>
-            </div>
-
-            @if($seller->latitude && $seller->longitude)
-                <div id="map"></div>
-            @else
-                <div class="map-error">
-                    <div class="error-icon">🗺️</div>
-                    <div class="error-title">No location set</div>
-                    <div class="error-message">Please set your shop location to view it on the map</div>
+        <!-- Map Card -->
+        <div class="col-lg-8">
+            <div class="card shadow-lg glass-effect">
+                <!-- Map Header -->
+                <div class="card-header bg-light">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-map text-primary fs-4 me-3"></i>
+                        <div>
+                            <h3 class="card-title h5 mb-1">Shop Location on Map</h3>
+                            <small class="text-muted">Interactive map showing your business location</small>
+                        </div>
+                    </div>
                 </div>
-            @endif
+
+                <!-- Map Content -->
+                <div class="card-body p-0">
+                    @if($seller->latitude && $seller->longitude)
+                        <div id="map"></div>
+                    @else
+                        <div class="d-flex flex-column align-items-center justify-content-center bg-light text-center"
+                             style="height: 500px;">
+                            <i class="bi bi-map display-1 text-muted mb-3"></i>
+                            <h4 class="text-muted">No location set</h4>
+                            <p class="text-muted">Please set your shop location to view it on the map</p>
+                            <a href="{{ route('location.edit') }}" class="btn btn-primary mt-2">
+                                <i class="bi bi-geo-alt me-2"></i>Set Location Now
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 @if($seller->latitude && $seller->longitude)
-<!-- Leaflet CSS and JS (Free OpenStreetMap solution) -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
+<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
 
 <script>
-// Initialize the map with Leaflet (completely free)
-const map = L.map('map').setView([{{ $seller->latitude }}, {{ $seller->longitude }}], 15);
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Leaflet map
+    const map = L.map('map').setView([{{ $seller->latitude }}, {{ $seller->longitude }}], 15);
 
-// Add OpenStreetMap tiles (free)
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    maxZoom: 19
-}).addTo(map);
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+    }).addTo(map);
 
-// Add a marker for the shop location
-const marker = L.marker([{{ $seller->latitude }}, {{ $seller->longitude }}])
-    .addTo(map)
-    .bindPopup(`
-        <div style="text-align: center; padding: 10px;">
-            <h3 style="margin: 0 0 5px 0; color: #1f2937;">{{ $seller->business_name }}</h3>
-            <p style="margin: 0; color: #6b7280; font-size: 14px;">{{ $seller->address }}</p>
-        </div>
-    `)
-    .openPopup();
+    // Custom business marker icon
+    const businessIcon = L.divIcon({
+        className: 'custom-business-marker',
+        html: `<div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-lg"
+               style="width: 50px; height: 50px; border: 3px solid white;">
+               <i class="bi bi-shop fs-4"></i>
+               </div>`,
+        iconSize: [50, 50],
+        iconAnchor: [25, 50]
+    });
 
-// Handle map errors
-map.on('tileerror', function(e) {
-    console.error('Map tile error:', e);
+    // Add marker with enhanced popup
+    const marker = L.marker([{{ $seller->latitude }}, {{ $seller->longitude }}], {icon: businessIcon})
+        .addTo(map)
+        .bindPopup(`
+            <div class="text-center p-3" style="min-width: 200px;">
+                <h5 class="text-primary mb-2">{{ $seller->business_name }}</h5>
+                @if($seller->address)
+                <p class="text-muted mb-2 small">{{ $seller->address }}</p>
+                @endif
+                @if($seller->phone)
+                <div class="mt-3">
+                    <a href="tel:{{ $seller->phone }}" class="btn btn-sm btn-outline-primary me-2">
+                        <i class="bi bi-telephone me-1"></i>Call
+                    </a>
+                    <a href="https://maps.google.com?q={{ $seller->latitude }},{{ $seller->longitude }}"
+                       target="_blank" class="btn btn-sm btn-outline-success">
+                        <i class="bi bi-navigation me-1"></i>Directions
+                    </a>
+                </div>
+                @endif
+            </div>
+        `, {
+            maxWidth: 300,
+            className: 'custom-popup'
+        })
+        .openPopup();
+
+    // Handle map errors gracefully
+    map.on('tileerror', function(e) {
+        console.warn('Map tile loading error:', e);
+    });
+
+    // Add zoom control styling
+    map.zoomControl.setPosition('topright');
 });
-
-console.log('Map loaded successfully with Leaflet');
 </script>
+
+<style>
+/* Custom marker styles */
+.custom-business-marker {
+    background: none !important;
+    border: none !important;
+}
+
+/* Enhanced popup styling */
+.leaflet-popup-content-wrapper {
+    border-radius: 1rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border: none;
+}
+
+.leaflet-popup-tip {
+    background: white;
+    border: none;
+    box-shadow: none;
+}
+
+/* Responsive map adjustments */
+@media (max-width: 768px) {
+    #map {
+        height: 350px !important;
+    }
+}
+
+/* Coordinate display */
+.font-monospace {
+    font-family: 'Courier New', monospace;
+}
+</style>
 @endif
 @endsection
