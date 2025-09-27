@@ -17,7 +17,7 @@ use App\Http\Controllers\LocationController;
 
 // Redirect root to login
 Route::get('/', function () {
-    return redirect()->route('login');
+    return redirect()->route('dashboard');
 });
 
 Route::get('/unauthorize', function () {
@@ -65,7 +65,7 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
     Route::resource('reports', ReportController::class)->names('report')->only(['index', 'create', 'store']);
 
     Route::resource('rewards', RewardController::class)->names('reward')->only(['index', 'create', 'store', 'edit', 'update']);
-    
+
     // Reward Redemption Management Routes
     Route::get('/redemptions', [RewardController::class, 'redemptions'])->name('reward.redemptions');
     Route::post('/redemptions/{id}/approve', [RewardController::class, 'approveRedemption'])->name('reward.redemptions.approve');
@@ -109,7 +109,7 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
         Route::get('/photos/{id}', [GalleryController::class, 'show'])->name('photos.show');
         Route::put('/photos/{id}', [GalleryController::class, 'update'])->name('photos.update');
         Route::delete('/photos/{id}', [GalleryController::class, 'destroy'])->name('photos.destroy');
-        
+
         Route::post('/photos/reorder', [SellerController::class, 'reorderPhotos'])->name('photos.reorder');
         Route::get('/api/photo-stats', [SellerController::class, 'getPhotoStats'])->name('api.photo-stats');
 
