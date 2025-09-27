@@ -193,16 +193,19 @@ class RewardController extends Controller
             if (!$rh || !$rh->reward) {
                 throw new Exception('Redemption could not be found!');
             }
+            
             // add point to seller
             $this->sRepo->addPoints(Auth::id(), $rh->reward->points_required);
+            
             // update the status to redeem
             $this->rHRepo->approve($id);
+            
             return redirect()->route('reward.redemptions')
                 ->with('success', 'Redemption approved successfully!');
         } catch (Exception $e) {
             Log::error($e->getMessage());
             return redirect()->back()
-                ->with('error', 'Failed to create reward. Please try again.');
+                ->with('error', 'Failed to approve redemption. Please try again.');
         }
     }
 
@@ -218,10 +221,17 @@ class RewardController extends Controller
         }
         $consumer_id = $rh->consumer_id;
         $reward_points = $rh->reward->points_required;
+        $reward_id = $rh->reward->id;
+        
         // return the point to consumer
         $this->cPRepo->refund($consumer_id, Auth::id(), $reward_points);
+        
+        // restore the reward quantity by decrementing quantity_redeemed
+        $this->rRepo->decrementQuantityRedeemed($reward_id);
+        
         // delete the redeem history
         $this->rHRepo->reject($id);
+        
         return redirect()->route('reward.redemptions')
             ->with('success', 'Redemption rejected successfully!');
     }

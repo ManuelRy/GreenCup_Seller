@@ -1,74 +1,305 @@
-@extends('master')
+@extends('layouts.dashboard')
 
-@section('content')
+@section('title', 'Dashboard - Green Cup App')
+
+@push('styles')
 <style>
-/* Reset and Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
-
-html {
-    font-size: 16px;
-    -webkit-text-size-adjust: 100%;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-    background: #ffffff;
-    color: #333333;
-    line-height: 1.6;
-    min-height: 100vh;
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-}
-
-/* Container with Gradient Background */
+/* Enhanced Dashboard Styles */
 .dashboard-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #00b09b 0%, #00cdac 50%, #00dfa8 100%);
+    background: linear-gradient(-45deg, #00b09b, #00c9a1, #00d9a6, #00e8ab, #00b09b);
+    background-size: 400% 400%;
+    animation: gradientShift 20s ease infinite;
     padding-bottom: 40px;
+    position: relative;
 }
 
-/* Header */
-.dashboard-header {
-    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
-    padding: 16px 20px;
-    position: sticky;
+.dashboard-container::before {
+    content: '';
+    position: fixed;
     top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 60%),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.08) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
 }
 
-.header-content {
-    max-width: 1200px;
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Main Content */
+.main-content {
+    max-width: 1100px;
     margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 32px 20px;
+    position: relative;
+    z-index: 1;
 }
 
-.app-title {
-    color: white;
-    font-size: 20px;
+/* Enhanced Points Card */
+.points-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-radius: 24px;
+    padding: 40px;
+    text-align: center;
+    margin-bottom: 32px;
+    box-shadow:
+        0 25px 80px rgba(0,0,0,0.15),
+        0 10px 40px rgba(0,0,0,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.9);
+    border: 1px solid rgba(255,255,255,0.3);
+    position: relative;
+    overflow: hidden;
+    animation: slideInUp 0.8s ease-out;
+}
+
+.points-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(0,176,155,0.1) 50%, transparent 70%);
+    transform: rotate(45deg);
+    animation: shimmer 4s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: rotate(45deg) translateX(-200%); }
+    100% { transform: rotate(45deg) translateX(200%); }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.points-value {
+    font-size: 48px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #00b09b 0%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 2;
+}
+
+.points-label {
+    color: #64748b;
+    font-size: 16px;
     font-weight: 600;
-    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 2;
 }
 
-.user-section {
+/* Enhanced Progress Card */
+.progress-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 32px;
+    box-shadow:
+        0 20px 60px rgba(0,0,0,0.12),
+        0 8px 32px rgba(0,0,0,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.9);
+    border: 1px solid rgba(255,255,255,0.3);
+    animation: slideInUp 0.8s ease-out 0.2s backwards;
+}
+
+.rank-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 16px 0;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00b09b 0%, #00d9a6 100%);
+    border-radius: 10px;
+    transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: progressShine 2s infinite;
+}
+
+@keyframes progressShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Enhanced Stats and Actions */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-radius: 18px;
+    padding: 28px 24px;
+    text-align: center;
+    box-shadow:
+        0 15px 40px rgba(0,0,0,0.1),
+        0 6px 20px rgba(0,0,0,0.08);
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow:
+        0 25px 60px rgba(0,0,0,0.15),
+        0 10px 30px rgba(0,0,0,0.1);
+}
+
+.action-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 14px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.action-btn:hover::before {
+    left: 100%;
+}
+
+.action-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) scale(1) !important;
+    pointer-events: auto !important;
+}
+
+.dropdown-menu {
+    padding: 12px 0;
+    overflow: visible;
+    position: relative;
+}
+
+.dropdown-item {
     display: flex;
     align-items: center;
     gap: 12px;
+    padding: 14px 20px;
+    color: #374151;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 8px;
-    transition: background-color 0.2s ease;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    white-space: nowrap;
+    min-height: 44px;
+    position: relative;
 }
 
-.user-section:hover {
-    background: rgba(255,255,255,0.1);
+.dropdown-item:hover {
+    background: #f3f4f6;
+    color: #1f2937;
+    text-decoration: none;
+}
+
+.dropdown-item.logout {
+    color: #dc2626;
+    border-top: 1px solid #e5e7eb;
+}
+
+.dropdown-item.logout:hover {
+    background: #fef2f2;
+    color: #dc2626;
 }
 
 .user-avatar {
@@ -94,6 +325,14 @@ body {
     color: white;
     font-size: 14px;
     font-weight: 500;
+}
+
+.dropdown-arrow {
+    transition: transform 0.2s ease;
+}
+
+.user-section.active .dropdown-arrow {
+    transform: rotate(180deg);
 }
 
 /* Main Content */
@@ -486,33 +725,31 @@ body {
     color: #999;
 }
 
-/* Quick Actions Grid - Now 6 items */
+/* Quick Actions Grid */
 .actions-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr); /* Updated to handle 6 items */
-    gap: 16px; /* Changed from 12px to 16px to match stats-grid */
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
     margin-bottom: 24px;
 }
 
 @media (max-width: 768px) {
     .actions-grid {
-        grid-template-columns: repeat(3, 1fr); /* 3 columns on tablet for better spacing */
+        grid-template-columns: repeat(3, 1fr);
     }
-
     .stats-grid {
-        grid-template-columns: 1fr; /* Stack stats vertically on tablet */
+        grid-template-columns: 1fr;
         gap: 12px;
     }
 }
 
 @media (max-width: 480px) {
     .actions-grid {
-        grid-template-columns: repeat(2, 1fr); /* Keep 2x2 on mobile */
+        grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
-
     .stats-grid {
-        grid-template-columns: 1fr; /* Stack stats vertically on mobile */
+        grid-template-columns: 1fr;
         gap: 12px;
     }
 }
@@ -734,37 +971,6 @@ body {
     text-decoration: none;
 }
 
-/* Getting Started Card */
-.getting-started-card {
-    background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
-    border-radius: 20px;
-    padding: 24px;
-    margin-top: 24px;
-    box-shadow: 0 4px 20px rgba(251, 146, 60, 0.15);
-    border: 1px solid rgba(251, 146, 60, 0.2);
-}
-
-.getting-started-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #9a3412;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.getting-started-steps {
-    line-height: 2;
-    color: #7c2d12;
-    font-weight: 500;
-}
-
-.getting-started-steps p {
-    margin-bottom: 8px;
-    padding-left: 8px;
-}
-
 /* Utility Classes */
 .text-center { text-align: center; }
 .text-muted { color: #666; }
@@ -774,31 +980,24 @@ body {
     .main-content {
         padding: 16px 12px;
     }
-
     .points-value {
         font-size: 48px;
     }
-
     .stat-value {
         font-size: 28px;
     }
-
     .stats-grid {
         grid-template-columns: 1fr;
     }
-
     .chart-legend {
         gap: 20px;
     }
-
     .receipt-stats-grid {
         grid-template-columns: 1fr;
     }
-
     .receipt-actions {
         flex-direction: column;
     }
-
     .progress-header {
         flex-direction: column;
         gap: 8px;
@@ -836,52 +1035,12 @@ body {
 .slide-in {
     animation: slideIn 0.5s ease-out;
 }
-
-/* Loading States */
-.loading {
-    opacity: 0.7;
-    pointer-events: none;
-}
-
-/* Toast Notifications */
-.toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: white;
-    border-radius: 12px;
-    padding: 16px 20px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    border-left: 4px solid #10b981;
-    z-index: 1000;
-    transform: translateX(400px);
-    transition: transform 0.3s ease;
-}
-
-.toast.show {
-    transform: translateX(0);
-}
-
-.toast.error {
-    border-left-color: #ef4444;
-}
 </style>
+@endpush
 
-<div class="dashboard-container">
-    <!-- Header -->
-    <header class="dashboard-header">
-        <div class="header-content">
-            <h1 class="app-title">🌱 Green Cup Seller</h1>
-
-            <div class="user-section" onclick="showLogoutConfirm()">
-                <span class="user-name">{{ $seller->business_name }}</span>
-                <div class="user-avatar" title="Click to logout">{{ substr($seller->business_name, 0, 1) }}</div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="main-content">
+@section('content')
+<!-- Main Content -->
+<main class="main-content">
         <!-- Points Card -->
         <div class="points-card fade-in">
             <div class="points-value" id="totalPoints">{{ number_format($totalRankPoints) }}</div>
@@ -1029,7 +1188,7 @@ body {
             </div>
         </div>
 
-        <!-- Quick Actions - All 6 main features -->
+        <!-- Quick Actions -->
         <div class="actions-grid fade-in">
             <a href="{{ route('seller.account') }}" class="action-card">
                 <div class="action-icon">👤</div>
@@ -1052,7 +1211,7 @@ body {
             </a>
 
             <a href="{{ route('location.show') }}" class="action-card location-action">
-                <div class="action-icon">�</div>
+                <div class="action-icon">📍</div>
                 <div class="action-label">Location</div>
             </a>
 
@@ -1073,7 +1232,6 @@ body {
 
             @if($totalTransactions > 0)
                 @php
-                    // Get recent transactions for display
                     $recentTransactions = collect();
                     try {
                         $recentTransactions = DB::table('point_transactions')
@@ -1142,204 +1300,30 @@ body {
                 </div>
             @endif
         </div>
-
-        @if($totalTransactions == 0)
-        <!-- Getting Started Guide -->
-        <div class="getting-started-card fade-in">
-            <h3 class="getting-started-title">
-                <span>🌟</span>
-                Getting Started Guide
-            </h3>
-            <div class="getting-started-steps">
-                <p><strong>1.</strong> Create receipts for eco-friendly customer purchases</p>
-                <p><strong>2.</strong> Share QR codes with customers to claim their green points</p>
-                <p><strong>3.</strong> Use the QR scanner to award points for bring-your-own items</p>
-                <p><strong>4.</strong> Track customer engagement and monitor your environmental impact</p>
-                <p><strong>5.</strong> Climb the seller ranks and unlock exclusive benefits!</p>
-            </div>
-        </div>
-        @endif
     </main>
-</div>
+@endsection
 
-<!-- Logout Form (hidden) -->
-<form id="logoutForm" action="{{ route('logout') }}" method="POST" style="display: none;">
-    @csrf
-</form>
-
-<!-- Toast Container -->
-<div id="toast" class="toast" style="display: none;">
-    <span id="toast-message">Success!</span>
-</div>
-
+@push('scripts')
 <script>
-// Global variables
-let isRefreshing = false;
-
-// Show logout confirmation
-function showLogoutConfirm() {
-    if (confirm('Are you sure you want to logout?')) {
-        document.getElementById('logoutForm').submit();
-    }
-}
-
-// Show toast notification
-function showToast(message, type = 'success') {
-    const toast = document.getElementById('toast');
-    const messageEl = document.getElementById('toast-message');
-
-    messageEl.textContent = message;
-    toast.className = `toast ${type}`;
-    toast.style.display = 'block';
-
-    // Show toast
-    setTimeout(() => toast.classList.add('show'), 100);
-
-    // Hide toast
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.style.display = 'none', 300);
-    }, 4000);
-}
-
-// Animate numbers on page load
-function animateValue(element, start, end, duration) {
-    if (!element) return;
-
-    let startTimestamp = null;
-    const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp;
-        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        const current = Math.floor(progress * (end - start) + start);
-        element.textContent = current.toLocaleString();
-        if (progress < 1) {
-            window.requestAnimationFrame(step);
-        }
-    };
-    window.requestAnimationFrame(step);
-}
-
-// Refresh dashboard data
-async function refreshDashboardData() {
-    if (isRefreshing) return;
-
-    isRefreshing = true;
-
-    try {
-        const response = await fetch('{{ route("dashboard.data") }}');
-        if (!response.ok) throw new Error('Network response was not ok');
-
-        const data = await response.json();
-
-        // Update total points with animation
-        const totalPointsEl = document.getElementById('totalPoints');
-        if (totalPointsEl && data.total_rank_points !== undefined) {
-            const currentValue = parseInt(totalPointsEl.textContent.replace(/,/g, ''));
-            const newValue = data.total_rank_points;
-
-            if (currentValue !== newValue) {
-                animateValue(totalPointsEl, currentValue, newValue, 1000);
-            }
-        }
-
-        // Update other dashboard stats if needed
-        console.log('Dashboard data refreshed successfully');
-
-    } catch (error) {
-        console.error('Error refreshing dashboard data:', error);
-    } finally {
-        isRefreshing = false;
-    }
-}
-
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Dashboard initialized');
-
-    // Animate total points on load
     const totalPointsEl = document.getElementById('totalPoints');
     if (totalPointsEl) {
         const currentValue = parseInt(totalPointsEl.textContent.replace(/,/g, ''));
         totalPointsEl.textContent = '0';
-        animateValue(totalPointsEl, 0, currentValue, 2000);
+
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / 2000, 1);
+            const current = Math.floor(progress * currentValue);
+            totalPointsEl.textContent = current.toLocaleString();
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
     }
-
-    // Add staggered fade-in animations
-    const fadeElements = document.querySelectorAll('.fade-in');
-    fadeElements.forEach((el, index) => {
-        el.style.opacity = '0';
-        setTimeout(() => {
-            el.style.opacity = '1';
-        }, index * 150);
-    });
-
-    // Add slide-in animations for activity items
-    const slideElements = document.querySelectorAll('.slide-in');
-    slideElements.forEach((el, index) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateX(-20px)';
-        setTimeout(() => {
-            el.style.opacity = '1';
-            el.style.transform = 'translateX(0)';
-        }, 500 + (index * 100));
-    });
-
-    @if($totalTransactions > 0)
-    // Auto-refresh dashboard data every 2 minutes
-    setInterval(refreshDashboardData, 120000);
-    @endif
-
-    // Show welcome message for new sellers
-    @if($totalTransactions == 0)
-    setTimeout(() => {
-        showToast('Welcome to Green Cup! Create your first receipt to get started.', 'success');
-    }, 1000);
-    @endif
-});
-
-// Handle visibility change (refresh when user returns to tab)
-document.addEventListener('visibilitychange', function() {
-    if (!document.hidden && {{ $totalTransactions > 0 ? 'true' : 'false' }}) {
-        setTimeout(refreshDashboardData, 1000);
-    }
-});
-
-// Keyboard shortcuts
-document.addEventListener('keydown', function(e) {
-    // Alt + R: Refresh data
-    if (e.altKey && e.key === 'r') {
-        e.preventDefault();
-        refreshDashboardData();
-        showToast('Dashboard refreshed!');
-    }
-
-    // Alt + N: New receipt
-    if (e.altKey && e.key === 'n') {
-        e.preventDefault();
-        window.location.href = '{{ route("seller.receipts.create") }}';
-    }
-
-    // Alt + S: Scanner
-    if (e.altKey && e.key === 's') {
-        e.preventDefault();
-        window.location.href = '{{ route("seller.scanner") }}';
-    }
-});
-
-// Handle online/offline status
-window.addEventListener('online', function() {
-    showToast('Connection restored!', 'success');
-    refreshDashboardData();
-});
-
-window.addEventListener('offline', function() {
-    showToast('Connection lost. Working offline.', 'error');
-});
-
-// Performance monitoring
-window.addEventListener('load', function() {
-    const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
-    console.log(`Dashboard loaded in ${loadTime}ms`);
 });
 </script>
-@endsection
+@endpush

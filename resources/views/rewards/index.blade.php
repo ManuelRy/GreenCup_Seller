@@ -1,7 +1,11 @@
-@extends('master')
+@extends('layouts.app')
 
-@section('content')
-  <style>
+@section('title', 'Rewards - Green Cup App')
+@section('page-title', 'Rewards')
+@section('page-subtitle', 'Manage your rewards')
+
+@push('styles')
+<style>
     /* Reset and Base Styles */
     * {
       margin: 0;
@@ -382,48 +386,41 @@
         gap: 10px;
       }
     }
-  </style>
+</style>
+@endpush
 
-  <div class="rewards-container">
-    <!-- Header -->
-    <div class="header">
-      <div class="header-content">
-        <h1 class="header-title">🎁 Rewards Management</h1>
-        <a href="{{ route('dashboard') }}" class="back-btn">← Back to Dashboard</a>
-      </div>
-    </div>
+@section('content')
+<!-- Alert Messages -->
+@if (session('success'))
+  <div class="alert alert-success">
+    ✅ {{ session('success') }}
+  </div>
+@endif
 
-    <!-- Alert Messages -->
-    @if (session('success'))
-      <div class="alert alert-success">
-        ✅ {{ session('success') }}
-      </div>
-    @endif
+@if (session('error'))
+  <div class="alert alert-error">
+    ❌ {{ session('error') }}
+  </div>
+@endif
 
-    @if (session('error'))
-      <div class="alert alert-error">
-        ❌ {{ session('error') }}
-      </div>
-    @endif
+<!-- Page Header -->
+<div class="page-header">
+  <h2 class="page-title">Your Rewards</h2>
+  <p class="page-subtitle">Create and manage rewards that customers can redeem with their points</p>
+  <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+    <a href="{{ route('reward.create') }}" class="create-btn">
+      ➕ Create New Reward
+    </a>
+    <a href="{{ route('reward.redemptions') }}" class="create-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+      🎁 Manage Redemptions
+    </a>
+  </div>
+</div>
 
-    <!-- Page Header -->
-    <div class="page-header">
-      <h2 class="page-title">Your Rewards</h2>
-      <p class="page-subtitle">Create and manage rewards that customers can redeem with their points</p>
-      <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-        <a href="{{ route('reward.create') }}" class="create-btn">
-          ➕ Create New Reward
-        </a>
-        <a href="{{ route('reward.redemptions') }}" class="create-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-          🎁 Manage Redemptions
-        </a>
-      </div>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-number">{{ $rewards->total() }}</div>
+<!-- Stats Cards -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-number">{{ $rewards->total() }}</div>
         <div class="stat-label">Total Rewards</div>
       </div>
       <div class="stat-card">

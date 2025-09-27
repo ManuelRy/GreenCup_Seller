@@ -12,6 +12,12 @@ class RedeemHistoryRepository
   {
     return RedeemHistory::with(['consumer', 'reward'])->where('id', $id)->first();
   }
+
+  public function create(array $data): ?Model
+  {
+    return RedeemHistory::create($data);
+  }
+
   public function pending($seller_id): Collection
   {
     return RedeemHistory::with(['reward', 'consumer'])
@@ -21,6 +27,28 @@ class RedeemHistoryRepository
       ->get();
   }
 
+  /**
+   * Create a redemption request and increment the reward's quantity_redeemed
+   */
+  public function createRedemption(int $consumer_id, int $reward_id): ?Model
+  {
+    $redemption = RedeemHistory::create([
+      'consumer_id' => $consumer_id,
+      'reward_id' => $reward_id,
+      'is_redeemed' => false
+    ]);
+
+    // Increment the reward's quantity_redeemed
+    if ($redemption) {
+      $reward = \App\Models\Reward::find($reward_id);
+      if ($reward && $reward->quantity_redeemed < $reward->quantity) {
+        $reward->increment('quantity_redeemed');
+      }
+    }
+
+    return $redemption;
+  }
+
   public function approve($id): bool
   {
     $rh = $this->get($id);
@@ -28,6 +56,7 @@ class RedeemHistoryRepository
       'is_redeemed' => true
     ]) : false;
   }
+
   public function reject($id): bool
   {
     $rh = $this->get($id);

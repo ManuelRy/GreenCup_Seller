@@ -179,6 +179,18 @@
       border-radius: 50%;
     }
 
+    #profileInitials {
+      font-size: 36px;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+
     .profile-overlay {
       position: absolute;
       top: 0;
@@ -1063,6 +1075,20 @@
       transform: translateY(-1px);
     }
 
+    .quick-action-btn.photos-btn {
+      background: linear-gradient(135deg, #fdf2f8, #fce7f3);
+      color: #be185d;
+      border-color: rgba(236, 72, 153, 0.2);
+    }
+
+    .quick-action-btn.photos-btn:hover {
+      background: linear-gradient(135deg, #fce7f3, #fbcfe8);
+      border-color: #ec4899;
+      color: #be185d;
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+
     @media (max-width: 768px) {
       .profile-quick-actions {
         flex-direction: column;
@@ -1106,17 +1132,27 @@
 
       <!-- Business Profile Card -->
       <div class="business-profile-card fade-in">
+        <!-- Debug info - remove this in production -->
+        {{-- Debug: photo_url = {{ $seller->photo_url ?? 'null' }} --}}
+        {{-- Debug: file_exists = {{ $seller->photo_url ? (file_exists(public_path($seller->photo_url)) ? 'true' : 'false') : 'no_url' }} --}}
+        {{-- Debug: business_name = {{ $seller->business_name ?? 'null' }} --}}
+
         <div class="profile-picture-input-wrapper">
-          <div class="profile-avatar" {{-- onclick="document.getElementById('profilePictureInput').click();" --}}>
-            <img src="{{ $seller->photo_url }}" alt="Profile" style="display: none;">
-            {{-- <span id="profileInitials">{{ substr($seller->business_name, 0, 2) }}</span> --}}
-            {{-- <div class="profile-overlay">
+          <div class="profile-avatar" style="position: relative;">
+            @if($seller->photo_url)
+              <img src="{{ asset($seller->photo_url) }}" alt="Profile" id="profileImage" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+            @else
+              <span id="profileInitials" style="font-size: 36px; font-weight: bold; text-transform: uppercase; color: white;">
+                {{ strtoupper(substr($seller->business_name ?? 'NA', 0, 2)) }}
+              </span>
+            @endif
+            <div class="profile-overlay" onclick="document.getElementById('profilePictureInput').click();">
               <div class="overlay-content">
                 <div class="overlay-icon">📷</div>
                 <div class="overlay-text">Change Photo</div>
               </div>
-            </div> --}}
-            {{-- <input type="file" id="profilePictureInput" class="profile-file-input" accept="image/*"> --}}
+            </div>
+            <input type="file" id="profilePictureInput" name="image" class="profile-file-input" accept="image/*" onchange="previewAndSubmitImage(this)" form="profilePhotoForm">
           </div>
         </div>
 
@@ -1125,11 +1161,9 @@
           <span>Click on the avatar to upload a profile picture (JPG, PNG, max 5MB)</span>
         </div>
 
-        <form action="{{ route('seller.photo.update') }}" method="POST" enctype="multipart/form-data">
+        <form id="profilePhotoForm" action="{{ route('seller.photo.update') }}" method="POST" enctype="multipart/form-data" style="display: none;">
           @csrf
-
-          <input type="file" name="image" accept="image/*">
-          <button type="submit" class="btn btn-secondary">Save</button>
+          {{-- We'll use the same input that's in the avatar --}}
         </form>
 
         <div class="profile-info-section">
@@ -1142,9 +1176,12 @@
           </button>
 
           <!-- Quick Actions -->
-          <div class="profile-quick-actions" style="margin-top: 15px; display: flex; gap: 10px;">
+          <div class="profile-quick-actions" style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
             <a href="{{ route('location.show') }}" class="quick-action-btn location-btn">
               📍 Shop Location
+            </a>
+            <a href="{{ route('seller.photos') }}" class="quick-action-btn photos-btn">
+              📸 Photo Gallery
             </a>
             <a href="{{ route('dashboard') }}" class="quick-action-btn dashboard-btn">
               🏠 Dashboard
@@ -1642,6 +1679,65 @@
       } else {
         editForm.style.display = 'none';
         editBtn.textContent = '✏️ Edit Profile';
+      }
+    }
+
+    // Profile image preview and upload
+    function previewAndSubmitImage(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+
+        // Validate file size (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+          alert('File size must be less than 5MB');
+          input.value = ''; // Clear the input
+          return;
+        }
+
+        // Validate file type
+        if (!file.type.match('image.*')) {
+          alert('Please select a valid image file');
+          input.value = ''; // Clear the input
+          return;
+        }
+
+        // Preview the image immediately
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const profileAvatar = document.querySelector('.profile-avatar');
+          const existingImg = profileAvatar.querySelector('#profileImage');
+          const initials = profileAvatar.querySelector('#profileInitials');
+
+          if (existingImg) {
+            // Update existing image
+            existingImg.src = e.target.result;
+          } else {
+            // Create new img element
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.alt = 'Profile';
+            img.id = 'profileImage';
+            img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 50%;';
+            profileAvatar.insertBefore(img, profileAvatar.firstChild);
+          }
+
+          // Hide initials if showing
+          if (initials) {
+            initials.style.display = 'none';
+          }
+        };
+        reader.readAsDataURL(file);
+
+        // Auto-submit the form after showing preview
+        setTimeout(() => {
+          if (confirm('Upload this profile picture?')) {
+            document.getElementById('profilePhotoForm').submit();
+          } else {
+            // Reset if user cancels
+            input.value = '';
+            location.reload();
+          }
+        }, 100);
       }
     }
   </script>

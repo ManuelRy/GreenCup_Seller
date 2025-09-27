@@ -32,4 +32,30 @@ class RewardRepository
     $item = $this->get($id, $seller_id);
     return $item ? $item->delete() : false;
   }
+
+  /**
+   * Increment the quantity_redeemed for a reward
+   */
+  public function incrementQuantityRedeemed($reward_id): bool
+  {
+    $reward = Reward::find($reward_id);
+    if ($reward && $reward->quantity_redeemed < $reward->quantity) {
+      $reward->increment('quantity_redeemed');
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Decrement the quantity_redeemed for a reward (used when redemption is rejected)
+   */
+  public function decrementQuantityRedeemed($reward_id): bool
+  {
+    $reward = Reward::find($reward_id);
+    if ($reward && $reward->quantity_redeemed > 0) {
+      $reward->decrement('quantity_redeemed');
+      return true;
+    }
+    return false;
+  }
 }

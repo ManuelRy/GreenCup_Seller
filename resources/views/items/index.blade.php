@@ -1,6 +1,10 @@
-@extends('master')
+@extends('layouts.app')
 
-@section('content')
+@section('title', 'Items - Green Cup App')
+@section('page-title', 'Items')
+@section('page-subtitle', 'Manage your items')
+
+@push('styles')
 <style>
 /* Reset and Base Styles */
 * {
@@ -521,49 +525,30 @@ body {
     }
 }
 </style>
+@endpush
 
-<div class="dashboard-container">
-    <!-- Header -->
-    <header class="dashboard-header">
-        <div class="header-content">
-            <div class="header-left">
-                <a href="{{ route('dashboard') }}" class="header-back-btn">
-                    ←
-                </a>
-                <div class="header-title-section">
-                    <h1 class="app-title">📦 Items Management</h1>
-                    <p class="app-subtitle">Manage items for receipt generation</p>
-                </div>
-            </div>
-            <a href="{{ route('dashboard') }}" class="back-button">
-                ← Back to Dashboard
-            </a>
+@section('content')
+<!-- Alerts -->
+@if(session('success'))
+    <div class="alert alert-success fade-in">
+        ✅ {{ session('success') }}
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-error fade-in">
+        ❌ {{ session('error') }}
+    </div>
+@endif
+
+<!-- Items Management Card -->
+<div class="items-management-card fade-in">
+    <!-- Header with Add Button -->
+    <div class="items-header">
+        <div>
+            <h2 class="items-title">Items Catalog</h2>
+            <p class="items-subtitle">Items available for receipt generation based on point values</p>
         </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Alerts -->
-        @if(session('success'))
-            <div class="alert alert-success fade-in">
-                ✅ {{ session('success') }}
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="alert alert-error fade-in">
-                ❌ {{ session('error') }}
-            </div>
-        @endif
-
-        <!-- Items Management Card -->
-        <div class="items-management-card fade-in">
-            <!-- Header with Add Button -->
-            <div class="items-header">
-                <div>
-                    <h2 class="items-title">Items Catalog</h2>
-                    <p class="items-subtitle">Items available for receipt generation based on point values</p>
-                </div>
                 <a href="{{ route('item.create') }}" class="add-item-btn">
                     ➕ Add New Item
                 </a>
