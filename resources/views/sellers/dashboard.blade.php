@@ -14,20 +14,6 @@
     position: relative;
 }
 
-.dashboard-container::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image:
-        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 60%),
-        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.08) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-}
-
 @keyframes gradientShift {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -40,7 +26,7 @@
     margin: 0 auto;
     padding: 32px 20px;
     position: relative;
-    z-index: 1;
+    z-index: 10;
 }
 
 /* Enhanced Points Card */
@@ -48,18 +34,16 @@
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
-    border-radius: 24px;
-    padding: 40px;
+    border-radius: 20px;
+    padding: 32px;
     text-align: center;
-    margin-bottom: 32px;
-    box-shadow:
-        0 25px 80px rgba(0,0,0,0.15),
-        0 10px 40px rgba(0,0,0,0.1),
-        inset 0 1px 0 rgba(255,255,255,0.9);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
     border: 1px solid rgba(255,255,255,0.3);
+    margin-bottom: 32px;
+    animation: slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
-    animation: slideInUp 0.8s ease-out;
+    z-index: 15;
 }
 
 .points-card::before {
@@ -503,11 +487,11 @@
 
 .receipt-stats-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
     position: relative;
-    z-index: 2;
+    z-index: 15;
 }
 
 .receipt-stat {
@@ -679,6 +663,8 @@
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     margin-bottom: 24px;
+    position: relative;
+    z-index: 15;
 }
 
 .stat-card {
@@ -755,15 +741,18 @@
 }
 
 .action-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 24px;
     border-radius: 16px;
-    padding: 20px 12px;
-    text-align: center;
     text-decoration: none;
-    color: #333;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    border: 2px solid transparent;
+    color: inherit;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 15;
 }
 
 .action-card:hover {

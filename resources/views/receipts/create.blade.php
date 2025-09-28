@@ -1,5 +1,28 @@
 @extends('master')
 
+@php
+function getItemIcon($itemName) {
+    $icons = [
+        'Coffee' => '☕',
+        'Metal Straw' => '🥤',
+        'Straw' => '🥤',
+        'Eco Bag' => '🍃',
+        'Glass Container' => '🍽️',
+        'Smoothie' => '🥤',
+        'Organic Vegetables' => '🥬',
+        'Coffee Cup' => '☕',
+        'Reusable Cup' => '♻️',
+        'Bamboo Utensils' => '🍴',
+        'Shopping Bag' => '🛍️',
+        'Takeout Container' => '📦',
+        'Water Bottle' => '🥤',
+        'Utensils Set' => '🍴',
+        'Food Container' => '🍽️'
+    ];
+    return $icons[$itemName] ?? '📦';
+}
+@endphp
+
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -126,7 +149,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h2>✅ Receipt Generated!</h2>
-            <button type="button" onclick="closeModal()" class="close-modal">×</button>
+            <button type="button" onclick="event.stopPropagation(); closeModal();" class="close-modal">×</button>
         </div>
 
         <div class="modal-body">
@@ -154,15 +177,15 @@
         </div>
 
         <div class="modal-actions">
-            <button type="button" onclick="showQRCode()" class="btn-qr">
+            <button type="button" onclick="event.stopPropagation(); showQRCode();" class="btn-qr">
                 <span class="btn-icon">📱</span>
                 Show QR Code
             </button>
-            <button type="button" onclick="createAnother()" class="btn-another">
+            <button type="button" onclick="event.stopPropagation(); createAnother();" class="btn-another">
                 <span class="btn-icon">➕</span>
                 Create Another
             </button>
-            <button type="button" onclick="goToReceipts()" class="btn-done">
+            <button type="button" onclick="event.stopPropagation(); goToReceipts();" class="btn-done">
                 <span class="btn-icon">📋</span>
                 View All Receipts
             </button>
@@ -614,7 +637,11 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1000;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
 }
 
 .modal-backdrop {
@@ -624,19 +651,20 @@ body {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
 }
 
 .modal-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
     background: white;
     border-radius: 20px;
     width: 90%;
     max-width: 500px;
+    max-height: 90vh;
     overflow: hidden;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    z-index: 10000;
+    pointer-events: auto;
 }
 
 .modal-header {
@@ -668,11 +696,15 @@ body {
     justify-content: center;
     border-radius: 8px;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 10001;
+    pointer-events: auto;
 }
 
 .close-modal:hover {
     background: #f3f4f6;
     color: #6b7280;
+    transform: scale(1.1);
 }
 
 .modal-body {
@@ -740,6 +772,9 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 10001;
+    pointer-events: auto;
 }
 
 .btn-qr {
@@ -750,6 +785,7 @@ body {
 .btn-qr:hover {
     background: #6366f1;
     color: white;
+    transform: translateY(-1px);
 }
 
 .btn-another {
@@ -760,6 +796,7 @@ body {
 .btn-another:hover {
     background: #e5e7eb;
     color: #111827;
+    transform: translateY(-1px);
 }
 
 .btn-done {
@@ -781,7 +818,7 @@ body {
     border-radius: 12px;
     padding: 1rem;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    z-index: 2000;
+    z-index: 9000;
     transform: translateX(400px);
     transition: transform 0.3s ease;
     max-width: 350px;
@@ -1074,12 +1111,22 @@ function showSuccessModal(receipt) {
     document.getElementById('generated-quantity').textContent = receipt.total_quantity + ' items';
     document.getElementById('generated-expires').textContent = receipt.expires_at;
 
-    document.getElementById('success-modal').style.display = 'block';
+    const modal = document.getElementById('success-modal');
+    modal.style.display = 'flex';
+    // Ensure the modal is clickable
+    modal.style.pointerEvents = 'auto';
+
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
 }
 
 // Close modal
 function closeModal() {
-    document.getElementById('success-modal').style.display = 'none';
+    const modal = document.getElementById('success-modal');
+    modal.style.display = 'none';
+
+    // Restore body scroll when modal is closed
+    document.body.style.overflow = 'auto';
 }
 
 // Show QR code
@@ -1140,38 +1187,25 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Create Receipt page loaded');
     updateButtons();
 
+    // Add event listener to modal content to prevent closing when clicking inside
+    const modalContent = document.querySelector('.modal-content');
+    if (modalContent) {
+        modalContent.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+
     // Handle escape key for modal
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
-            closeModal();
+            const modal = document.getElementById('success-modal');
+            if (modal && modal.style.display === 'flex') {
+                closeModal();
+            }
         }
     });
 
     console.log('Initialization complete');
 });
-
-// PHP helper function for item icons
-@php
-function getItemIcon($itemName) {
-    $icons = [
-        'Coffee' => '☕',
-        'Metal Straw' => '🥤',
-        'Straw' => '🥤',
-        'Eco Bag' => '🍃',
-        'Glass Container' => '🍽️',
-        'Smoothie' => '🥤',
-        'Organic Vegetables' => '🥬',
-        'Coffee Cup' => '☕',
-        'Reusable Cup' => '♻️',
-        'Bamboo Utensils' => '🍴',
-        'Shopping Bag' => '🛍️',
-        'Takeout Container' => '📦',
-        'Water Bottle' => '🥤',
-        'Utensils Set' => '🍴',
-        'Food Container' => '🍽️'
-    ];
-    return $icons[$itemName] ?? '📦';
-}
-@endphp
 </script>
 @endsection

@@ -1,4 +1,4 @@
-<!-- Enhanced Footer Component -->
+{{-- <!-- Enhanced Footer Component -->
 <footer class="app-footer">
     <div class="footer-content">
         <div class="footer-info">
@@ -145,4 +145,4 @@
             gap: 12px;
         }
     }
-</style>
+</style> --}}

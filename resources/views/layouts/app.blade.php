@@ -79,6 +79,122 @@
             z-index: 0;
         }
 
+        /* Floating Animation Elements */
+        .app-container::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 40% 40%, rgba(255,255,255,0.04) 0%, transparent 30%);
+            animation: floatElements 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes floatElements {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 1;
+            }
+            25% {
+                transform: translateY(-20px) rotate(5deg);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translateY(-10px) rotate(-3deg);
+                opacity: 0.9;
+            }
+            75% {
+                transform: translateY(-30px) rotate(8deg);
+                opacity: 0.7;
+            }
+        }
+
+        /* Particle Animation */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: particleFloat 15s linear infinite;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 12s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 2s; animation-duration: 15s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 4s; animation-duration: 18s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 6s; animation-duration: 14s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 8s; animation-duration: 16s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 10s; animation-duration: 13s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 1s; animation-duration: 17s; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 3s; animation-duration: 19s; }
+        .particle:nth-child(9) { left: 90%; animation-delay: 5s; animation-duration: 11s; }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(90vh) scale(1);
+            }
+            90% {
+                opacity: 1;
+                transform: translateY(10vh) scale(1);
+            }
+            100% {
+                transform: translateY(-10vh) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Wave Animation */
+        .wave-animation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to top,
+                rgba(0, 176, 155, 0.1) 0%,
+                rgba(0, 201, 161, 0.05) 50%,
+                transparent 100%);
+            animation: waveMotion 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes waveMotion {
+            0%, 100% {
+                transform: translateX(0px) scaleY(1);
+            }
+            25% {
+                transform: translateX(-10px) scaleY(1.1);
+            }
+            50% {
+                transform: translateX(10px) scaleY(0.9);
+            }
+            75% {
+                transform: translateX(-5px) scaleY(1.05);
+            }
+        }
+
         /* Main Content Area */
         .main-content {
             flex: 1;
@@ -176,6 +292,20 @@
 
 <body>
     <div class="app-container">
+        <!-- Animated Background Elements -->
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        <div class="wave-animation"></div>
+
         <!-- Navigation Component -->
         @include('components.navbar')
 
@@ -213,7 +343,7 @@
         </main>
 
         <!-- Footer (if needed) -->
-        @include('components.footer')
+        {{-- @include('components.footer') --}}
     </div>
 
     <!-- Scripts -->

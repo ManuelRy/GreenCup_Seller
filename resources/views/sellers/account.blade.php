@@ -1,1745 +1,631 @@
 @extends('master')
 
 @section('content')
-  <style>
-    /* Reset and Base Styles */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html {
-      font-size: 16px;
-      -webkit-text-size-adjust: 100%;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-      background: #ffffff;
-      color: #333333;
-      line-height: 1.6;
-      min-height: 100vh;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* Container with Gradient Background */
-    .dashboard-container {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #00b09b 0%, #00cdac 50%, #00dfa8 100%);
-      padding-bottom: 40px;
-    }
-
-    /* Header */
-    .dashboard-header {
-      background: #374151;
-      padding: 20px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .header-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .header-back-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      color: white;
-      font-size: 18px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-    }
-
-    .header-back-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      text-decoration: none;
-    }
-
-    .header-title-section {
-      color: white;
-    }
-
-    .app-title {
-      font-size: 24px;
-      font-weight: 700;
-      margin: 0 0 4px 0;
-      color: white;
-    }
-
-    .app-subtitle {
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.8);
-      margin: 0;
-    }
-
-    .back-button {
-      background: linear-gradient(135deg, #00b09b, #00cdac);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 12px rgba(0, 176, 155, 0.3);
-    }
-
-    .back-button:hover {
-      background: linear-gradient(135deg, #009688, #00b09b);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 176, 155, 0.4);
-      color: white;
-      text-decoration: none;
-    }
-
-    /* Main Content */
-    .main-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 24px 16px;
-    }
-
-    /* Business Profile Section */
-    .business-profile-card {
-      background: white;
-      border-radius: 20px;
-      padding: 32px;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      border: 2px solid #f0f0f0;
-      text-align: center;
-    }
-
-    /* Profile Picture Input Styles */
-    .profile-picture-input-wrapper {
-      position: relative;
-      display: inline-block;
-      margin-bottom: 20px;
-    }
-
-    .profile-avatar {
-      width: 100px;
-      height: 100px;
-      margin: 0 auto 20px;
-      background: linear-gradient(135deg, #00b09b, #00cdac);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 36px;
-      font-weight: bold;
-      text-transform: uppercase;
-      color: white;
-      border: 4px solid rgba(0, 176, 155, 0.2);
-      box-shadow: 0 8px 25px rgba(0, 176, 155, 0.3);
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .profile-avatar:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 35px rgba(0, 176, 155, 0.4);
-      border-color: rgba(0, 176, 155, 0.4);
-    }
-
-    .profile-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-
-    #profileInitials {
-      font-size: 36px;
-      font-weight: bold;
-      text-transform: uppercase;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-    }
-
-    .profile-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      cursor: pointer;
-    }
-
-    .profile-avatar:hover .profile-overlay {
-      opacity: 1;
-    }
-
-    .overlay-content {
-      color: white;
-      text-align: center;
-    }
-
-    .overlay-icon {
-      font-size: 20px;
-      margin-bottom: 4px;
-    }
-
-    .overlay-text {
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .profile-file-input {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0;
-      cursor: pointer;
-    }
-
-    .upload-instructions {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .change-picture-btn {
-      background: linear-gradient(135deg, #6c757d, #5a6268);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
-    }
-
-    .change-picture-btn:hover {
-      background: linear-gradient(135deg, #5a6268, #545b62);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
-    }
-
-    .business-name {
-      font-size: 28px;
-      font-weight: 700;
-      margin: 0 0 8px;
-      color: #333;
-    }
-
-    .business-email {
-      font-size: 16px;
-      color: #666;
-      margin: 0 0 24px;
-    }
-
-    /* Profile Edit Form Styles */
-    .edit-profile-btn {
-      background: linear-gradient(135deg, #007bff, #0056b3);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin: 10px 0;
-      box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
-    }
-
-    .edit-profile-btn:hover {
-      background: linear-gradient(135deg, #0056b3, #004085);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
-    }
-
-    #profile-edit-form {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 12px;
-      border: 1px solid #e9ecef;
-      margin-top: 15px;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 600;
-      color: #333;
-      font-size: 14px;
-    }
-
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border: 2px solid #e9ecef;
-      border-radius: 8px;
-      font-size: 14px;
-      transition: border-color 0.3s ease;
-      box-sizing: border-box;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: #007bff;
-      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .form-actions .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .form-actions .btn-primary {
-      background: linear-gradient(135deg, #28a745, #1e7e34);
-      color: white;
-      box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
-    }
-
-    .form-actions .btn-primary:hover {
-      background: linear-gradient(135deg, #1e7e34, #155724);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
-    }
-
-    .form-actions .btn-secondary {
-      background: linear-gradient(135deg, #6c757d, #5a6268);
-      color: white;
-      box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
-    }
-
-    .form-actions .btn-secondary:hover {
-      background: linear-gradient(135deg, #5a6268, #545b62);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
-    }
-
-    .rank-badge-container {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-
-    .rank-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-      padding: 12px 24px;
-      border-radius: 25px;
-      font-size: 16px;
-      font-weight: 600;
-      color: #333;
-      border: 2px solid #e9ecef;
-    }
-
-    .rank-badge.platinum {
-      background: linear-gradient(135deg, #e5e4e2, #bbb);
-      color: #333;
-    }
-
-    .rank-badge.gold {
-      background: linear-gradient(135deg, #FFD700, #FFA500);
-      color: white;
-    }
-
-    .rank-badge.silver {
-      background: linear-gradient(135deg, #C0C0C0, #808080);
-      color: white;
-    }
-
-    .rank-badge.bronze {
-      background: linear-gradient(135deg, #CD7F32, #8B4513);
-      color: white;
-    }
-
-    /* Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 32px;
-    }
-
-    .stat-card {
-      background: white;
-      border-radius: 16px;
-      padding: 24px;
-      text-align: center;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      border: 2px solid #f0f0f0;
-      transition: all 0.3s ease;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-      border-color: #00b09b;
-    }
-
-    .stat-icon {
-      font-size: 32px;
-      margin-bottom: 12px;
-      display: block;
-    }
-
-    .stat-value {
-      font-size: 28px;
-      font-weight: 700;
-      color: #00b09b;
-      margin-bottom: 4px;
-    }
-
-    .stat-label {
-      font-size: 14px;
-      color: #666;
-      font-weight: 500;
-    }
-
-    /* Rank Progress */
-    .rank-progress-card {
-      background: white;
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 32px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      border: 2px solid #f0f0f0;
-    }
-
-    .rank-progress-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 16px;
-      text-align: center;
-    }
-
-    .rank-progress-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .current-rank,
-    .next-rank {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .current-rank {
-      color: #00b09b;
-    }
-
-    .next-rank {
-      color: #666;
-    }
-
-    .progress-bar-container {
-      width: 100%;
-      height: 12px;
-      background: #f0f0f0;
-      border-radius: 6px;
-      overflow: hidden;
-      margin-bottom: 8px;
-    }
-
-    .progress-bar-fill {
-      height: 100%;
-      background: linear-gradient(45deg, #00b09b, #00cdac);
-      border-radius: 6px;
-      transition: width 0.3s ease;
-    }
-
-    .points-needed {
-      text-align: center;
-      font-size: 12px;
-      color: #666;
-    }
-
-    /* Transaction History */
-    .transaction-history-card {
-      background: white;
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      border: 2px solid #f0f0f0;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 2px solid #f0f0f0;
-    }
-
-    .section-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: #333;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .filter-select {
-      padding: 10px 16px;
-      border: 2px solid #f0f0f0;
-      border-radius: 12px;
-      font-size: 14px;
-      background: white;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s ease;
-    }
-
-    .filter-select:focus {
-      outline: none;
-      border-color: #00b09b;
-    }
-
-    /* Transaction Cards */
-    .transaction-card {
-      background: #f8f9fa;
-      border: 2px solid #f0f0f0;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 16px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .transaction-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      background: linear-gradient(135deg, #00b09b, #00cdac);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .transaction-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      border-color: #00b09b;
-      background: white;
-    }
-
-    .transaction-card:hover::before {
-      opacity: 1;
-    }
-
-    .transaction-card.earn {
-      border-left: 4px solid #28a745;
-    }
-
-    .transaction-card.spend {
-      border-left: 4px solid #17a2b8;
-    }
-
-    .transaction-card.receipt-based {
-      border-left: 4px solid #6f42c1;
-    }
-
-    .transaction-card.qr-based {
-      border-left: 4px solid #fd7e14;
-    }
-
-    .transaction-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .transaction-type {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .transaction-type.earn {
-      color: #28a745;
-    }
-
-    .transaction-type.spend {
-      color: #17a2b8;
-    }
-
-    .transaction-points {
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .transaction-points.earn {
-      color: #dc3545;
-    }
-
-    .transaction-points.spend {
-      color: #17a2b8;
-    }
-
-    .transaction-details {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .detail-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      color: #666;
-    }
-
-    .detail-icon {
-      font-size: 16px;
-      opacity: 0.7;
-    }
-
-    .transaction-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 12px;
-      border-top: 1px solid #e9ecef;
-      font-size: 12px;
-      color: #999;
-    }
-
-    .transaction-id {
-      font-family: monospace;
-      background: #e9ecef;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 60px 24px;
-    }
-
-    .empty-icon {
-      font-size: 64px;
-      margin-bottom: 20px;
-      opacity: 0.5;
-    }
-
-    .empty-title {
-      font-size: 20px;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 12px;
-    }
-
-    .empty-text {
-      font-size: 16px;
-      color: #666;
-      margin-bottom: 32px;
-      line-height: 1.5;
-    }
-
-    .empty-action {
-      display: inline-block;
-      background: linear-gradient(135deg, #00b09b, #00cdac);
-      color: white;
-      padding: 12px 24px;
-      border-radius: 12px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 176, 155, 0.3);
-    }
-
-    .empty-action:hover {
-      background: linear-gradient(135deg, #009688, #00b09b);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 176, 155, 0.4);
-      color: white;
-      text-decoration: none;
-    }
-
-    /* Pagination */
-    .pagination-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 24px;
-      padding-top: 16px;
-      border-top: 1px solid #e9ecef;
-    }
-
-    .pagination-info {
-      font-size: 14px;
-      color: #666;
-    }
-
-    .load-more {
-      background: linear-gradient(135deg, #00b09b, #00cdac);
-      color: white;
-      padding: 10px 20px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 8px rgba(0, 176, 155, 0.3);
-    }
-
-    .load-more:hover {
-      background: linear-gradient(135deg, #009688, #00b09b);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 176, 155, 0.4);
-      color: white;
-      text-decoration: none;
-    }
-
-    /* Export Button */
-    .export-btn {
-      background: linear-gradient(135deg, #6c757d, #5a6268);
-      color: white;
-      padding: 10px 16px;
-      border: none;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      text-decoration: none;
-      box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
-    }
-
-    .export-btn:hover {
-      background: linear-gradient(135deg, #5a6268, #545b62);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
-      color: white;
-      text-decoration: none;
-    }
-
-    /* Alert Messages */
-    .alert {
-      padding: 16px 20px;
-      border-radius: 12px;
-      margin-bottom: 24px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .alert-success {
-      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-      color: #047857;
-      border: 1px solid rgba(4, 120, 87, 0.2);
-    }
-
-    .alert-error {
-      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-      color: #dc2626;
-      border: 1px solid rgba(220, 38, 38, 0.2);
-    }
-
-    /* Modal Styles */
-    .transaction-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      padding: 20px;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-    }
-
-    .transaction-modal.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal-content {
-      background: white;
-      border-radius: 20px;
-      max-width: 600px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-      transform: scale(0.9);
-      transition: transform 0.3s ease;
-    }
-
-    .transaction-modal.active .modal-content {
-      transform: scale(1);
-    }
-
-    .modal-header {
-      background: linear-gradient(135deg, #00b09b, #00cdac);
-      color: white;
-      padding: 24px 32px;
-      border-radius: 20px 20px 0 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .modal-title {
-      font-size: 20px;
-      font-weight: 600;
-      margin: 0;
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 24px;
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-    }
-
-    .modal-close:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .modal-body {
-      padding: 32px;
-    }
-
-    .modal-section {
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #f0f0f0;
-    }
-
-    .modal-section:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-    }
-
-    .modal-section-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .modal-detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .modal-detail-item {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .modal-detail-label {
-      font-size: 12px;
-      color: #666;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .modal-detail-value {
-      font-size: 14px;
-      color: #333;
-      font-weight: 500;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 1024px) {
-      .main-content {
-        padding: 16px 12px;
-      }
-
-      .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 16px;
-      }
-
-      .transaction-details {
-        grid-template-columns: 1fr;
-        gap: 8px;
-      }
-
-      .modal-detail-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .header-content {
-        flex-direction: column;
-        gap: 16px;
-        text-align: center;
-      }
-
-      .header-left {
-        justify-content: center;
-      }
-
-      .app-title {
-        font-size: 20px;
-      }
-
-      .business-profile-card {
-        padding: 24px 16px;
-      }
-
-      .business-name {
-        font-size: 24px;
-      }
-
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .modal-content {
-        margin: 10px;
-        max-height: 95vh;
-      }
-
-      .modal-header {
-        padding: 20px 24px;
-      }
-
-      .modal-body {
-        padding: 24px;
-      }
-    }
-
-    .fade-in {
-      animation: fadeIn 0.6s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Quick Action Buttons */
-    .profile-quick-actions {
-      margin-top: 15px;
-      display: flex;
-      gap: 10px;
-    }
-
-    .quick-action-btn {
-      flex: 1;
-      padding: 10px 16px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-      text-align: center;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      border: 2px solid transparent;
-    }
-
-    .quick-action-btn.location-btn {
-      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-      color: #065f46;
-      border-color: rgba(34, 197, 94, 0.2);
-    }
-
-    .quick-action-btn.location-btn:hover {
-      background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-      border-color: #22c55e;
-      color: #064e3b;
-      text-decoration: none;
-      transform: translateY(-1px);
-    }
-
-    .quick-action-btn.dashboard-btn {
-      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-      color: #0c4a6e;
-      border-color: rgba(14, 165, 233, 0.2);
-    }
-
-    .quick-action-btn.dashboard-btn:hover {
-      background: linear-gradient(135deg, #e0f2fe, #bae6fd);
-      border-color: #0ea5e9;
-      color: #0c4a6e;
-      text-decoration: none;
-      transform: translateY(-1px);
-    }
-
-    .quick-action-btn.photos-btn {
-      background: linear-gradient(135deg, #fdf2f8, #fce7f3);
-      color: #be185d;
-      border-color: rgba(236, 72, 153, 0.2);
-    }
-
-    .quick-action-btn.photos-btn:hover {
-      background: linear-gradient(135deg, #fce7f3, #fbcfe8);
-      border-color: #ec4899;
-      color: #be185d;
-      text-decoration: none;
-      transform: translateY(-1px);
-    }
-
-    @media (max-width: 768px) {
-      .profile-quick-actions {
-        flex-direction: column;
-      }
-    }
-  </style>
-
-  <div class="dashboard-container">
-    <!-- Header -->
-    <header class="dashboard-header">
-      <div class="header-content">
-        <div class="header-left">
-          <a href="{{ route('dashboard') }}" class="header-back-btn">
-            ←
-          </a>
-          <div class="header-title-section">
-            <h1 class="app-title">💼 Business Account</h1>
-            <p class="app-subtitle">Manage your account details and view transaction history</p>
-          </div>
+<style>
+.profile-avatar {
+    width: 120px; height: 120px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 4px solid #fff;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    position: relative; overflow: hidden; cursor: pointer;
+    transition: all 0.3s ease;
+}
+.profile-avatar:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.15); }
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.profile-overlay {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7); opacity: 0; transition: opacity 0.3s ease; cursor: pointer;
+}
+.profile-avatar:hover .profile-overlay { opacity: 1; }
+.profile-file-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.rank-badge {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white; border: none;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+.rank-badge.platinum { background: linear-gradient(135deg, #c0c0c0, #a8a8a8); }
+.rank-badge.gold { background: linear-gradient(135deg, #ffd700, #ffb300); }
+.rank-badge.silver { background: linear-gradient(135deg, #c0c0c0, #999999); }
+.rank-badge.bronze { background: linear-gradient(135deg, #cd7f32, #a0522d); }
+.progress-bar-fill { background: linear-gradient(90deg, #667eea, #764ba2) !important; }
+.stat-card {
+    border: 1px solid #e8ecf4;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+}
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    border-color: #667eea;
+}
+.transaction-card { cursor: pointer; transition: all 0.3s ease; border: 1px solid #e8ecf4; }
+.transaction-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    border-color: #667eea;
+}
+.btn-gradient {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none; color: white;
+    transition: all 0.3s ease;
+}
+.btn-gradient:hover {
+    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+.card-premium {
+    border: 1px solid #e8ecf4;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+}
+.fade-in { animation: fadeIn 0.6s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.modal-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.3s ease; backdrop-filter: blur(4px); }
+.modal-backdrop.active { opacity: 1; visibility: visible; }
+.modal-content { transform: scale(0.9); transition: transform 0.3s ease; }
+.modal-backdrop.active .modal-content { transform: scale(1); }
+.text-gradient { background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+</style>
+
+<main class="container-fluid px-3 px-lg-5 py-4">
+    <!-- Alerts -->
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show fade-in border-0 shadow-sm">
+            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        <a href="{{ route('dashboard') }}" class="back-button">
-          ← Back to Dashboard
-        </a>
-      </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="main-content">
-      <!-- Alerts -->
-      @if (session('success'))
-        <div class="alert alert-success fade-in">
-          ✅ {{ session('success') }}
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show fade-in border-0 shadow-sm">
+            <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-      @endif
+    @endif
 
-      @if (session('error'))
-        <div class="alert alert-error fade-in">
-          ❌ {{ session('error') }}
-        </div>
-      @endif
-
-      <!-- Business Profile Card -->
-      <div class="business-profile-card fade-in">
-        <!-- Debug info - remove this in production -->
-        {{-- Debug: photo_url = {{ $seller->photo_url ?? 'null' }} --}}
-        {{-- Debug: file_exists = {{ $seller->photo_url ? (file_exists(public_path($seller->photo_url)) ? 'true' : 'false') : 'no_url' }} --}}
-        {{-- Debug: business_name = {{ $seller->business_name ?? 'null' }} --}}
-
-        <div class="profile-picture-input-wrapper">
-          <div class="profile-avatar" style="position: relative;">
-            @if($seller->photo_url)
-              <img src="{{ asset($seller->photo_url) }}" alt="Profile" id="profileImage" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-            @else
-              <span id="profileInitials" style="font-size: 36px; font-weight: bold; text-transform: uppercase; color: white;">
-                {{ strtoupper(substr($seller->business_name ?? 'NA', 0, 2)) }}
-              </span>
-            @endif
-            <div class="profile-overlay" onclick="document.getElementById('profilePictureInput').click();">
-              <div class="overlay-content">
-                <div class="overlay-icon">📷</div>
-                <div class="overlay-text">Change Photo</div>
-              </div>
+    <!-- Business Profile Card -->
+    <div class="card card-premium border-0 mb-4 fade-in">
+        <div class="card-body p-5 text-center">
+            <div class="d-flex justify-content-center mb-4">
+                <div class="profile-avatar rounded-circle d-flex align-items-center justify-content-center">
+                    @if ($seller->photo_url)
+                        <img src="{{ asset($seller->photo_url) }}" alt="Profile" id="profileImage" class="rounded-circle">
+                    @else
+                        <span id="profileInitials" class="fs-1 fw-bold text-white">{{ strtoupper(substr($seller->business_name ?? 'NA', 0, 2)) }}</span>
+                    @endif
+                    <div class="profile-overlay rounded-circle d-flex align-items-center justify-content-center" onclick="document.getElementById('profilePictureInput').click();">
+                        <div class="text-white text-center">
+                            <i class="fas fa-camera fs-4 mb-2"></i>
+                            <div class="small fw-semibold">Change Photo</div>
+                        </div>
+                    </div>
+                    <input type="file" id="profilePictureInput" name="image" class="profile-file-input" accept="image/*" onchange="previewAndSubmitImage(this)" form="profilePhotoForm">
+                </div>
             </div>
-            <input type="file" id="profilePictureInput" name="image" class="profile-file-input" accept="image/*" onchange="previewAndSubmitImage(this)" form="profilePhotoForm">
-          </div>
-        </div>
 
-        <div class="upload-instructions">
-          <span>📤</span>
-          <span>Click on the avatar to upload a profile picture (JPG, PNG, max 5MB)</span>
-        </div>
+            <div class="d-flex align-items-center justify-content-center mb-4 text-muted">
+                <i class="fas fa-upload me-2"></i>
+                <span>Click on the avatar to upload a profile picture (JPG, PNG, max 5MB)</span>
+            </div>
 
-        <form id="profilePhotoForm" action="{{ route('seller.photo.update') }}" method="POST" enctype="multipart/form-data" style="display: none;">
-          @csrf
-          {{-- We'll use the same input that's in the avatar --}}
-        </form>
+            <form id="profilePhotoForm" action="{{ route('seller.photo.update') }}" method="POST" enctype="multipart/form-data" class="d-none">@csrf</form>
 
-        <div class="profile-info-section">
-          <h2 class="business-name">{{ $seller->business_name }}</h2>
-          <p class="business-email">{{ $seller->email }}</p>
+            <h1 class="h2 fw-bold mb-2 text-gradient">{{ $seller->business_name }}</h1>
+            <p class="text-muted mb-4 fs-5">{{ $seller->email }}</p>
 
-          <!-- Edit Profile Button -->
-          <button type="button" class="edit-profile-btn" onclick="toggleProfileEdit()">
-            ✏️ Edit Profile
-          </button>
-
-          <!-- Quick Actions -->
-          <div class="profile-quick-actions" style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-            <a href="{{ route('location.show') }}" class="quick-action-btn location-btn">
-              📍 Shop Location
-            </a>
-            <a href="{{ route('seller.photos') }}" class="quick-action-btn photos-btn">
-              📸 Photo Gallery
-            </a>
-            <a href="{{ route('dashboard') }}" class="quick-action-btn dashboard-btn">
-              🏠 Dashboard
-            </a>
-          </div>
-
-          <!-- Edit Profile Form (initially hidden) -->
-          <div id="profile-edit-form" style="display: none; margin-top: 20px;">
-            <form action="{{ route('seller.profile.update') }}" method="POST">
-              @csrf
-              @method('PUT')
-
-              <div class="form-group">
-                <label for="business_name">Business Name:</label>
-                <input type="text" id="business_name" name="business_name" value="{{ $seller->business_name }}" required>
-              </div>
-
-              <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" value="{{ $seller->email }}" required>
-              </div>
-
-              <div class="form-group">
-                <label for="phone">Phone:</label>
-                <input type="text" id="phone" name="phone" value="{{ $seller->phone }}">
-              </div>
-
-              <div class="form-group">
-                <label for="address">Address:</label>
-                <textarea id="address" name="address" rows="3">{{ $seller->address }}</textarea>
-              </div>
-
-              <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-                <button type="button" class="btn btn-secondary" onclick="toggleProfileEdit()">Cancel</button>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <div class="rank-badge-container">
-          <div class="rank-badge {{ strtolower($currentRank->name) }}">
-            <span class="rank-icon">
-              @switch($currentRank->name)
-                @case('Platinum')
-                  💎
-                @break
-
-                @case('Gold')
-                  🏆
-                @break
-
-                @case('Silver')
-                  🥈
-                @break
-
-                @case('Bronze')
-                  🥉
-                @break
-
-                @default
-                  ⭐
-              @endswitch
-            </span>
-            <span class="rank-name">{{ $currentRank->name }} Seller</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Stats Grid -->
-      <div class="stats-grid fade-in">
-        <div class="stat-card">
-          <span class="stat-icon">🏆</span>
-          <div class="stat-value">{{ number_format($totalRankPoints) }}</div>
-          <div class="stat-label">Total Rank Points</div>
-        </div>
-        <div class="stat-card">
-          <span class="stat-icon">📤</span>
-          <div class="stat-value">{{ number_format($pointsGiven) }}</div>
-          <div class="stat-label">Points Given</div>
-        </div>
-        <div class="stat-card">
-          <span class="stat-icon">📥</span>
-          <div class="stat-value">{{ number_format($pointsFromRedemptions) }}</div>
-          <div class="stat-label">From Redemptions</div>
-        </div>
-        <div class="stat-card">
-          <span class="stat-icon">👥</span>
-          <div class="stat-value">{{ number_format($totalCustomers) }}</div>
-          <div class="stat-label">Total Customers</div>
-        </div>
-      </div>
-
-      <!-- Rank Progress -->
-      @if ($nextRank)
-        <div class="rank-progress-card fade-in">
-          <h3 class="rank-progress-title">🎯 Progress to {{ $nextRank->name }}</h3>
-          <div class="rank-progress-info">
-            <span class="current-rank">{{ $currentRank->name }}</span>
-            <span class="next-rank">{{ $nextRank->name }}</span>
-          </div>
-          <div class="progress-bar-container">
-            <div class="progress-bar-fill"
-              style="width: {{ min(100, (($totalRankPoints - $currentRank->min_points) / ($nextRank->min_points - $currentRank->min_points)) * 100) }}%"></div>
-          </div>
-          <div class="points-needed">{{ number_format($pointsToNext) }} points needed to reach {{ $nextRank->name }}</div>
-        </div>
-      @endif
-
-      <!-- Transaction History -->
-      <div class="transaction-history-card fade-in">
-        <div class="section-header">
-          <h3 class="section-title">
-            📊 Transaction History
-          </h3>
-          <div style="display: flex; gap: 12px; align-items: center;">
-            <button class="export-btn" onclick="exportTransactions()">
-              📊 Export CSV
+            <button type="button" class="btn btn-outline-primary me-3 mb-3" onclick="toggleProfileEdit()">
+                <i class="fas fa-edit me-2"></i>Edit Profile
             </button>
-            <select class="filter-select" onchange="filterTransactions(this.value)">
-              <option value="all" {{ $filter == 'all' ? 'selected' : '' }}>All Transactions</option>
-              <option value="earn" {{ $filter == 'earn' ? 'selected' : '' }}>Points Given</option>
-              <option value="spend" {{ $filter == 'spend' ? 'selected' : '' }}>Redemptions</option>
-            </select>
-          </div>
+
+            <!-- Quick Actions -->
+            <div class="row g-3 mb-4 mt-3">
+                <div class="col-12 col-md-4">
+                    <a href="{{ route('location.show') }}" class="btn btn-success w-100 py-3">
+                        <i class="fas fa-map-marker-alt me-2"></i>Shop Location
+                    </a>
+                </div>
+                <div class="col-12 col-md-4">
+                    <a href="{{ route('seller.photos') }}" class="btn btn-warning w-100 py-3">
+                        <i class="fas fa-images me-2"></i>Photo Gallery
+                    </a>
+                </div>
+                <div class="col-12 col-md-4">
+                    <a href="{{ route('dashboard') }}" class="btn btn-info w-100 py-3">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Edit Profile Form -->
+            <div id="profile-edit-form" class="d-none mt-4">
+                <div class="bg-light p-4 rounded-3 border">
+                    <form action="{{ route('seller.profile.update') }}" method="POST">
+                        @csrf @method('PUT')
+                        <div class="row g-4">
+                            <div class="col-12 col-md-6">
+                                <label for="business_name" class="form-label fw-semibold">Business Name</label>
+                                <input type="text" class="form-control form-control-lg" id="business_name" name="business_name" value="{{ $seller->business_name }}" required>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="email" class="form-label fw-semibold">Email</label>
+                                <input type="email" class="form-control form-control-lg" id="email" name="email" value="{{ $seller->email }}" required>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="phone" class="form-label fw-semibold">Phone</label>
+                                <input type="text" class="form-control form-control-lg" id="phone" name="phone" value="{{ $seller->phone }}">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="address" class="form-label fw-semibold">Address</label>
+                                <textarea class="form-control form-control-lg" id="address" name="address" rows="3">{{ $seller->address }}</textarea>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="btn btn-gradient px-4 py-2">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary px-4 py-2" onclick="toggleProfileEdit()">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Rank Badge -->
+            <div class="d-flex justify-content-center mt-4">
+                <div class="rank-badge badge fs-5 fw-semibold px-4 py-3 rounded-pill d-flex align-items-center gap-2 {{ strtolower($currentRank->name) }}">
+                    <span class="fs-4">
+                        @switch($currentRank->name)
+                            @case('Platinum') 💎 @break
+                            @case('Gold') 🏆 @break
+                            @case('Silver') 🥈 @break
+                            @case('Bronze') 🥉 @break
+                            @default ⭐
+                        @endswitch
+                    </span>
+                    <span>{{ $currentRank->name }} Seller</span>
+                </div>
+            </div>
         </div>
-
-        @forelse($transactions as $transaction)
-          <div class="transaction-card {{ $transaction->type }}" onclick="showTransactionModal({{ json_encode($transaction) }})">
-            <div class="transaction-header">
-              <div class="transaction-type {{ $transaction->type }}">
-                @if ($transaction->type === 'earn')
-                  @if ($transaction->receipt_code)
-                    🧾 Receipt Transaction
-                  @else
-                    📤 Points Given
-                  @endif
-                @else
-                  📥 Points Redeemed
-                @endif
-              </div>
-              <div class="transaction-points {{ $transaction->type }}">
-                @if ($transaction->type === 'earn')
-                  -{{ number_format($transaction->points) }}
-                @else
-                  +{{ number_format($transaction->points) }}
-                @endif
-              </div>
-            </div>
-
-            <div class="transaction-details">
-              <div class="detail-item">
-                <span class="detail-icon">👤</span>
-                <span>{{ $transaction->consumer_name ?? 'Customer #' . $transaction->consumer_id }}</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-icon">📦</span>
-                <span>
-                  @if ($transaction->item_name)
-                    {{ $transaction->item_name }}
-                  @elseif(isset($transaction->extracted_items))
-                    {{ $transaction->extracted_items }}
-                  @elseif($transaction->description && str_contains($transaction->description, 'Purchased:'))
-                    @php
-                      // Extract items from description like "Purchased: Coffee, Food Container from..."
-                      $desc = $transaction->description;
-                      if (preg_match('/Purchased:\s*([^f]+?)\s+from/i', $desc, $matches)) {
-                          $items = trim($matches[1]);
-                          echo strlen($items) > 30 ? substr($items, 0, 30) . '...' : $items;
-                      } else {
-                          echo 'Receipt Items';
-                      }
-                    @endphp
-                  @elseif($transaction->receipt_code)
-                    Receipt #{{ $transaction->receipt_code }}
-                  @elseif($transaction->qr_code_id)
-                    Item #{{ $transaction->qr_code_id }}
-                  @else
-                    Direct Transaction
-                  @endif
-                </span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-icon">🔢</span>
-                <span>{{ $transaction->units_scanned ?? 1 }} units scanned</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-icon">⚡</span>
-                <span>
-                  @if ($transaction->points_per_unit)
-                    {{ $transaction->points_per_unit }} pts/unit
-                  @else
-                    {{ number_format($transaction->points / ($transaction->units_scanned ?? 1), 1) }} pts/unit
-                  @endif
-                </span>
-              </div>
-            </div>
-
-            <div class="transaction-meta">
-              <span class="transaction-id">ID: {{ str_pad($transaction->id, 6, '0', STR_PAD_LEFT) }}</span>
-              <span>{{ \Carbon\Carbon::parse($transaction->scanned_at ?? $transaction->created_at)->format('M d, Y • h:i A') }}</span>
-            </div>
-          </div>
-        @empty
-          <div class="empty-state">
-            <div class="empty-icon">📊</div>
-            <h3 class="empty-title">No transactions yet</h3>
-            <p class="empty-text">Start scanning customer QR codes to see your transaction history and earn rank points!</p>
-            <a href="{{ route('seller.scanner') }}" class="empty-action">
-              📱 Open QR Scanner
-            </a>
-          </div>
-        @endforelse
-
-        @if ($transactions->count() > 0)
-          <div class="pagination-container">
-            <div class="pagination-info">
-              Showing {{ $transactions->count() }} of {{ $transactions->total() }} transactions
-            </div>
-            @if ($transactions->hasMorePages())
-              <a href="{{ $transactions->nextPageUrl() }}" class="load-more">
-                Load More →
-              </a>
-            @endif
-          </div>
-        @endif
-      </div>
-    </main>
-  </div>
-
-  <!-- Transaction Detail Modal -->
-  <div id="transactionModal" class="transaction-modal" onclick="closeTransactionModal(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-      <div class="modal-header">
-        <h3 class="modal-title">📧 Transaction Details</h3>
-        <button class="modal-close" onclick="closeTransactionModal()">×</button>
-      </div>
-
-      <div class="modal-body">
-        <!-- Transaction Summary -->
-        <div class="modal-section">
-          <h4 class="modal-section-title">💳 Transaction Summary</h4>
-          <div class="modal-detail-grid">
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Transaction ID</span>
-              <span class="modal-detail-value" id="modalTransactionId">-</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Type</span>
-              <span class="modal-detail-value" id="modalTransactionType">-</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Points</span>
-              <span class="modal-detail-value" id="modalPoints">-</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Date & Time</span>
-              <span class="modal-detail-value" id="modalDateTime">-</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Customer Information -->
-        <div class="modal-section">
-          <h4 class="modal-section-title">👤 Customer Information</h4>
-          <div class="modal-detail-grid">
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Customer Name</span>
-              <span class="modal-detail-value" id="modalCustomerName">-</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Customer ID</span>
-              <span class="modal-detail-value" id="modalCustomerId">-</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Item Details -->
-        <div class="modal-section">
-          <h4 class="modal-section-title">📦 Item Details</h4>
-          <div class="modal-detail-grid">
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Item Name</span>
-              <span class="modal-detail-value" id="modalItemName">-</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Quantity Scanned</span>
-              <span class="modal-detail-value" id="modalUnitsScanned">-</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Points Per Unit</span>
-              <span class="modal-detail-value" id="modalPointsPerUnit">-</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Total Points</span>
-              <span class="modal-detail-value" id="modalTotalPoints">-</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">QR Code ID</span>
-              <span class="modal-detail-value" id="modalQRCodeId">-</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Receipt Code</span>
-              <span class="modal-detail-value" id="modalReceiptCode">-</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Transaction Source</span>
-              <span class="modal-detail-value" id="modalTransactionSource">-</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Transaction Description</span>
-              <span class="modal-detail-value" id="modalDescription">-</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Impact Information -->
-        <div class="modal-section">
-          <h4 class="modal-section-title">🏆 Business Impact</h4>
-          <div class="modal-detail-grid">
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Rank Points Impact</span>
-              <span class="modal-detail-value" id="modalRankImpact">-</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Current Total Points</span>
-              <span class="modal-detail-value">{{ number_format($totalRankPoints) }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <script>
-    // Show transaction modal
-    function showTransactionModal(transaction) {
-      // Debug: Log the transaction data to see what we're getting
-      console.log('Transaction data:', transaction);
-      console.log('QR Code ID:', transaction.qr_code_id);
-      console.log('Receipt Code:', transaction.receipt_code);
-      console.log('Description:', transaction.description);
+    <!-- Stats Grid -->
+    <div class="row g-4 mb-5 fade-in">
+        <div class="col-6 col-lg-3">
+            <div class="card stat-card border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="text-primary mb-3" style="font-size: 3rem;">🏆</div>
+                    <div class="h2 text-primary fw-bold mb-2">{{ number_format($totalRankPoints) }}</div>
+                    <div class="text-muted fw-semibold">Total Rank Points</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card stat-card border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="text-success mb-3" style="font-size: 3rem;">📤</div>
+                    <div class="h2 text-success fw-bold mb-2">{{ number_format($pointsGiven) }}</div>
+                    <div class="text-muted fw-semibold">Points Given</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card stat-card border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="text-info mb-3" style="font-size: 3rem;">📥</div>
+                    <div class="h2 text-info fw-bold mb-2">{{ number_format($pointsFromRedemptions) }}</div>
+                    <div class="text-muted fw-semibold">From Redemptions</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card stat-card border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="text-warning mb-3" style="font-size: 3rem;">👥</div>
+                    <div class="h2 text-warning fw-bold mb-2">{{ number_format($totalCustomers) }}</div>
+                    <div class="text-muted fw-semibold">Total Customers</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-      // Populate modal fields
-      document.getElementById('modalTransactionId').textContent = '#' + String(transaction.id).padStart(6, '0');
+    <!-- Rank Progress -->
+    @if ($nextRank)
+        <div class="card card-premium border-0 mb-5 fade-in">
+            <div class="card-body p-5">
+                <h3 class="h4 fw-bold text-center mb-4 text-gradient">
+                    <i class="fas fa-target me-2"></i>Progress to {{ $nextRank->name }}
+                </h3>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <span class="badge bg-primary fs-6 px-3 py-2">{{ $currentRank->name }}</span>
+                    <span class="badge bg-secondary fs-6 px-3 py-2">{{ $nextRank->name }}</span>
+                </div>
+                <div class="progress mb-3" style="height: 16px;">
+                    <div class="progress-bar progress-bar-fill" style="width: {{ min(100, (($totalRankPoints - $currentRank->min_points) / ($nextRank->min_points - $currentRank->min_points)) * 100) }}%"></div>
+                </div>
+                <div class="text-center text-muted fw-semibold">{{ number_format($pointsToNext) }} points needed to reach {{ $nextRank->name }}</div>
+            </div>
+        </div>
+    @endif
 
-      // Determine transaction type display
-      let transactionType = 'Points Given';
-      if (transaction.type === 'earn') {
-        if (transaction.receipt_code) {
-          transactionType = 'Receipt Transaction';
-        } else {
-          transactionType = 'Points Given';
-        }
-      } else {
-        transactionType = 'Points Redeemed';
-      }
-      document.getElementById('modalTransactionType').textContent = transactionType;
-      document.getElementById('modalPoints').textContent = (transaction.type === 'earn' ? '-' : '+') + transaction.points + ' points';
-      document.getElementById('modalDateTime').textContent = new Date(transaction.scanned_at || transaction.created_at).toLocaleString();
+    <!-- Transaction History -->
+    <div class="card card-premium border-0 fade-in">
+        <div class="card-header bg-white border-0 p-4">
+            <div class="row align-items-center">
+                <div class="col-12 col-md-6">
+                    <h3 class="h4 fw-bold mb-0 text-gradient">
+                        <i class="fas fa-chart-line me-2"></i>Transaction History
+                    </h3>
+                </div>
+                <div class="col-12 col-md-6 mt-3 mt-md-0">
+                    <div class="d-flex gap-3 justify-content-md-end">
+                        <button class="btn btn-outline-secondary" onclick="exportTransactions()">
+                            <i class="fas fa-download me-2"></i>Export CSV
+                        </button>
+                        <select class="form-select" style="width: 200px;" onchange="filterTransactions(this.value)">
+                            <option value="all" {{ $filter == 'all' ? 'selected' : '' }}>All Transactions</option>
+                            <option value="earn" {{ $filter == 'earn' ? 'selected' : '' }}>Points Given</option>
+                            <option value="spend" {{ $filter == 'spend' ? 'selected' : '' }}>Redemptions</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      document.getElementById('modalCustomerName').textContent = transaction.consumer_name || 'Customer #' + transaction.consumer_id;
-      document.getElementById('modalCustomerId').textContent = '#' + String(transaction.consumer_id).padStart(6, '0');
+        <div class="card-body p-4">
+            @forelse($transactions as $transaction)
+                <div class="transaction-card card mb-4" onclick="showTransactionModal({{ json_encode($transaction) }})">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center fw-bold fs-5">
+                                @if ($transaction->type === 'earn')
+                                    @if ($transaction->receipt_code)
+                                        <i class="fas fa-receipt text-primary me-3"></i>Receipt Transaction
+                                    @else
+                                        <i class="fas fa-share text-primary me-3"></i>Points Given
+                                    @endif
+                                @else
+                                    <i class="fas fa-download text-success me-3"></i>Points Redeemed
+                                @endif
+                            </div>
+                            <div class="h4 fw-bold {{ $transaction->type === 'earn' ? 'text-danger' : 'text-success' }} mb-0">
+                                {{ $transaction->type === 'earn' ? '-' : '+' }}{{ number_format($transaction->points) }}
+                            </div>
+                        </div>
 
-      // Handle item information with better fallbacks
-      let itemName = 'Direct Transaction';
-      if (transaction.item_name) {
+                        <div class="row g-3 text-muted mb-3">
+                            <div class="col-12 col-md-6">
+                                <i class="fas fa-user me-2"></i>
+                                <strong>{{ $transaction->consumer_name ?? 'Customer #' . $transaction->consumer_id }}</strong>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <i class="fas fa-box me-2"></i>
+                                @if ($transaction->item_name)
+                                    {{ $transaction->item_name }}
+                                @elseif(isset($transaction->extracted_items))
+                                    {{ $transaction->extracted_items }}
+                                @elseif($transaction->description && str_contains($transaction->description, 'Purchased:'))
+                                    @php
+                                        $desc = $transaction->description;
+                                        if (preg_match('/Purchased:\s*([^f]+?)\s+from/i', $desc, $matches)) {
+                                            $items = trim($matches[1]);
+                                            echo strlen($items) > 30 ? substr($items, 0, 30) . '...' : $items;
+                                        } else {
+                                            echo 'Receipt Items';
+                                        }
+                                    @endphp
+                                @elseif($transaction->receipt_code)
+                                    Receipt #{{ $transaction->receipt_code }}
+                                @elseif($transaction->qr_code_id)
+                                    Item #{{ $transaction->qr_code_id }}
+                                @else
+                                    Direct Transaction
+                                @endif
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <i class="fas fa-sort-numeric-up me-2"></i>{{ $transaction->units_scanned ?? 1 }} units scanned
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <i class="fas fa-bolt me-2"></i>
+                                @if ($transaction->points_per_unit)
+                                    {{ $transaction->points_per_unit }} pts/unit
+                                @else
+                                    {{ number_format($transaction->points / ($transaction->units_scanned ?? 1), 1) }} pts/unit
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <span class="badge bg-light text-dark">ID: {{ str_pad($transaction->id, 6, '0', STR_PAD_LEFT) }}</span>
+                            <span class="text-muted">{{ \Carbon\Carbon::parse($transaction->scanned_at ?? $transaction->created_at)->format('M d, Y • h:i A') }}</span>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="text-center py-5">
+                    <div class="display-1 mb-4 opacity-50">📊</div>
+                    <h3 class="h4 fw-bold mb-3">No transactions yet</h3>
+                    <p class="text-muted mb-4 fs-5">Start scanning customer QR codes to see your transaction history and earn rank points!</p>
+                    <a href="{{ route('seller.scanner') }}" class="btn btn-gradient btn-lg px-5 py-3">
+                        <i class="fas fa-qrcode me-2"></i>Open QR Scanner
+                    </a>
+                </div>
+            @endforelse
+
+            @if ($transactions->count() > 0)
+                <div class="d-flex justify-content-between align-items-center pt-4 border-top">
+                    <div class="text-muted">Showing {{ $transactions->count() }} of {{ $transactions->total() }} transactions</div>
+                    @if ($transactions->hasMorePages())
+                        <a href="{{ $transactions->nextPageUrl() }}" class="btn btn-outline-primary">
+                            Load More <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    @endif
+                </div>
+            @endif
+        </div>
+    </div>
+</main>
+
+<!-- Transaction Detail Modal -->
+<div id="transactionModal" class="modal-backdrop d-flex align-items-center justify-content-center p-4" onclick="closeTransactionModal(event)">
+    <div class="modal-content bg-white rounded-4 shadow-lg border-0" style="max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto;" onclick="event.stopPropagation()">
+        <div class="text-white p-4 rounded-top-4 d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+            <h3 class="h4 mb-0 fw-bold"><i class="fas fa-receipt me-2"></i>Transaction Details</h3>
+            <button class="btn btn-link text-white p-0 fs-3" onclick="closeTransactionModal()" style="text-decoration: none;">&times;</button>
+        </div>
+
+        <div class="p-5">
+            <!-- Transaction Summary -->
+            <div class="mb-5 pb-4 border-bottom">
+                <h4 class="h5 fw-bold mb-4 text-gradient"><i class="fas fa-credit-card me-2"></i>Transaction Summary</h4>
+                <div class="row g-4">
+                    <div class="col-6 col-md-3">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Transaction ID</div>
+                        <div class="fw-bold" id="modalTransactionId">-</div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Type</div>
+                        <div class="fw-bold" id="modalTransactionType">-</div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Points</div>
+                        <div class="fw-bold" id="modalPoints">-</div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Date & Time</div>
+                        <div class="fw-bold" id="modalDateTime">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Information -->
+            <div class="mb-5 pb-4 border-bottom">
+                <h4 class="h5 fw-bold mb-4 text-gradient"><i class="fas fa-user me-2"></i>Customer Information</h4>
+                <div class="row g-4">
+                    <div class="col-6">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Customer Name</div>
+                        <div class="fw-bold" id="modalCustomerName">-</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Customer ID</div>
+                        <div class="fw-bold" id="modalCustomerId">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item Details -->
+            <div class="mb-5 pb-4 border-bottom">
+                <h4 class="h5 fw-bold mb-4 text-gradient"><i class="fas fa-box me-2"></i>Item Details</h4>
+                <div class="row g-4">
+                    <div class="col-6">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Item Name</div>
+                        <div class="fw-bold" id="modalItemName">-</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Quantity Scanned</div>
+                        <div class="fw-bold" id="modalUnitsScanned">-</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Points Per Unit</div>
+                        <div class="fw-bold" id="modalPointsPerUnit">-</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Total Points</div>
+                        <div class="fw-bold" id="modalTotalPoints">-</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">QR Code ID</div>
+                        <div class="fw-bold" id="modalQRCodeId">-</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Receipt Code</div>
+                        <div class="fw-bold" id="modalReceiptCode">-</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Transaction Source</div>
+                        <div class="fw-bold" id="modalTransactionSource">-</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Description</div>
+                        <div class="fw-bold" id="modalDescription">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Impact Information -->
+            <div class="mb-0">
+                <h4 class="h5 fw-bold mb-4 text-gradient"><i class="fas fa-trophy me-2"></i>Business Impact</h4>
+                <div class="row g-4">
+                    <div class="col-6">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Rank Points Impact</div>
+                        <div class="fw-bold" id="modalRankImpact">-</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Current Total Points</div>
+                        <div class="fw-bold">{{ number_format($totalRankPoints) }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showTransactionModal(transaction) {
+    document.getElementById('modalTransactionId').textContent = '#' + String(transaction.id).padStart(6, '0');
+
+    let transactionType = transaction.type === 'earn' ? (transaction.receipt_code ? 'Receipt Transaction' : 'Points Given') : 'Points Redeemed';
+    document.getElementById('modalTransactionType').textContent = transactionType;
+    document.getElementById('modalPoints').textContent = (transaction.type === 'earn' ? '-' : '+') + transaction.points + ' points';
+    document.getElementById('modalDateTime').textContent = new Date(transaction.scanned_at || transaction.created_at).toLocaleString();
+
+    document.getElementById('modalCustomerName').textContent = transaction.consumer_name || 'Customer #' + transaction.consumer_id;
+    document.getElementById('modalCustomerId').textContent = '#' + String(transaction.consumer_id).padStart(6, '0');
+
+    let itemName = 'Direct Transaction';
+    if (transaction.item_name) {
         itemName = transaction.item_name;
-      } else if (transaction.extracted_items) {
-        // Use pre-extracted items from controller
+    } else if (transaction.extracted_items) {
         itemName = transaction.extracted_items;
-      } else if (transaction.description && transaction.description.includes('Purchased:')) {
-        // Extract items from description like "Purchased: Coffee, Food Container from..."
+    } else if (transaction.description && transaction.description.includes('Purchased:')) {
         const match = transaction.description.match(/Purchased:\s*([^f]+?)\s+from/i);
-        if (match && match[1]) {
-          itemName = match[1].trim();
-        } else {
-          itemName = 'Receipt Items';
-        }
-      } else if (transaction.receipt_code) {
+        itemName = match && match[1] ? match[1].trim() : 'Receipt Items';
+    } else if (transaction.receipt_code) {
         itemName = 'Receipt #' + transaction.receipt_code;
-      } else if (transaction.qr_code_id) {
+    } else if (transaction.qr_code_id) {
         itemName = 'Item #' + transaction.qr_code_id;
-      }
-      document.getElementById('modalItemName').textContent = itemName;
+    }
+    document.getElementById('modalItemName').textContent = itemName;
 
-      // Show quantity with clear labeling
-      const quantity = transaction.units_scanned || 1;
-      document.getElementById('modalUnitsScanned').textContent = quantity + ' unit' + (quantity > 1 ? 's' : '');
+    const quantity = transaction.units_scanned || 1;
+    document.getElementById('modalUnitsScanned').textContent = quantity + ' unit' + (quantity > 1 ? 's' : '');
 
-      // Calculate and show points per unit
-      let pointsPerUnit = 0;
-      if (transaction.points_per_unit) {
-        pointsPerUnit = transaction.points_per_unit;
-      } else if (transaction.points && quantity) {
-        pointsPerUnit = Math.round((transaction.points / quantity) * 10) / 10; // Round to 1 decimal
-      }
-      document.getElementById('modalPointsPerUnit').textContent = pointsPerUnit + ' points/unit';
+    let pointsPerUnit = transaction.points_per_unit || (transaction.points && quantity ? Math.round((transaction.points / quantity) * 10) / 10 : 0);
+    document.getElementById('modalPointsPerUnit').textContent = pointsPerUnit + ' points/unit';
+    document.getElementById('modalTotalPoints').textContent = transaction.points + ' points';
+    document.getElementById('modalQRCodeId').textContent = transaction.qr_code_id ? '#' + transaction.qr_code_id : 'N/A';
 
-      document.getElementById('modalTotalPoints').textContent = transaction.points + ' points';
-      document.getElementById('modalQRCodeId').textContent = transaction.qr_code_id ? '#' + transaction.qr_code_id : 'N/A';
-
-      // Handle receipt code with better fallback
-      let receiptCode = 'N/A';
-      let transactionSource = 'Unknown';
-
-      if (transaction.receipt_code) {
+    let receiptCode = 'N/A', transactionSource = 'Unknown';
+    if (transaction.receipt_code) {
         receiptCode = transaction.receipt_code;
         transactionSource = 'Receipt System';
-      } else if (transaction.qr_code_id) {
+    } else if (transaction.qr_code_id) {
         transactionSource = 'QR Code Scan';
-      } else if (transaction.description && transaction.description.includes('from ')) {
-        // Generate a pseudo receipt code from description for old transactions
+    } else if (transaction.description && transaction.description.includes('from ')) {
         const match = transaction.description.match(/from\s+(.+?)$/i);
         if (match) {
-          const location = match[1].trim();
-          receiptCode = 'LEGACY_' + String(transaction.id).padStart(6, '0');
-          transactionSource = 'Legacy Transaction (' + location + ')';
+            receiptCode = 'LEGACY_' + String(transaction.id).padStart(6, '0');
+            transactionSource = 'Legacy Transaction (' + match[1].trim() + ')';
         } else {
-          transactionSource = 'Legacy Direct Entry';
+            transactionSource = 'Legacy Direct Entry';
         }
-      } else {
+    } else {
         transactionSource = 'Direct Entry';
-      }
-
-      document.getElementById('modalReceiptCode').textContent = receiptCode;
-      document.getElementById('modalTransactionSource').textContent = transactionSource;
-
-      document.getElementById('modalDescription').textContent = transaction.description || 'No description available';
-
-      document.getElementById('modalRankImpact').textContent = '+' + transaction.points + ' points';
-
-      // Show modal
-      document.getElementById('transactionModal').classList.add('active');
-      document.body.style.overflow = 'hidden';
     }
 
-    // Close transaction modal
-    function closeTransactionModal(event) {
-      if (!event || event.target === document.getElementById('transactionModal')) {
+    document.getElementById('modalReceiptCode').textContent = receiptCode;
+    document.getElementById('modalTransactionSource').textContent = transactionSource;
+    document.getElementById('modalDescription').textContent = transaction.description || 'No description available';
+    document.getElementById('modalRankImpact').textContent = '+' + transaction.points + ' points';
+
+    document.getElementById('transactionModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeTransactionModal(event) {
+    if (!event || event.target === document.getElementById('transactionModal')) {
         document.getElementById('transactionModal').classList.remove('active');
         document.body.style.overflow = 'auto';
-      }
     }
+}
 
-    // Filter transactions
-    function filterTransactions(type) {
-      const url = new URL(window.location);
-      url.searchParams.set('filter', type);
-      window.location.href = url.toString();
+function filterTransactions(type) {
+    const url = new URL(window.location);
+    url.searchParams.set('filter', type);
+    window.location.href = url.toString();
+}
+
+function exportTransactions() {
+    const url = new URL('{{ route('seller.account.export') }}', window.location.origin);
+    const currentFilter = new URLSearchParams(window.location.search).get('filter');
+    if (currentFilter && currentFilter !== 'all') url.searchParams.set('filter', currentFilter);
+    window.location.href = url.toString();
+}
+
+function toggleProfileEdit() {
+    const editForm = document.getElementById('profile-edit-form');
+    const editBtn = document.querySelector('.btn[onclick="toggleProfileEdit()"]');
+
+    if (editForm.classList.contains('d-none')) {
+        editForm.classList.remove('d-none');
+        editBtn.innerHTML = '<i class="fas fa-times me-2"></i>Cancel Edit';
+        editBtn.className = 'btn btn-outline-secondary me-3 mb-3';
+    } else {
+        editForm.classList.add('d-none');
+        editBtn.innerHTML = '<i class="fas fa-edit me-2"></i>Edit Profile';
+        editBtn.className = 'btn btn-outline-primary me-3 mb-3';
     }
+}
 
-    // Export transactions
-    function exportTransactions() {
-      const url = new URL('{{ route('seller.account.export') }}', window.location.origin);
-
-      // Add current filter if any
-      const currentFilter = new URLSearchParams(window.location.search).get('filter');
-      if (currentFilter && currentFilter !== 'all') {
-        url.searchParams.set('filter', currentFilter);
-      }
-
-      window.location.href = url.toString();
-    }
-
-    // Initialize animations
-    document.addEventListener('DOMContentLoaded', function() {
-      // Add fade-in animation to elements
-      const fadeElements = document.querySelectorAll('.fade-in');
-      fadeElements.forEach((el, index) => {
-        el.style.opacity = '0';
-        setTimeout(() => {
-          el.style.opacity = '1';
-        }, index * 100);
-      });
-
-      // Keyboard shortcuts
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-          closeTransactionModal();
-        }
-      });
-
-      console.log('Account page initialized');
-    });
-
-    // Toggle profile edit form
-    function toggleProfileEdit() {
-      const editForm = document.getElementById('profile-edit-form');
-      const editBtn = document.querySelector('.edit-profile-btn');
-
-      if (editForm.style.display === 'none') {
-        editForm.style.display = 'block';
-        editBtn.textContent = '❌ Cancel Edit';
-      } else {
-        editForm.style.display = 'none';
-        editBtn.textContent = '✏️ Edit Profile';
-      }
-    }
-
-    // Profile image preview and upload
-    function previewAndSubmitImage(input) {
-      if (input.files && input.files[0]) {
+function previewAndSubmitImage(input) {
+    if (input.files && input.files[0]) {
         const file = input.files[0];
 
-        // Validate file size (5MB max)
         if (file.size > 5 * 1024 * 1024) {
-          alert('File size must be less than 5MB');
-          input.value = ''; // Clear the input
-          return;
+            alert('File size must be less than 5MB');
+            input.value = '';
+            return;
         }
 
-        // Validate file type
         if (!file.type.match('image.*')) {
-          alert('Please select a valid image file');
-          input.value = ''; // Clear the input
-          return;
+            alert('Please select a valid image file');
+            input.value = '';
+            return;
         }
 
-        // Preview the image immediately
         const reader = new FileReader();
         reader.onload = function(e) {
-          const profileAvatar = document.querySelector('.profile-avatar');
-          const existingImg = profileAvatar.querySelector('#profileImage');
-          const initials = profileAvatar.querySelector('#profileInitials');
+            const profileAvatar = document.querySelector('.profile-avatar');
+            const existingImg = profileAvatar.querySelector('#profileImage');
+            const initials = profileAvatar.querySelector('#profileInitials');
 
-          if (existingImg) {
-            // Update existing image
-            existingImg.src = e.target.result;
-          } else {
-            // Create new img element
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.alt = 'Profile';
-            img.id = 'profileImage';
-            img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 50%;';
-            profileAvatar.insertBefore(img, profileAvatar.firstChild);
-          }
+            if (existingImg) {
+                existingImg.src = e.target.result;
+            } else {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = 'Profile';
+                img.id = 'profileImage';
+                img.className = 'rounded-circle';
+                profileAvatar.insertBefore(img, profileAvatar.firstChild);
+            }
 
-          // Hide initials if showing
-          if (initials) {
-            initials.style.display = 'none';
-          }
+            if (initials) initials.style.display = 'none';
         };
         reader.readAsDataURL(file);
 
-        // Auto-submit the form after showing preview
         setTimeout(() => {
-          if (confirm('Upload this profile picture?')) {
-            document.getElementById('profilePhotoForm').submit();
-          } else {
-            // Reset if user cancels
-            input.value = '';
-            location.reload();
-          }
+            if (confirm('Upload this profile picture?')) {
+                document.getElementById('profilePhotoForm').submit();
+            } else {
+                input.value = '';
+                location.reload();
+            }
         }, 100);
-      }
     }
-  </script>
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const fadeElements = document.querySelectorAll('.fade-in');
+    fadeElements.forEach((el, index) => {
+        el.style.opacity = '0';
+        setTimeout(() => el.style.opacity = '1', index * 100);
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeTransactionModal();
+    });
+});
+</script>
 
 @endsection

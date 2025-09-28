@@ -3,7 +3,7 @@
 @section('content')
 <div class="receipts-container">
     <!-- Header -->
-    <div class="receipts-header">
+    {{-- <div class="receipts-header">
         <div class="header-content">
             <div class="header-left">
                 <a href="{{ route('dashboard') }}" class="back-button">
@@ -21,7 +21,7 @@
                 Create Receipt
             </a>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Statistics Cards -->
     <div class="stats-grid">
@@ -32,7 +32,7 @@
                 <div class="stat-label">Total Receipts</div>
             </div>
         </div>
-        
+
         <div class="stat-card pending">
             <div class="stat-icon">⏳</div>
             <div class="stat-details">
@@ -40,7 +40,7 @@
                 <div class="stat-label">Pending</div>
             </div>
         </div>
-        
+
         <div class="stat-card claimed">
             <div class="stat-icon">✅</div>
             <div class="stat-details">
@@ -48,7 +48,7 @@
                 <div class="stat-label">Claimed</div>
             </div>
         </div>
-        
+
         <div class="stat-card expired">
             <div class="stat-icon">⌛</div>
             <div class="stat-details">
@@ -87,19 +87,19 @@
 
             <div class="filter-group">
                 <label for="search">Search:</label>
-                <input type="text" name="search" id="search" placeholder="Receipt code..." 
+                <input type="text" name="search" id="search" placeholder="Receipt code..."
                        onchange="this.form.submit()">
             </div>
 
             <div class="filter-group">
                 <label for="date_from">From:</label>
-                <input type="date" name="date_from" id="date_from" 
+                <input type="date" name="date_from" id="date_from"
                        value="{{ $dateFrom }}" onchange="this.form.submit()">
             </div>
 
             <div class="filter-group">
                 <label for="date_to">To:</label>
-                <input type="date" name="date_to" id="date_to" 
+                <input type="date" name="date_to" id="date_to"
                        value="{{ $dateTo }}" onchange="this.form.submit()">
             </div>
 
@@ -867,60 +867,60 @@ body {
     .receipts-header {
         padding: 1rem;
     }
-    
+
     .header-content {
         flex-direction: column;
         gap: 1rem;
         align-items: stretch;
     }
-    
+
     .header-left {
         justify-content: center;
         text-align: center;
     }
-    
+
     .create-receipt-btn {
         justify-content: center;
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr;
         padding: 1rem;
     }
-    
+
     .points-summary {
         grid-template-columns: 1fr;
         padding: 0 1rem 1rem;
     }
-    
+
     .filters-form {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .filter-actions {
         margin-left: 0;
         justify-content: center;
     }
-    
+
     .receipts-section {
         padding: 0 1rem;
     }
-    
+
     .receipt-details {
         grid-template-columns: 1fr;
     }
-    
+
     .receipt-header {
         flex-direction: column;
         gap: 1rem;
         align-items: flex-start;
     }
-    
+
     .receipt-actions {
         align-self: flex-end;
     }
-    
+
     .toast {
         top: 1rem;
         right: 1rem;
@@ -929,7 +929,7 @@ body {
         min-width: auto;
         transform: translateY(-100px);
     }
-    
+
     .toast.show {
         transform: translateY(0);
     }
@@ -939,23 +939,23 @@ body {
     .header-left h1 {
         font-size: 1.5rem;
     }
-    
+
     .stat-value {
         font-size: 1.75rem;
     }
-    
+
     .points-value {
         font-size: 2rem;
     }
-    
+
     .code-text {
         font-size: 1rem;
     }
-    
+
     .items-list {
         flex-direction: column;
     }
-    
+
     .item-tag,
     .more-items {
         display: inline-block;
@@ -1005,25 +1005,25 @@ async function cancelReceipt(receiptId) {
 
         if (data.success) {
             showToast(data.message, 'success');
-            
+
             // Update the receipt card
             const receiptCard = document.querySelector(`[data-receipt-id="${receiptId}"]`);
             if (receiptCard) {
                 receiptCard.classList.remove('pending');
                 receiptCard.classList.add('expired');
-                
+
                 // Update status badge
                 const statusBadge = receiptCard.querySelector('.status-badge');
                 statusBadge.className = 'status-badge status-expired';
                 statusBadge.innerHTML = '⌛ Expired';
-                
+
                 // Remove action buttons
                 const qrBtn = receiptCard.querySelector('.qr-btn');
                 const cancelBtn = receiptCard.querySelector('.cancel-btn');
                 if (qrBtn) qrBtn.remove();
                 if (cancelBtn) cancelBtn.remove();
             }
-            
+
             // Refresh page after delay to update stats
             setTimeout(() => window.location.reload(), 2000);
         } else {
@@ -1039,11 +1039,11 @@ async function cancelReceipt(receiptId) {
 function showToast(message, type = 'success') {
     const toast = document.getElementById(type === 'success' ? 'success-toast' : 'error-toast');
     const messageEl = document.getElementById(type === 'success' ? 'success-message' : 'error-message');
-    
+
     messageEl.textContent = message;
     toast.style.display = 'block';
     toast.classList.add('show');
-    
+
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => {

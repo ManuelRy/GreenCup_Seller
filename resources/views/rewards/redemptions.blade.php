@@ -382,12 +382,12 @@
 
   <div class="redemptions-container">
     <!-- Header -->
-    <div class="header">
+    {{-- <div class="header">
       <div class="header-content">
         <h1 class="header-title">🎁 Reward Redemptions</h1>
         <a href="{{ route('reward.index') }}" class="back-btn">← Back to Rewards</a>
       </div>
-    </div>
+    </div> --}}
 
     <!-- Alert Messages -->
     @if (session('success'))

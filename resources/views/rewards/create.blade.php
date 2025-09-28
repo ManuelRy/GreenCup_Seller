@@ -274,12 +274,12 @@ body {
 
 <div class="create-container">
     <!-- Header -->
-    <div class="header">
+    {{-- <div class="header">
         <div class="header-content">
             <h1 class="header-title">🎁 Create New Reward</h1>
             <a href="{{ route('reward.index') }}" class="back-btn">← Back to Rewards</a>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Alert Messages -->
     @if(session('error'))
