@@ -178,7 +178,7 @@
     <div class="guest-container">
         <!-- Brand Header -->
         <div class="brand-header">
-            <h1>Green Cup</h1>
+            <h1>Green Cups</h1>
             <p>Sustainable Solutions for Sellers</p>
         </div>
 

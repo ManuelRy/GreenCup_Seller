@@ -10,6 +10,12 @@ class Seller extends Authenticatable
 {
     use HasFactory;
 
+    // Status constants
+    const STATUS_PENDING = 'pending';
+    const STATUS_APPROVED = 'approved';
+    const STATUS_SUSPENDED = 'suspended';
+    const STATUS_REJECTED = 'rejected';
+
     protected $fillable = [
         'business_name',
         'email',
@@ -21,6 +27,7 @@ class Seller extends Authenticatable
         'longitude',
         'phone',
         'is_active',
+        'status',
         'total_points',
         'photo_url',
         'photo_caption',
@@ -37,6 +44,38 @@ class Seller extends Authenticatable
         'longitude' => 'decimal:7',
         'total_points' => 'integer',
     ];
+
+    /**
+     * Check if seller is active (approved status)
+     */
+    public function isApproved(): bool
+    {
+        return $this->status === self::STATUS_APPROVED;
+    }
+
+    /**
+     * Check if seller is pending approval
+     */
+    public function isPending(): bool
+    {
+        return $this->status === self::STATUS_PENDING;
+    }
+
+    /**
+     * Check if seller is suspended
+     */
+    public function isSuspended(): bool
+    {
+        return $this->status === self::STATUS_SUSPENDED;
+    }
+
+    /**
+     * Check if seller is rejected
+     */
+    public function isRejected(): bool
+    {
+        return $this->status === self::STATUS_REJECTED;
+    }
 
     /**
      * Automatically hash password when setting it

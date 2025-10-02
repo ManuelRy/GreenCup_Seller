@@ -20,8 +20,22 @@ Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
+// Inactive seller status routes (accessible without auth)
+Route::get('/pending', function () {
+    return view('sellers.pending');
+})->name('sellers.pending');
+
+Route::get('/suspended', function () {
+    return view('sellers.suspended');
+})->name('sellers.suspended');
+
+Route::get('/rejected', function () {
+    return view('sellers.rejected');
+})->name('sellers.rejected');
+
+// Legacy route for backward compatibility
 Route::get('/unauthorize', function () {
-    return view('sellers.inactive');
+    return view('sellers.pending');
 })->name('sellers.inactive');
 
 /*

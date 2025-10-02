@@ -51,9 +51,29 @@ class SellerAuthController extends Controller
             // Attempt authentication
             if (Auth::guard('seller')->attempt($credentials, $remember)) {
                 $request->session()->regenerate();
-                
+
                 $seller = Auth::guard('seller')->user();
                 Log::info('Successful login for seller: ' . $seller->business_name . ' (ID: ' . $seller->id . ')');
+
+                // Check seller status before allowing access
+                if ($seller->status !== \App\Models\Seller::STATUS_APPROVED) {
+                    Auth::guard('seller')->logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+
+                    // Redirect to appropriate inactive page based on status
+                    switch ($seller->status) {
+                        case \App\Models\Seller::STATUS_PENDING:
+                            return redirect()->route('sellers.pending');
+                        case \App\Models\Seller::STATUS_SUSPENDED:
+                            return redirect()->route('sellers.suspended');
+                        case \App\Models\Seller::STATUS_REJECTED:
+                            return redirect()->route('sellers.rejected');
+                        default:
+                            return redirect()->route('login')
+                                ->with('error', 'Account status unknown. Please contact support.');
+                    }
+                }
 
                 return redirect()
                     ->intended(route('dashboard'))
@@ -190,6 +210,10 @@ class SellerAuthController extends Controller
             DB::beginTransaction();
 
             try {
+                // Set default status to pending for new sellers
+                $data['status'] = Seller::STATUS_PENDING;
+                $data['is_active'] = false; // Keep for backward compatibility
+
                 // Create seller
                 $seller = Seller::create($data);
                 

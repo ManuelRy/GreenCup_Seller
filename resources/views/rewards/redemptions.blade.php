@@ -1,500 +1,272 @@
-@extends('master')
+@extends('layouts.app')
+
+@section('title', 'Redemptions - Green Cup App')
+@section('page-title', 'Redemptions')
+
+@push('styles')
+<style>
+.dashboard-container {
+    min-height: 100vh;
+    background: linear-gradient(-45deg, #00b09b, #00c9a1, #00d9a6, #00e8ab, #00b09b);
+    background-size: 400% 400%;
+    animation: gradientShift 20s ease infinite;
+    padding-bottom: 40px;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 20px;
+}
+
+.redemptions-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    margin-bottom: 32px;
+}
+
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(25px);
+    border-radius: 18px;
+    padding: 28px 24px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: all 0.4s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+}
+
+.redemptions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+}
+
+.redemption-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: all 0.4s;
+}
+
+.redemption-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+}
+
+.redemption-card.pending {
+    border-left: 4px solid #f59e0b;
+}
+
+.redemption-card.approved {
+    border-left: 4px solid #10b981;
+}
+
+.redemption-card.rejected {
+    border-left: 4px solid #ef4444;
+}
+
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-approved {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.action-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.btn-success:hover {
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.btn-danger:hover {
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+}
+
+@media (max-width: 768px) {
+    .stats-row {
+        grid-template-columns: 1fr;
+    }
+    .redemptions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+@endpush
 
 @section('content')
-  <style>
-    /* Reset and Base Styles */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-      background: linear-gradient(135deg, #00b09b 0%, #00cdac 50%, #00dfa8 100%);
-      min-height: 100vh;
-      color: #333333;
-    }
-
-    .redemptions-container {
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    /* Header */
-    .header {
-      background: #374151;
-      padding: 20px;
-      margin: -20px -20px 30px -20px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .header-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .header-title {
-      color: white;
-      font-size: 24px;
-      font-weight: 700;
-    }
-
-    .back-btn {
-      background: linear-gradient(135deg, #6b7280, #4b5563);
-      color: white;
-      text-decoration: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-
-    .back-btn:hover {
-      background: linear-gradient(135deg, #4b5563, #374151);
-      transform: translateY(-1px);
-      color: white;
-      text-decoration: none;
-    }
-
-    /* Alert Messages */
-    .alert {
-      padding: 15px 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      font-weight: 600;
-    }
-
-    .alert-success {
-      background: #d1fae5;
-      color: #065f46;
-      border: 1px solid #10b981;
-    }
-
-    .alert-error {
-      background: #fee2e2;
-      color: #991b1b;
-      border: 1px solid #ef4444;
-    }
-
-    /* Page Header */
-    .page-header {
-      background: white;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      margin-bottom: 30px;
-      text-align: center;
-    }
-
-    .page-title {
-      font-size: 32px;
-      font-weight: 700;
-      color: #1f2937;
-      margin-bottom: 10px;
-    }
-
-    .page-subtitle {
-      color: #6b7280;
-      font-size: 18px;
-      margin-bottom: 25px;
-    }
-
-    /* Stats Cards */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-
-    .stat-card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      text-align: center;
-    }
-
-    .stat-number {
-      font-size: 32px;
-      font-weight: 700;
-      color: #059669;
-    }
-
-    .stat-label {
-      color: #6b7280;
-      font-size: 14px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    /* Redemptions List */
-    .redemptions-section {
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
-
-    .section-header {
-      background: linear-gradient(135deg, #374151, #1f2937);
-      color: white;
-      padding: 20px 30px;
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .redemptions-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 20px;
-      padding: 30px;
-    }
-
-    .redemption-card {
-      background: #f9fafb;
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 20px;
-      transition: all 0.3s ease;
-    }
-
-    .redemption-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    .redemption-card.pending {
-      border-color: #f59e0b;
-      background: #fefce8;
-    }
-
-    .redemption-card.approved {
-      border-color: #10b981;
-      background: #f0fdf4;
-    }
-
-    .redemption-card.rejected {
-      border-color: #ef4444;
-      background: #fef2f2;
-    }
-
-    .redemption-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .redemption-id {
-      font-size: 14px;
-      font-weight: 600;
-      color: #6b7280;
-    }
-
-    .status-badge {
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .status-pending {
-      background: #fbbf24;
-      color: #92400e;
-    }
-
-    .status-approved {
-      background: #10b981;
-      color: white;
-    }
-
-    .status-rejected {
-      background: #ef4444;
-      color: white;
-    }
-
-    .consumer-info {
-      margin-bottom: 15px;
-    }
-
-    .consumer-name {
-      font-size: 18px;
-      font-weight: 700;
-      color: #1f2937;
-      margin-bottom: 4px;
-    }
-
-    .consumer-contact {
-      font-size: 14px;
-      color: #6b7280;
-      margin-bottom: 2px;
-    }
-
-    .reward-info {
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-    }
-
-    .reward-name {
-      font-size: 16px;
-      font-weight: 700;
-      color: #1f2937;
-      margin-bottom: 8px;
-    }
-
-    .reward-points {
-      color: #059669;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .redemption-time {
-      font-size: 12px;
-      color: #6b7280;
-      margin-bottom: 15px;
-    }
-
-    .redemption-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .approve-btn {
-      flex: 1;
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .approve-btn:hover {
-      background: linear-gradient(135deg, #059669, #047857);
-      transform: translateY(-1px);
-    }
-
-    .reject-btn {
-      flex: 1;
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .reject-btn:hover {
-      background: linear-gradient(135deg, #dc2626, #b91c1c);
-      transform: translateY(-1px);
-    }
-
-    .approved-info {
-      background: #d1fae5;
-      color: #065f46;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      text-align: center;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 60px 30px;
-      color: #6b7280;
-    }
-
-    .empty-icon {
-      font-size: 64px;
-      margin-bottom: 20px;
-      opacity: 0.5;
-    }
-
-    .empty-title {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .empty-description {
-      font-size: 16px;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .redemptions-container {
-        padding: 10px;
-      }
-
-      .header {
-        margin: -10px -10px 20px -10px;
-        padding: 15px;
-      }
-
-      .header-content {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-      }
-
-      .page-header {
-        padding: 20px;
-      }
-
-      .page-title {
-        font-size: 24px;
-      }
-
-      .page-subtitle {
-        font-size: 16px;
-      }
-
-      .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      }
-
-      .redemptions-grid {
-        grid-template-columns: 1fr;
-        padding: 20px;
-      }
-
-      .section-header {
-        padding: 15px 20px;
-        font-size: 18px;
-      }
-    }
-  </style>
-
-  <div class="redemptions-container">
-    <!-- Header -->
-    {{-- <div class="header">
-      <div class="header-content">
-        <h1 class="header-title">🎁 Reward Redemptions</h1>
-        <a href="{{ route('reward.index') }}" class="back-btn">← Back to Rewards</a>
-      </div>
-    </div> --}}
-
-    <!-- Alert Messages -->
-    @if (session('success'))
-      <div class="alert alert-success">
-        ✅ {{ session('success') }}
-      </div>
-    @endif
-
-    @if (session('error'))
-      <div class="alert alert-error">
-        ❌ {{ session('error') }}
-      </div>
-    @endif
-
-    <!-- Page Header -->
-    <div class="page-header">
-      <h1 class="page-title">Manage Reward Redemptions</h1>
-      <p class="page-subtitle">Review and approve customer reward redemption requests</p>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-number">{{ $redemptions->where('is_redeemed', false)->count() }}</div>
-        <div class="stat-label">Pending Requests</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">{{ $redemptions->where('is_redeemed', true)->count() }}</div>
-        <div class="stat-label">Approved Today</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">{{ $redemptions->count() }}</div>
-        <div class="stat-label">Total Requests</div>
-      </div>
-    </div>
-
-    <!-- Redemptions List -->
-    <div class="redemptions-section">
-      <div class="section-header">
-        📋 Redemption Requests
-      </div>
-
-      @if ($redemptions->count() > 0)
-        <div class="redemptions-grid">
-          @foreach ($redemptions as $redemption)
-            <div class="redemption-card {{ $redemption->status }}">
-              <!-- Redemption Header -->
-              <div class="redemption-header">
-                <span class="redemption-id">#{{ str_pad($redemption->id, 4, '0', STR_PAD_LEFT) }}</span>
-                <span class="status-badge status-{{ $redemption->status }}">
-                  {{ ucfirst($redemption->status) }}
-                </span>
-              </div>
-
-              <!-- Consumer Information -->
-              <div class="consumer-info">
-                <div class="consumer-name">{{ $redemption->consumer->name }}</div>
-                <div class="consumer-contact">📧 {{ $redemption->consumer->email }}</div>
-                <div class="consumer-contact">📱 {{ $redemption->consumer->phone_number }}</div>
-              </div>
-
-              <!-- Reward Information -->
-              <div class="reward-info">
-                <div class="reward-name">{{ $redemption->reward->name }}</div>
-                <div class="reward-points">💎 {{ $redemption->reward->points_required }} points required</div>
-              </div>
-
-              <!-- Request Time -->
-              <div class="redemption-time">
-                🕒 Requested {{ $redemption->created_at->diffForHumans() }}
-              </div>
-
-              <!-- Actions -->
-              @if ($redemption->is_redeemed == false)
-                <div class="redemption-actions">
-                  <form method="POST" action="{{ route('reward.redemptions.approve', $redemption->id) }}" style="flex: 1;">
-                    @csrf
-                    <button type="submit" class="approve-btn" onclick="return confirm('Are you sure you want to approve this redemption?')">
-                      ✅ Approve
-                    </button>
-                  </form>
-                  <form method="POST" action="{{ route('reward.redemptions.reject', $redemption->id) }}" style="flex: 1;">
-                    @csrf
-                    <button type="submit" class="reject-btn" onclick="return confirm('Are you sure you want to reject this redemption?')">
-                      ❌ Reject
-                    </button>
-                  </form>
+<div class="dashboard-container">
+    <div class="main-content">
+
+        @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
+        @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
+        <div class="redemptions-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1">Redemptions</h2>
+                    <p class="text-muted mb-0">Review and approve redemption requests</p>
                 </div>
-              @elseif($redemption->is_redeemed === true)
-                <div class="approved-info">
-                  ✅ Approved {{ isset($redemption->approved_at) ? $redemption->approved_at->diffForHumans() : 'recently' }}
-                </div>
-              @else
-                <div class="approved-info" style="background: #fee2e2; color: #991b1b;">
-                  ❌ Rejected
-                </div>
-              @endif
+                <a href="{{ route('reward.index') }}" class="action-btn">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Rewards
+                </a>
             </div>
-          @endforeach
         </div>
-      @else
-        <div class="empty-state">
-          <div class="empty-icon">🎁</div>
-          <h3 class="empty-title">No Redemption Requests Yet</h3>
-          <p class="empty-description">When customers request to redeem rewards, they will appear here for your approval.</p>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div style="font-size: 2.5rem;">⏳</div>
+                <h3 class="fw-bold mt-2">{{ $redemptions->where('is_redeemed', false)->count() }}</h3>
+                <p class="text-muted mb-0 small">PENDING</p>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 2.5rem;">✅</div>
+                <h3 class="fw-bold mt-2">{{ $redemptions->where('is_redeemed', true)->count() }}</h3>
+                <p class="text-muted mb-0 small">APPROVED</p>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 2.5rem;">📊</div>
+                <h3 class="fw-bold mt-2">{{ $redemptions->count() }}</h3>
+                <p class="text-muted mb-0 small">TOTAL REQUESTS</p>
+            </div>
         </div>
-      @endif
+
+        @if($redemptions->count() > 0)
+        <div class="redemptions-grid">
+            @foreach($redemptions as $redemption)
+            <div class="redemption-card {{ $redemption->status }}">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted small fw-bold">#{{ str_pad($redemption->id, 4, '0', STR_PAD_LEFT) }}</span>
+                    @if($redemption->is_redeemed === false)
+                        <span class="status-badge status-pending">Pending</span>
+                    @elseif($redemption->is_redeemed === true)
+                        <span class="status-badge status-approved">Approved</span>
+                    @else
+                        <span class="status-badge status-rejected">Rejected</span>
+                    @endif
+                </div>
+
+                <div class="mb-3">
+                    <h5 class="fw-bold mb-1">{{ $redemption->consumer->name }}</h5>
+                    <p class="text-muted small mb-1"><i class="fas fa-envelope me-1"></i>{{ $redemption->consumer->email }}</p>
+                    <p class="text-muted small mb-0"><i class="fas fa-phone me-1"></i>{{ $redemption->consumer->phone_number }}</p>
+                </div>
+
+                <div class="bg-light p-3 rounded mb-3">
+                    <h6 class="fw-bold mb-1">{{ $redemption->reward->name }}</h6>
+                    <p class="text-muted small mb-0"><i class="fas fa-star me-1"></i>{{ number_format($redemption->reward->points_required) }} points</p>
+                </div>
+
+                <p class="text-muted small mb-3">
+                    <i class="fas fa-clock me-1"></i>{{ $redemption->created_at->diffForHumans() }}
+                </p>
+
+                @if($redemption->is_redeemed === false)
+                <div class="d-flex gap-2">
+                    <form method="POST" action="{{ route('reward.redemptions.approve', $redemption->id) }}" class="flex-fill">
+                        @csrf
+                        <button type="submit" class="action-btn btn-success w-100" onclick="return confirm('Approve this redemption?')">
+                            <i class="fas fa-check me-1"></i>Approve
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ route('reward.redemptions.reject', $redemption->id) }}" class="flex-fill">
+                        @csrf
+                        <button type="submit" class="action-btn btn-danger w-100" onclick="return confirm('Reject this redemption?')">
+                            <i class="fas fa-times me-1"></i>Reject
+                        </button>
+                    </form>
+                </div>
+                @elseif($redemption->is_redeemed === true)
+                <div class="alert alert-success mb-0 small">
+                    <i class="fas fa-check-circle me-1"></i>Approved {{ isset($redemption->approved_at) ? $redemption->approved_at->diffForHumans() : 'recently' }}
+                </div>
+                @else
+                <div class="alert alert-danger mb-0 small">
+                    <i class="fas fa-times-circle me-1"></i>Rejected
+                </div>
+                @endif
+            </div>
+            @endforeach
+        </div>
+        @else
+        <div class="redemptions-card text-center py-5">
+            <div style="font-size: 5rem;">🎁</div>
+            <h3 class="fw-bold mt-3">No Redemptions</h3>
+            <p class="text-muted">Redemption requests will appear here</p>
+        </div>
+        @endif
     </div>
-  </div>
+</div>
 @endsection

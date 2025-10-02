@@ -674,7 +674,7 @@ body {
                 </a>
                 <div class="header-title-section">
                     <h1 class="app-title">✏️ Edit Item</h1>
-                    <p class="app-subtitle">Update the details for <span class="item-name-badge">{{ $item->name }}</span></p>
+                    <p class="app-subtitle">Update the details for <span class="item-name-badge">{{ $item->name ?? 'this item' }}</span></p>
                 </div>
             </div>
             <a href="{{ route('item.index') }}" class="back-button">

@@ -965,32 +965,172 @@
 .text-muted { color: #666; }
 
 /* Mobile Optimizations */
-@media (max-width: 640px) {
+@media (max-width: 1024px) {
+    .stats-row {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+    }
+    .receipt-stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 768px) {
     .main-content {
-        padding: 16px 12px;
+        padding: 24px 16px;
+    }
+    .points-card {
+        padding: 28px 20px;
     }
     .points-value {
-        font-size: 48px;
+        font-size: 42px;
+    }
+    .progress-card, .analytics-card, .activity-card {
+        padding: 20px;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    .stats-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .receipt-stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .chart-legend {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+        padding-left: 20px;
+    }
+    .actions-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+}
+
+@media (max-width: 640px) {
+    .main-content {
+        padding: 20px 12px;
+    }
+    .points-card {
+        padding: 24px 16px;
+        margin-bottom: 20px;
+    }
+    .points-value {
+        font-size: 36px;
+    }
+    .points-label {
+        font-size: 13px;
     }
     .stat-value {
-        font-size: 28px;
+        font-size: 24px;
+    }
+    .stat-title {
+        font-size: 12px;
     }
     .stats-grid {
         grid-template-columns: 1fr;
     }
     .chart-legend {
-        gap: 20px;
+        gap: 16px;
+        font-size: 13px;
     }
     .receipt-stats-grid {
         grid-template-columns: 1fr;
+        gap: 12px;
     }
     .receipt-actions {
         flex-direction: column;
+        gap: 10px;
+    }
+    .receipt-btn {
+        width: 100%;
     }
     .progress-header {
         flex-direction: column;
-        gap: 8px;
+        gap: 12px;
         text-align: center;
+        align-items: center;
+    }
+    .rank-badge {
+        font-size: 12px;
+        padding: 6px 14px;
+    }
+    .progress-text {
+        font-size: 11px;
+    }
+    .activity-item {
+        flex-wrap: wrap;
+    }
+    .activity-points {
+        width: 100%;
+        text-align: left;
+        margin-top: 8px;
+        padding-left: 56px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 16px 10px;
+    }
+    .points-value {
+        font-size: 32px;
+    }
+    .points-card, .progress-card, .analytics-card, .receipt-stats-card, .activity-card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+    .actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .action-card {
+        padding: 20px 16px;
+    }
+    .action-icon {
+        font-size: 24px;
+    }
+    .action-label {
+        font-size: 12px;
+    }
+    .donut-chart {
+        width: 160px;
+        height: 160px;
+    }
+    .chart-value {
+        font-size: 28px;
+    }
+    .receipt-stat-value {
+        font-size: 28px;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .stat-card {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 360px) {
+    .points-value {
+        font-size: 28px;
+    }
+    .stat-value {
+        font-size: 20px;
+    }
+    .actions-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    .receipt-stats-grid {
+        gap: 10px;
     }
 }
 

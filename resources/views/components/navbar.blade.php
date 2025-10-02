@@ -75,7 +75,7 @@
                                 <img src="{{ asset(auth('seller')->user()->photo_url) }}"
                                      alt="Profile" class="user-photo">
                             @else
-                                <i class="fas fa-user"></i>
+                                <i class="fas fa-store"></i>
                             @endif
                         </div>
                         <div class="user-details">
@@ -94,7 +94,7 @@
                                         <img src="{{ asset(auth('seller')->user()->photo_url) }}"
                                              alt="Profile" class="user-photo">
                                     @else
-                                        <i class="fas fa-user"></i>
+                                        <i class="fas fa-store"></i>
                                     @endif
                                 </div>
                                 <div>
@@ -157,7 +157,7 @@
                                 <img src="{{ asset(auth('seller')->user()->photo_url) }}"
                                      alt="Profile" class="user-photo">
                             @else
-                                <i class="fas fa-user"></i>
+                                <i class="fas fa-store"></i>
                             @endif
                         </div>
                         <div>

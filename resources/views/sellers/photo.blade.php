@@ -2501,7 +2501,7 @@
             }, index * 100);
         });
 
-        console.log('Photo gallery initialized with', photoGroupsData.length, 'photo groups');
+           console.log('Photo gallery initialized with', photoGroupsData.length, 'photo groups');
         });
 
         // Scroll to upload section
@@ -2539,5 +2539,4 @@
         }
         });
     </script>
-
     @endsection
