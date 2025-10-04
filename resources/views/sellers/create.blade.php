@@ -6,6 +6,8 @@
   <title>Register Business - GreenCup</title>
   <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   @vite(['resources/css/app.css', 'resources/js/app.js'])
 
   <style>
@@ -36,12 +38,12 @@ body {
 }
 
 .register-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
+  background: white;
   border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .card-header-custom {
@@ -84,6 +86,14 @@ body {
   padding: 2.5rem 2rem;
 }
 
+.mb-3 {
+  margin-bottom: 1.5rem;
+}
+
+.mb-4 {
+  margin-bottom: 2rem;
+}
+
 .alert {
   border-radius: 12px;
   padding: 1rem 1.25rem;
@@ -124,12 +134,7 @@ body {
   color: #374151;
   margin-bottom: 0.5rem;
   font-size: 0.95rem;
-}
-
-.form-label i {
-  color: #0d9488;
-  margin-right: 0.5rem;
-  font-size: 0.9rem;
+  display: block;
 }
 
 .form-label .text-muted {
@@ -138,32 +143,72 @@ body {
   font-size: 0.875rem;
 }
 
+.input-wrapper {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 1.1rem;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
 .form-control,
 .form-select {
   border: 2px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  padding: 0.875rem 1rem 0.875rem 3rem;
   font-size: 1rem;
   transition: all 0.3s ease;
+  background: white;
+  width: 100%;
 }
 
 .form-control:focus,
 .form-select:focus {
   border-color: #0d9488;
-  box-shadow: 0 0 0 0.2rem rgba(13, 148, 136, 0.15);
+  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1);
+  background: white;
+  outline: none;
+}
+
+.form-control:focus + .input-icon,
+.form-select:focus + .input-icon {
+  color: #0d9488;
 }
 
 .form-control.is-invalid,
 .form-select.is-invalid {
   border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.form-control::placeholder {
+  color: #d1d5db;
+}
+
+textarea.form-control {
+  padding: 0.875rem 1rem;
+  min-height: 120px;
+  resize: vertical;
 }
 
 .invalid-feedback {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
+  display: block;
+  color: #ef4444;
   font-size: 0.875rem;
   margin-top: 0.5rem;
+}
+
+.invalid-feedback i {
+  margin-right: 0.25rem;
 }
 
 textarea.form-control {
@@ -177,42 +222,47 @@ textarea.form-control {
 }
 
 .btn-secondary-custom {
-  background: linear-gradient(135deg, #6b7280, #4b5563);
-  border: none;
-  border-radius: 10px;
-  padding: 0.75rem 1.5rem;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 0.875rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
-  color: white;
+  color: #374151;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  cursor: pointer;
+  text-decoration: none;
 }
 
 .btn-secondary-custom:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4);
-  background: linear-gradient(135deg, #4b5563, #374151);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #f9fafb;
+  border-color: #d1d5db;
+  color: #374151;
+  text-decoration: none;
 }
 
 .btn-primary-custom {
   background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
   border: none;
-  border-radius: 10px;
-  padding: 0.875rem 1.5rem;
-  font-size: 1.05rem;
-  font-weight: 600;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  font-size: 1.125rem;
+  font-weight: 700;
   color: white;
   width: 100%;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(13, 148, 136, 0.3);
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
+  cursor: pointer;
 }
 
-.btn-primary-custom:hover {
+.btn-primary-custom:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4);
+  box-shadow: 0 6px 20px rgba(13, 148, 136, 0.35);
   background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
 }
 
@@ -407,11 +457,14 @@ textarea.form-control {
 
           <div class="mb-3">
             <label for="business_name" class="form-label">
-              <i class="fas fa-store"></i>Business Name
+              Business Name
             </label>
-            <input type="text" id="business_name" name="business_name" value="{{ old('business_name') }}"
-              class="form-control @error('business_name') is-invalid @enderror"
-              placeholder="Enter your business name" required />
+            <div class="input-wrapper">
+              <i class="fas fa-store input-icon"></i>
+              <input type="text" id="business_name" name="business_name" value="{{ old('business_name') }}"
+                class="form-control @error('business_name') is-invalid @enderror"
+                placeholder="Enter your business name" required />
+            </div>
             @error('business_name')
               <div class="invalid-feedback">
                 <i class="fas fa-exclamation-circle"></i>
@@ -422,11 +475,14 @@ textarea.form-control {
 
           <div class="mb-3">
             <label for="email" class="form-label">
-              <i class="fas fa-envelope"></i>Business Email
+              Email Address
             </label>
-            <input type="email" id="email" name="email" value="{{ old('email') }}"
-              class="form-control @error('email') is-invalid @enderror"
-              placeholder="Enter your business email" required autocomplete="email" />
+            <div class="input-wrapper">
+              <i class="fas fa-envelope input-icon"></i>
+              <input type="email" id="email" name="email" value="{{ old('email') }}"
+                class="form-control @error('email') is-invalid @enderror"
+                placeholder="your.email@example.com" required />
+            </div>
             @error('email')
               <div class="invalid-feedback">
                 <i class="fas fa-exclamation-circle"></i>
@@ -437,11 +493,14 @@ textarea.form-control {
 
           <div class="mb-3">
             <label for="phone" class="form-label">
-              <i class="fas fa-phone"></i>Phone Number <span class="text-muted">(optional)</span>
+              Phone Number <span class="text-muted">(optional)</span>
             </label>
-            <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
-              class="form-control @error('phone') is-invalid @enderror"
-              placeholder="Enter business phone number" autocomplete="tel" />
+            <div class="input-wrapper">
+              <i class="fas fa-phone input-icon"></i>
+              <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
+                class="form-control @error('phone') is-invalid @enderror"
+                placeholder="+855 12 345 678" />
+            </div>
             @error('phone')
               <div class="invalid-feedback">
                 <i class="fas fa-exclamation-circle"></i>
@@ -452,7 +511,7 @@ textarea.form-control {
 
           <div class="mb-3">
             <label for="description" class="form-label">
-              <i class="fas fa-file-text"></i>Business Description <span class="text-muted">(optional)</span>
+              Business Description <span class="text-muted">(optional)</span>
             </label>
             <textarea id="description" name="description"
               class="form-control @error('description') is-invalid @enderror"
@@ -468,26 +527,29 @@ textarea.form-control {
 
           <div class="mb-3">
             <label for="working_hours" class="form-label">
-              <i class="fas fa-clock"></i>Working Hours <span class="text-muted">(optional)</span>
+              Working Hours <span class="text-muted">(optional)</span>
             </label>
-            <select id="working_hours" name="working_hours" class="form-select @error('working_hours') is-invalid @enderror">
-              <option value="">-- Select Working Hours --</option>
-              <optgroup label="Standard Business Hours">
-                <option value="Mon-Fri 9AM-5PM" {{ old('working_hours') == 'Mon-Fri 9AM-5PM' ? 'selected' : '' }}>Mon-Fri 9AM-5PM</option>
-                <option value="Mon-Fri 8AM-6PM" {{ old('working_hours') == 'Mon-Fri 8AM-6PM' ? 'selected' : '' }}>Mon-Fri 8AM-6PM</option>
-              </optgroup>
-              <optgroup label="Including Saturday">
-                <option value="Mon-Sat 9AM-5PM" {{ old('working_hours') == 'Mon-Sat 9AM-5PM' ? 'selected' : '' }}>Mon-Sat 9AM-5PM</option>
-                <option value="Mon-Sat 8AM-6PM" {{ old('working_hours') == 'Mon-Sat 8AM-6PM' ? 'selected' : '' }}>Mon-Sat 8AM-6PM</option>
-              </optgroup>
-              <optgroup label="7 Days a Week">
-                <option value="Mon-Sun 9AM-5PM" {{ old('working_hours') == 'Mon-Sun 9AM-5PM' ? 'selected' : '' }}>Mon-Sun 9AM-5PM</option>
-                <option value="24/7" {{ old('working_hours') == '24/7' ? 'selected' : '' }}>24/7 (Always Open)</option>
-              </optgroup>
-              <optgroup label="Custom">
-                <option value="custom" {{ old('working_hours') == 'custom' ? 'selected' : '' }}>Custom Hours</option>
-              </optgroup>
-            </select>
+            <div class="input-wrapper">
+              <i class="fas fa-clock input-icon"></i>
+              <select id="working_hours" name="working_hours" class="form-select @error('working_hours') is-invalid @enderror">
+                <option value="">-- Select Working Hours --</option>
+                <optgroup label="Standard Business Hours">
+                  <option value="Mon-Fri 9AM-5PM" {{ old('working_hours') == 'Mon-Fri 9AM-5PM' ? 'selected' : '' }}>Mon-Fri 9AM-5PM</option>
+                  <option value="Mon-Fri 8AM-6PM" {{ old('working_hours') == 'Mon-Fri 8AM-6PM' ? 'selected' : '' }}>Mon-Fri 8AM-6PM</option>
+                </optgroup>
+                <optgroup label="Including Saturday">
+                  <option value="Mon-Sat 9AM-5PM" {{ old('working_hours') == 'Mon-Sat 9AM-5PM' ? 'selected' : '' }}>Mon-Sat 9AM-5PM</option>
+                  <option value="Mon-Sat 8AM-6PM" {{ old('working_hours') == 'Mon-Sat 8AM-6PM' ? 'selected' : '' }}>Mon-Sat 8AM-6PM</option>
+                </optgroup>
+                <optgroup label="7 Days a Week">
+                  <option value="Mon-Sun 9AM-5PM" {{ old('working_hours') == 'Mon-Sun 9AM-5PM' ? 'selected' : '' }}>Mon-Sun 9AM-5PM</option>
+                  <option value="24/7" {{ old('working_hours') == '24/7' ? 'selected' : '' }}>24/7 (Always Open)</option>
+                </optgroup>
+                <optgroup label="Custom">
+                  <option value="custom" {{ old('working_hours') == 'custom' ? 'selected' : '' }}>Custom Hours</option>
+                </optgroup>
+              </select>
+            </div>
 
             <div id="customHoursInput" class="custom-hours-input">
               <input type="text" id="custom_working_hours" name="custom_working_hours"
@@ -505,7 +567,7 @@ textarea.form-control {
 
           <div class="mb-3">
             <label for="address" class="form-label">
-              <i class="fas fa-map-marker-alt"></i>Business Address
+              Business Address
             </label>
             <textarea id="address" name="address"
               class="form-control @error('address') is-invalid @enderror"
@@ -521,11 +583,14 @@ textarea.form-control {
           <div class="row g-3 mb-3">
             <div class="col-md-6">
               <label for="latitude" class="form-label">
-                <i class="fas fa-map"></i>Latitude
+                Latitude
               </label>
-              <input type="number" step="any" id="latitude" name="latitude" value="{{ old('latitude') }}"
-                class="form-control @error('latitude') is-invalid @enderror"
-                placeholder="e.g., 11.5564" required min="-90" max="90" />
+              <div class="input-wrapper">
+                <i class="fas fa-map input-icon"></i>
+                <input type="number" step="any" id="latitude" name="latitude" value="{{ old('latitude') }}"
+                  class="form-control @error('latitude') is-invalid @enderror"
+                  placeholder="e.g., 11.5564" required min="-90" max="90" />
+              </div>
               @error('latitude')
                 <div class="invalid-feedback">
                   <i class="fas fa-exclamation-circle"></i>
@@ -536,11 +601,14 @@ textarea.form-control {
 
             <div class="col-md-6">
               <label for="longitude" class="form-label">
-                <i class="fas fa-map"></i>Longitude
+                Longitude
               </label>
-              <input type="number" step="any" id="longitude" name="longitude" value="{{ old('longitude') }}"
-                class="form-control @error('longitude') is-invalid @enderror"
-                placeholder="e.g., 104.9282" required min="-180" max="180" />
+              <div class="input-wrapper">
+                <i class="fas fa-map input-icon"></i>
+                <input type="number" step="any" id="longitude" name="longitude" value="{{ old('longitude') }}"
+                  class="form-control @error('longitude') is-invalid @enderror"
+                  placeholder="e.g., 104.9282" required min="-180" max="180" />
+              </div>
               @error('longitude')
                 <div class="invalid-feedback">
                   <i class="fas fa-exclamation-circle"></i>
@@ -557,13 +625,25 @@ textarea.form-control {
             </button>
           </div>
 
+          <!-- Map for Location Selection -->
+          <div class="mb-4">
+            <label class="form-label">
+              Select Location on Map
+            </label>
+            <p class="text-muted small mb-2">Click on the map to set your business location, or use the button above to get your current location</p>
+            <div id="registrationMap" style="height: 400px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></div>
+          </div>
+
           <div class="mb-3">
             <label for="password" class="form-label">
-              <i class="fas fa-lock"></i>Password
+              Password
             </label>
-            <input type="password" id="password" name="password"
-              class="form-control @error('password') is-invalid @enderror"
-              placeholder="Create a strong password (min 8 characters)" required minlength="8" autocomplete="new-password" />
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" id="password" name="password"
+                class="form-control @error('password') is-invalid @enderror"
+                placeholder="Create a strong password (min 8 characters)" required minlength="8" autocomplete="new-password" />
+            </div>
             <div class="password-strength">
               <div class="password-strength-bar" id="passwordStrength"></div>
             </div>
@@ -580,11 +660,14 @@ textarea.form-control {
 
           <div class="mb-4">
             <label for="password_confirmation" class="form-label">
-              <i class="fas fa-lock"></i>Confirm Password
+              Confirm Password
             </label>
-            <input type="password" id="password_confirmation" name="password_confirmation"
-              class="form-control @error('password_confirmation') is-invalid @enderror"
-              placeholder="Confirm your password" required autocomplete="new-password" />
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" id="password_confirmation" name="password_confirmation"
+                class="form-control @error('password_confirmation') is-invalid @enderror"
+                placeholder="Confirm your password" required autocomplete="new-password" />
+            </div>
             @error('password_confirmation')
               <div class="invalid-feedback">
                 <i class="fas fa-exclamation-circle"></i>
@@ -765,6 +848,9 @@ function getCurrentLocation() {
         document.getElementById('latitude').dispatchEvent(new Event('input'));
         document.getElementById('longitude').dispatchEvent(new Event('input'));
 
+        // Update map marker
+        updateMapFromInputs();
+
         text.textContent = 'Getting Address...';
 
         try {
@@ -831,6 +917,109 @@ async function reverseGeocode(lat, lng) {
     console.warn('Address lookup failed:', error);
   }
 }
+
+// Initialize Leaflet Map
+let map, marker;
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Default location (Phnom Penh, Cambodia)
+  const defaultLat = 11.5564;
+  const defaultLng = 104.9282;
+
+  // Initialize map
+  map = L.map('registrationMap').setView([defaultLat, defaultLng], 13);
+
+  // Add OpenStreetMap tiles
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(map);
+
+  // Custom marker icon
+  const customIcon = L.divIcon({
+    className: 'custom-marker',
+    html: '<div style="background: linear-gradient(135deg, #0d9488, #0f766e); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.4); border: 3px solid white;"><i class="fas fa-store" style="color: white; font-size: 16px;"></i></div>',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40]
+  });
+
+  // Add initial marker if lat/lng already exist
+  const latInput = document.getElementById('latitude');
+  const lngInput = document.getElementById('longitude');
+
+  if (latInput.value && lngInput.value) {
+    const lat = parseFloat(latInput.value);
+    const lng = parseFloat(lngInput.value);
+    marker = L.marker([lat, lng], {icon: customIcon}).addTo(map);
+    map.setView([lat, lng], 15);
+  }
+
+  // Handle map clicks
+  map.on('click', async function(e) {
+    const lat = e.latlng.lat;
+    const lng = e.latlng.lng;
+
+    // Update inputs
+    latInput.value = lat.toFixed(7);
+    lngInput.value = lng.toFixed(7);
+
+    // Trigger input events for validation
+    latInput.dispatchEvent(new Event('input'));
+    lngInput.dispatchEvent(new Event('input'));
+
+    // Remove old marker if exists
+    if (marker) {
+      map.removeLayer(marker);
+    }
+
+    // Add new marker
+    marker = L.marker([lat, lng], {icon: customIcon}).addTo(map)
+      .bindPopup('Getting address...<br><small>' + lat.toFixed(6) + ', ' + lng.toFixed(6) + '</small>')
+      .openPopup();
+
+    // Get address from coordinates
+    try {
+      await reverseGeocode(lat, lng);
+      marker.setPopupContent('Your Business Location<br><small>' + lat.toFixed(6) + ', ' + lng.toFixed(6) + '</small>');
+    } catch (error) {
+      marker.setPopupContent('Your Business Location<br><small>' + lat.toFixed(6) + ', ' + lng.toFixed(6) + '</small>');
+    }
+  });
+
+  // Update map when coordinates are manually entered
+  latInput.addEventListener('change', updateMapFromInputs);
+  lngInput.addEventListener('change', updateMapFromInputs);
+});
+
+function updateMapFromInputs() {
+  const latInput = document.getElementById('latitude');
+  const lngInput = document.getElementById('longitude');
+
+  if (latInput.value && lngInput.value) {
+    const lat = parseFloat(latInput.value);
+    const lng = parseFloat(lngInput.value);
+
+    if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+      if (marker) {
+        map.removeLayer(marker);
+      }
+
+      const customIcon = L.divIcon({
+        className: 'custom-marker',
+        html: '<div style="background: linear-gradient(135deg, #0d9488, #0f766e); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.4); border: 3px solid white;"><i class="fas fa-store" style="color: white; font-size: 16px;"></i></div>',
+        iconSize: [40, 40],
+        iconAnchor: [20, 40]
+      });
+
+      marker = L.marker([lat, lng], {icon: customIcon}).addTo(map)
+        .bindPopup('Your Business Location<br><small>' + lat.toFixed(6) + ', ' + lng.toFixed(6) + '</small>');
+      map.setView([lat, lng], 15);
+    }
+  }
+}
   </script>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </body>
 </html>

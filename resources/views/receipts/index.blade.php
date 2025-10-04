@@ -2,27 +2,6 @@
 
 @section('content')
 <div class="receipts-container">
-    <!-- Header -->
-    {{-- <div class="receipts-header">
-        <div class="header-content">
-            <div class="header-left">
-                <a href="{{ route('dashboard') }}" class="back-button">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 12H5M12 19l-7-7 7-7"/>
-                    </svg>
-                </a>
-                <div>
-                    <h1>Receipt Management</h1>
-                    <p>Create and manage customer receipts</p>
-                </div>
-            </div>
-            <a href="{{ route('seller.receipts.create') }}" class="create-receipt-btn">
-                <span class="btn-icon">+</span>
-                Create Receipt
-            </a>
-        </div>
-    </div> --}}
-
     <!-- Statistics Cards -->
     <div class="stats-grid">
         <div class="stat-card total">
@@ -68,7 +47,7 @@
         <div class="summary-card claimed-points">
             <h3>Points Claimed</h3>
             <div class="points-value">{{ number_format($stats['total_points_claimed']) }} pts</div>
-            <p>Points successfully claimed by customers</p>
+            <p>Points successfully claimed by consumers</p>
         </div>
     </div>
 
@@ -205,6 +184,11 @@
             </div>
         @endif
     </div>
+
+    <!-- Floating Action Button (FAB) for Mobile -->
+    <a href="{{ route('seller.receipts.create') }}" class="fab" title="Create Receipt">
+        <span class="fab-icon">+</span>
+    </a>
 </div>
 
 <!-- Success Toast -->
@@ -252,23 +236,47 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.5;
     color: var(--text-primary);
-    background: var(--background);
+    background: linear-gradient(135deg, var(--background) 0%, #e0f2fe 100%);
     margin: 0;
     padding: 0;
+    position: relative;
+    min-height: 100vh;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: floatPattern 60s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes floatPattern {
+    from { transform: translate(0, 0) rotate(0deg); }
+    to { transform: translate(40px, 40px) rotate(360deg); }
 }
 
 .receipts-container {
     min-height: 100vh;
     padding: 0 0 2rem;
+    position: relative;
+    z-index: 1;
 }
 
 /* Header */
 .receipts-header {
     background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
     color: white;
-    padding: 1.5rem;
+    padding: 2rem 1.5rem;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .receipts-header::before {
@@ -278,9 +286,15 @@ body {
     right: -20%;
     width: 100%;
     height: 200%;
-    background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
     transform: rotate(-15deg);
     pointer-events: none;
+    animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
 }
 
 .header-content {
@@ -369,30 +383,53 @@ body {
 }
 
 .stat-card {
-    background: var(--card-bg);
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: var(--shadow);
+    background: linear-gradient(135deg, var(--card-bg) 0%, #fafbfc 100%);
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.02);
     display: flex;
     align-items: center;
-    gap: 1rem;
-    transition: all 0.3s ease;
+    gap: 1.25rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.6s;
+}
+
+.stat-card:hover::before {
+    left: 100%;
 }
 
 .stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(16, 185, 129, 0.1);
 }
 
 .stat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 2rem;
     flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.1) rotate(5deg);
 }
 
 .stat-card.total .stat-icon {
@@ -412,10 +449,18 @@ body {
 }
 
 .stat-value {
-    font-size: 2rem;
+    font-size: 2.25rem;
     font-weight: 800;
     line-height: 1;
-    color: var(--text-primary);
+    background: linear-gradient(135deg, var(--text-primary) 0%, #374151 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: transform 0.3s;
+}
+
+.stat-card:hover .stat-value {
+    transform: scale(1.05);
 }
 
 .stat-label {
@@ -437,10 +482,33 @@ body {
 .summary-card {
     background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-dark) 100%);
     color: white;
-    border-radius: 16px;
-    padding: 1.5rem;
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
     text-align: center;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.summary-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    transition: transform 0.6s;
+}
+
+.summary-card:hover::before {
+    transform: rotate(180deg);
+}
+
+.summary-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(16, 185, 129, 0.4);
 }
 
 .summary-card.claimed-points {
@@ -455,10 +523,22 @@ body {
 }
 
 .points-value {
-    font-size: 2.5rem;
+    font-size: 2.75rem;
     font-weight: 900;
     line-height: 1;
     margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.summary-card h3 {
+    position: relative;
+    z-index: 1;
+}
+
+.summary-card p {
+    position: relative;
+    z-index: 1;
 }
 
 .summary-card p {
@@ -571,16 +651,41 @@ body {
 
 .receipt-card {
     background: var(--card-bg);
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: var(--shadow);
-    transition: all 0.3s ease;
+    border-radius: 20px;
+    padding: 1.75rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.02);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border-left: 4px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.receipt-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(135deg, transparent, rgba(16, 185, 129, 0.3));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none; /* Allow clicks to pass through */
+    z-index: 0;
+}
+
+.receipt-card:hover::after {
+    opacity: 1;
 }
 
 .receipt-card:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(16, 185, 129, 0.1);
 }
 
 .receipt-card.pending {
@@ -600,6 +705,8 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
 }
 
 .receipt-code {
@@ -640,6 +747,8 @@ body {
 .receipt-actions {
     display: flex;
     gap: 0.5rem;
+    position: relative;
+    z-index: 2;
 }
 
 .view-btn,
@@ -656,6 +765,8 @@ body {
     border: none;
     cursor: pointer;
     font-size: 1rem;
+    position: relative;
+    z-index: 2;
 }
 
 .view-btn {
@@ -862,12 +973,59 @@ body {
     line-height: 1.4;
 }
 
+/* Floating Action Button (FAB) */
+.fab {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-dark) 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex; /* Always visible */
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    cursor: pointer;
+    animation: fabBounce 0.6s ease-out;
+}
+
+.fab:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5), 0 6px 12px rgba(0, 0, 0, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+.fab:active {
+    transform: scale(0.95) rotate(90deg);
+}
+
+.fab-icon {
+    font-size: 2rem;
+    font-weight: 300;
+    line-height: 1;
+}
+
+@keyframes fabBounce {
+    0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2) rotate(180deg);
+    }
+    100% {
+        transform: scale(1) rotate(90deg);
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
-    .receipts-header {
-        padding: 1rem;
-    }
-
     .header-content {
         flex-direction: column;
         gap: 1rem;
@@ -877,10 +1035,6 @@ body {
     .header-left {
         justify-content: center;
         text-align: center;
-    }
-
-    .create-receipt-btn {
-        justify-content: center;
     }
 
     .stats-grid {

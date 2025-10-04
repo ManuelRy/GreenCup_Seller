@@ -2,120 +2,171 @@
 
 @section('content')
 <style>
-/* Reset and Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* Modern Professional Design with Purple Gradient Theme */
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --danger-gradient: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-    background: linear-gradient(135deg, #00b09b 0%, #00cdac 50%, #00dfa8 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
     min-height: 100vh;
-    color: #333333;
+    color: #1e293b;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: floatPattern 60s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes floatPattern {
+    from { transform: translate(0, 0) rotate(0deg); }
+    to { transform: translate(50px, 50px) rotate(360deg); }
 }
 
 .create-container {
     min-height: 100vh;
-    padding: 20px;
-}
-
-/* Header */
-.header {
-    background: #374151;
-    padding: 20px;
-    margin: -20px -20px 30px -20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.header-content {
-    max-width: 800px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header-title {
-    color: white;
-    font-size: 24px;
-    font-weight: 700;
-}
-
-.back-btn {
-    background: linear-gradient(135deg, #6b7280, #4b5563);
-    color: white;
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.back-btn:hover {
-    background: linear-gradient(135deg, #4b5563, #374151);
-    transform: translateY(-1px);
-    color: white;
-    text-decoration: none;
+    padding: 2rem 1rem;
+    position: relative;
+    z-index: 1;
 }
 
 /* Alert Messages */
 .alert {
-    padding: 15px 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-weight: 600;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: none;
+    animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .alert-error {
-    background: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #ef4444;
+    border-left: 4px solid #ef4444;
+}
+
+.alert-error strong {
+    color: #dc2626;
 }
 
 /* Form Container */
 .form-container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.15);
     overflow: hidden;
+    animation: slideIn 0.6s ease-out;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .form-header {
-    background: linear-gradient(135deg, #10b981, #059669);
+    background: var(--primary-gradient);
     color: white;
-    padding: 30px;
+    padding: 2.5rem 2rem;
     text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.form-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 10%, transparent 10%);
+    background-size: 30px 30px;
+    animation: headerPattern 30s linear infinite;
+}
+
+@keyframes headerPattern {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.form-header-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
 .form-title {
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 8px;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .form-subtitle {
-    font-size: 16px;
-    opacity: 0.9;
+    font-size: 1rem;
+    opacity: 0.95;
+    position: relative;
+    z-index: 1;
 }
 
 .form-content {
-    padding: 40px;
+    padding: 2.5rem 2rem;
 }
 
 /* Form Groups */
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 20px;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .form-group {
-    margin-bottom: 25px;
+    margin-bottom: 1.5rem;
 }
 
 .form-group.full-width {
@@ -124,30 +175,34 @@ body {
 
 .form-label {
     display: block;
-    font-weight: 600;
+    font-weight: 700;
     color: #374151;
-    margin-bottom: 8px;
-    font-size: 14px;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .form-input,
 .form-textarea,
 .form-select {
     width: 100%;
-    padding: 12px 16px;
+    padding: 0.875rem 1.125rem;
     border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: all 0.3s ease;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background: white;
+    font-weight: 500;
 }
 
 .form-input:focus,
 .form-textarea:focus,
 .form-select:focus {
     outline: none;
-    border-color: #10b981;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1), 0 4px 12px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
 }
 
 .form-textarea {
@@ -157,40 +212,83 @@ body {
 
 .form-error {
     color: #dc2626;
-    font-size: 12px;
-    margin-top: 4px;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    font-weight: 600;
+}
+
+.helper-text {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
 }
 
 /* File Upload */
 .file-upload-container {
-    border: 2px dashed #d1d5db;
-    border-radius: 8px;
-    padding: 30px;
+    border: 3px dashed #cbd5e1;
+    border-radius: 16px;
+    padding: 2.5rem;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    position: relative;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
+}
+
+.file-upload-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 16px;
+    background: var(--primary-gradient);
+    opacity: 0;
+    transition: opacity 0.4s;
 }
 
 .file-upload-container:hover {
-    border-color: #10b981;
-    background: #f0fdf4;
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(102, 126, 234, 0.15);
+}
+
+.file-upload-container:hover::before {
+    opacity: 0.05;
 }
 
 .file-upload-icon {
-    font-size: 48px;
-    color: #9ca3af;
-    margin-bottom: 15px;
+    font-size: 3.5rem;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+    transition: transform 0.3s;
+    position: relative;
+    z-index: 1;
+}
+
+.file-upload-container:hover .file-upload-icon {
+    transform: scale(1.1) rotate(5deg);
 }
 
 .file-upload-text {
     color: #374151;
-    font-weight: 600;
-    margin-bottom: 5px;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
 }
 
 .file-upload-hint {
     color: #6b7280;
-    font-size: 14px;
+    font-size: 0.875rem;
+    position: relative;
+    z-index: 1;
 }
 
 .file-input {
@@ -200,35 +298,61 @@ body {
 /* Form Actions */
 .form-actions {
     display: flex;
-    gap: 15px;
+    gap: 1rem;
     justify-content: flex-end;
-    margin-top: 40px;
-    padding-top: 30px;
-    border-top: 1px solid #e5e7eb;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #f1f5f9;
 }
 
 .btn {
-    padding: 14px 28px;
+    padding: 1rem 2rem;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
-    display: inline-block;
-    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #10b981, #059669);
+    background: var(--primary-gradient);
     color: white;
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px rgba(102, 126, 234, 0.3);
+    color: white;
+}
+
+.btn-primary:active {
     transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
 .btn-secondary {
@@ -240,21 +364,13 @@ body {
     background: #e5e7eb;
     color: #374151;
     text-decoration: none;
-}
-
-/* Helper Text */
-.helper-text {
-    font-size: 12px;
-    color: #6b7280;
-    margin-top: 4px;
+    transform: translateY(-2px);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .header-content {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
+    .create-container {
+        padding: 1rem 0.5rem;
     }
 
     .form-row {
@@ -263,35 +379,64 @@ body {
     }
 
     .form-content {
-        padding: 30px 20px;
+        padding: 2rem 1.5rem;
+    }
+
+    .form-header {
+        padding: 2rem 1.5rem;
+    }
+
+    .form-title {
+        font-size: 1.5rem;
     }
 
     .form-actions {
-        flex-direction: column;
+        flex-direction: column-reverse;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-content {
+        padding: 1.5rem 1rem;
+    }
+
+    .form-header {
+        padding: 1.5rem 1rem;
+    }
+
+    .form-header-icon {
+        font-size: 2.5rem;
+    }
+
+    .form-title {
+        font-size: 1.25rem;
+    }
+
+    .file-upload-container {
+        padding: 2rem 1rem;
     }
 }
 </style>
 
 <div class="create-container">
-    <!-- Header -->
-    {{-- <div class="header">
-        <div class="header-content">
-            <h1 class="header-title">🎁 Create New Reward</h1>
-            <a href="{{ route('reward.index') }}" class="back-btn">← Back to Rewards</a>
-        </div>
-    </div> --}}
-
     <!-- Alert Messages -->
     @if(session('error'))
         <div class="alert alert-error">
-            ❌ {{ session('error') }}
+            <i class="fas fa-exclamation-circle"></i>
+            <strong>Error!</strong> {{ session('error') }}
         </div>
     @endif
 
     @if($errors->any())
         <div class="alert alert-error">
+            <i class="fas fa-exclamation-triangle"></i>
             <strong>Please fix the following errors:</strong>
-            <ul style="margin-top: 10px; padding-left: 20px;">
+            <ul style="margin-top: 0.75rem; padding-left: 1.5rem; margin-bottom: 0;">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -302,6 +447,9 @@ body {
     <!-- Form Container -->
     <div class="form-container">
         <div class="form-header">
+            <div class="form-header-icon">
+                <i class="fas fa-gift"></i>
+            </div>
             <h2 class="form-title">Create New Reward</h2>
             <p class="form-subtitle">Set up a new reward that customers can redeem with their points</p>
         </div>
@@ -318,7 +466,7 @@ body {
                                value="{{ old('name') }}" required maxlength="255"
                                placeholder="e.g., Free Coffee, 20% Discount">
                         @error('name')
-                            <div class="form-error">{{ $message }}</div>
+                            <div class="form-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                         @enderror
                     </div>
 
@@ -328,7 +476,7 @@ body {
                                value="{{ old('points_required') }}" required min="1"
                                placeholder="100">
                         @error('points_required')
-                            <div class="form-error">{{ $message }}</div>
+                            <div class="form-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                         @enderror
                         <div class="helper-text">How many points customers need to redeem this reward</div>
                     </div>
@@ -340,7 +488,7 @@ body {
                     <textarea id="description" name="description" class="form-textarea"
                               maxlength="1000" placeholder="Describe your reward, terms and conditions, etc.">{{ old('description') }}</textarea>
                     @error('description')
-                        <div class="form-error">{{ $message }}</div>
+                        <div class="form-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                     @enderror
                     <div class="helper-text">Optional description to help customers understand the reward</div>
                 </div>
@@ -353,29 +501,31 @@ body {
                                value="{{ old('quantity') }}" required min="1"
                                placeholder="50">
                         @error('quantity')
-                            <div class="form-error">{{ $message }}</div>
+                            <div class="form-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                         @enderror
                         <div class="helper-text">How many of this reward are available</div>
                     </div>
 
                     <div class="form-group">
-                        <label for="valid_from" class="form-label">Valid From *</label>
-                        <input type="date" id="valid_from" name="valid_from" class="form-input"
-                               value="{{ old('valid_from', date('Y-m-d')) }}" required>
+                        <label for="valid_from" class="form-label">Valid From (Date & Time) *</label>
+                        <input type="datetime-local" id="valid_from" name="valid_from" class="form-input"
+                               value="{{ old('valid_from', date('Y-m-d\TH:i')) }}" required>
                         @error('valid_from')
-                            <div class="form-error">{{ $message }}</div>
+                            <div class="form-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                         @enderror
+                        <div class="helper-text">When the reward becomes available</div>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="valid_until" class="form-label">Valid Until *</label>
-                        <input type="date" id="valid_until" name="valid_until" class="form-input"
+                        <label for="valid_until" class="form-label">Valid Until (Date & Time) *</label>
+                        <input type="datetime-local" id="valid_until" name="valid_until" class="form-input"
                                value="{{ old('valid_until') }}" required>
                         @error('valid_until')
-                            <div class="form-error">{{ $message }}</div>
+                            <div class="form-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                         @enderror
+                        <div class="helper-text">When the reward expires</div>
                     </div>
                 </div>
 
@@ -383,24 +533,28 @@ body {
                 <div class="form-group full-width">
                     <label for="image" class="form-label">Reward Image</label>
                     <div class="file-upload-container" onclick="document.getElementById('image').click()">
-                        <div class="file-upload-icon">📷</div>
+                        <div class="file-upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
                         <div class="file-upload-text">Click to upload an image</div>
                         <div class="file-upload-hint">JPG, PNG, GIF up to 5MB</div>
                     </div>
                     <input type="file" id="image" name="image" class="file-input"
                            accept="image/jpeg,image/png,image/jpg,image/gif">
                     @error('image')
-                        <div class="form-error">{{ $message }}</div>
+                        <div class="form-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                     @enderror
                 </div>
 
                 <!-- Form Actions -->
                 <div class="form-actions">
                     <a href="{{ route('reward.index') }}" class="btn btn-secondary">
-                        Cancel
+                        <i class="fas fa-times"></i>
+                        <span>Cancel</span>
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        ✨ Create Reward
+                        <i class="fas fa-check"></i>
+                        <span>Create Reward</span>
                     </button>
                 </div>
             </form>
@@ -416,11 +570,12 @@ document.getElementById('image').addEventListener('change', function(e) {
 
     if (file) {
         const fileName = file.name;
-        container.innerHTML = `
-            <div class="file-upload-icon">✅</div>
-            <div class="file-upload-text">Image selected: ${fileName}</div>
-            <div class="file-upload-hint">Click to change image</div>
-        `;
+        const fileSize = (file.size / 1024 / 1024).toFixed(2);
+        container.querySelector('.file-upload-icon').innerHTML = '<i class="fas fa-check-circle"></i>';
+        container.querySelector('.file-upload-text').textContent = fileName;
+        container.querySelector('.file-upload-hint').textContent = `Size: ${fileSize} MB - Click to change`;
+        container.style.borderColor = '#667eea';
+        container.style.background = 'rgba(102, 126, 234, 0.1)';
     }
 });
 

@@ -129,7 +129,7 @@ class GalleryController extends Controller
             ]);
 
             $this->sGRepo->update($id, Auth::id(), $request->all());
-            return redirect()->route('seller.photos')->with('success', 'Photo updated successfully! ✏️');
+            return redirect()->route('seller.photos');
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'An error occurred while updating the photo.');
         }

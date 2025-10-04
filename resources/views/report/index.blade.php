@@ -29,19 +29,6 @@
           </div>
         </div>
 
-        <!-- Success Message -->
-        @if(session('success'))
-          <div class="row mb-4">
-            <div class="col-12">
-              <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i>
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-            </div>
-          </div>
-        @endif
-
         <!-- Reports List -->
         <div class="row">
           <div class="col-12">

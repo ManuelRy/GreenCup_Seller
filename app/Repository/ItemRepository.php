@@ -14,7 +14,7 @@ class ItemRepository
   }
   public function listQuery($seller_id, $query = null)
   {
-    $items = Item::query();
+    $items = Item::where('seller_id', $seller_id);
     if ($query) {
       $items->where('name', 'like', '%' . $query . '%');
     }

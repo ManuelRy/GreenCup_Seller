@@ -63,21 +63,48 @@
   font-size: 0.95rem;
 }
 
+.input-wrapper {
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 1.1rem;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
 .form-control {
   border: 2px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  padding: 0.875rem 1rem 0.875rem 3rem;
   font-size: 1rem;
   transition: all 0.3s ease;
+  background: white;
 }
 
 .form-control:focus {
   border-color: #0d9488;
-  box-shadow: 0 0 0 0.2rem rgba(13, 148, 136, 0.15);
+  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1);
+  background: white;
+}
+
+.form-control:focus + .input-icon {
+  color: #0d9488;
 }
 
 .form-control.is-invalid {
   border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.form-control::placeholder {
+  color: #d1d5db;
 }
 
 .invalid-feedback {
@@ -240,16 +267,19 @@
 
       <div class="mb-3">
         <label for="email" class="form-label">Business Email</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value="{{ old('email', session('registration_email')) }}"
-          class="form-control @error('email') is-invalid @enderror"
-          placeholder="Enter your business email"
-          required
-          autocomplete="email"
-        />
+        <div class="input-wrapper">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value="{{ old('email', session('registration_email')) }}"
+            class="form-control @error('email') is-invalid @enderror"
+            placeholder="Enter your business email"
+            required
+            autocomplete="email"
+          />
+          <i class="fas fa-envelope input-icon"></i>
+        </div>
         @error('email')
           <div class="invalid-feedback">
             <i class="fas fa-exclamation-circle"></i>
@@ -260,15 +290,18 @@
 
       <div class="mb-3">
         <label for="password" class="form-label">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          class="form-control @error('password') is-invalid @enderror"
-          placeholder="Enter your password"
-          required
-          autocomplete="current-password"
-        />
+        <div class="input-wrapper">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-control @error('password') is-invalid @enderror"
+            placeholder="Enter your password"
+            required
+            autocomplete="current-password"
+          />
+          <i class="fas fa-lock input-icon"></i>
+        </div>
         @error('password')
           <div class="invalid-feedback">
             <i class="fas fa-exclamation-circle"></i>

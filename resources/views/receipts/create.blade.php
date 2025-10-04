@@ -40,7 +40,13 @@ function getItemIcon($itemName) {
                 <div class="items-grid">
                     @foreach($items as $item)
                         <div class="item-card" id="item-card-{{ $item->id }}">
-                            <div class="item-icon">{{ getItemIcon($item->name) }}</div>
+                            <div class="item-icon">
+                                @if($item->image_url)
+                                    <img src="{{ asset($item->image_url) }}" alt="{{ $item->name }}" loading="lazy">
+                                @else
+                                    {{ getItemIcon($item->name) }}
+                                @endif
+                            </div>
                             <div class="item-name">{{ $item->name }}</div>
                             <div class="item-points">{{ $item->points_per_unit }} pts each</div>
 
@@ -64,7 +70,7 @@ function getItemIcon($itemName) {
                 @if($items->isEmpty())
                     <div class="no-items">
                         <div class="no-items-icon">📦</div>
-                        <p>No items available. Please contact admin to add items to the system.</p>
+                        <p>No items available. Please <a href="{{ route('item.create') }}">add items</a> to the system.</p>
                     </div>
                 @endif
             </div>
@@ -207,8 +213,29 @@ function getItemIcon($itemName) {
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     margin: 0;
-    background: #f8fafc;
+    background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
     color: #111827;
+    position: relative;
+    min-height: 100vh;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: floatPattern 60s linear infinite;
+    pointer-events: none; /* Allow clicks to pass through */
+    z-index: 0;
+}
+
+@keyframes floatPattern {
+    from { transform: translate(0, 0) rotate(0deg); }
+    to { transform: translate(40px, 40px) rotate(360deg); }
 }
 
 /* Header */
@@ -277,6 +304,11 @@ body {
 }
 
 /* Receipt Builder */
+.create-receipt-container {
+    position: relative;
+    z-index: 1;
+}
+
 .receipt-builder {
     display: grid;
     grid-template-columns: 1fr 400px;
@@ -295,15 +327,33 @@ body {
 
 .items-section {
     background: white;
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s;
+    position: relative;
+}
+
+.items-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent 0%, #10b981 50%, transparent 100%);
+    border-radius: 24px 24px 0 0;
+    pointer-events: none; /* Allow clicks to pass through */
 }
 
 .section-header h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1.75rem;
+    font-weight: 800;
     margin: 0 0 0.5rem;
+    background: linear-gradient(135deg, #10b981, #059669);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .section-header p {
@@ -319,34 +369,81 @@ body {
 }
 
 .item-card {
-    background: #f8fafc;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
     border: 2px solid transparent;
-    border-radius: 16px;
-    padding: 1.5rem;
+    border-radius: 20px;
+    padding: 1.75rem 1.5rem;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.item-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(5, 150, 105, 0.05));
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none; /* Allow clicks to pass through */
+    z-index: 0;
+}
+
+.item-card:hover::before {
+    opacity: 1;
 }
 
 .item-card:hover {
     border-color: #10b981;
-    background: #f0fdf4;
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.15);
 }
 
 .item-card.selected {
     border-color: #10b981;
-    background: #f0fdf4;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2);
 }
 
 .item-icon {
-    font-size: 2.5rem;
+    font-size: 3rem;
     margin-bottom: 0.75rem;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+    max-width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-icon img {
+    max-width: 100%;
+    max-height: 80px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.item-card:hover .item-icon {
+    transform: scale(1.15) rotate(5deg);
 }
 
 .item-name {
     font-size: 1rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
 }
 
 .item-points {
@@ -354,6 +451,8 @@ body {
     color: #10b981;
     font-weight: 600;
     margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
 }
 
 .add-item-btn {
@@ -371,6 +470,8 @@ body {
     justify-content: center;
     gap: 0.25rem;
     width: 100%;
+    position: relative;
+    z-index: 2; /* Ensure button is clickable */
 }
 
 .add-item-btn:hover {
@@ -384,6 +485,8 @@ body {
     justify-content: center;
     gap: 0.75rem;
     margin-top: 1rem;
+    position: relative;
+    z-index: 2; /* Ensure controls are clickable */
 }
 
 .qty-btn {
@@ -428,9 +531,13 @@ body {
 }
 
 .preview-header h3 {
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: 1.5rem;
+    font-weight: 800;
     margin: 0;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .clear-btn {
@@ -457,10 +564,24 @@ body {
 
 .receipt-paper {
     background: white;
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.02);
     border: 1px solid #f3f4f6;
+    page-break-inside: avoid;
+    position: relative;
+}
+
+.receipt-paper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent 0%, #10b981 50%, transparent 100%);
+    border-radius: 20px 20px 0 0;
+    pointer-events: none; /* Allow clicks to pass through */
 }
 
 .receipt-header-section {
@@ -589,18 +710,42 @@ body {
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
     border: none;
-    border-radius: 12px;
-    padding: 1rem;
-    font-size: 1rem;
+    border-radius: 16px;
+    padding: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+    overflow: hidden;
+}
+
+.generate-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.generate-btn:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 .generate-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba(16, 185, 129, 0.4);
+}
+
+.generate-btn:active:not(:disabled) {
+    transform: translateY(-1px);
 }
 
 .generate-btn:disabled {
@@ -939,13 +1084,10 @@ function changeQuantity(itemId, change) {
         // Remove item
         delete selectedItems[itemId];
         updateItemCard(itemId);
-    } else if (newQuantity <= 10) {
-        // Update quantity
+    } else {
+        // Update quantity (no maximum limit)
         selectedItems[itemId].quantity = newQuantity;
         updateItemCard(itemId);
-    } else {
-        showToast('Maximum quantity (10) reached!', 'error');
-        return;
     }
 
     updateReceiptPreview();

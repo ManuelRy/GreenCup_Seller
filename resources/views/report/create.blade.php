@@ -31,15 +31,6 @@
                 </h5>
               </div>
               <div class="card-body">
-                <!-- Display Success Message -->
-                @if(session('success'))
-                  <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                @endif
-
                 <!-- Display Validation Errors -->
                 @if($errors->any())
                   <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -214,7 +205,7 @@
                           <p class="text-muted small mb-3">
                             Screenshots help us understand your issue better
                           </p>
-                          <button type="button" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('image').click()">
+                          <button type="button" class="btn btn-outline-primary btn-sm" id="chooseFileBtn">
                             <i class="fas fa-plus me-2"></i>Choose File
                           </button>
                           <div class="mt-2">
@@ -494,12 +485,19 @@
       const imagePreview = document.getElementById('imagePreview');
       const previewImg = document.getElementById('previewImg');
       const fileName = document.getElementById('fileName');
+      const chooseFileBtn = document.getElementById('chooseFileBtn');
+      let isProcessing = false; // Guard to prevent double processing
 
-      // Click to upload
-      uploadArea.addEventListener('click', () => {
-        if (!uploadArea.classList.contains('has-file')) {
-          fileInput.click();
-        }
+      // Choose file button click
+      chooseFileBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent event bubbling
+        fileInput.click();
+      });
+
+      // Upload area click (only for drag/drop visual feedback, not for opening file picker)
+      uploadArea.addEventListener('click', (e) => {
+        // Don't open file picker on area click - only button or drag/drop
+        e.stopPropagation();
       });
 
       // Drag and drop functionality
@@ -525,17 +523,20 @@
 
       // File input change
       fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) {
+        if (e.target.files.length > 0 && !isProcessing) {
           handleFileSelection(e.target.files[0]);
         }
       });
 
       // Handle file selection
       function handleFileSelection(file) {
+        if (isProcessing) return; // Prevent double processing
+        isProcessing = true;
         // Validate file type
         if (!file.type.startsWith('image/')) {
           showAlert('Please select an image file (JPG, PNG, GIF)', 'warning');
           fileInput.value = ''; // Clear the input
+          isProcessing = false;
           return;
         }
 
@@ -545,6 +546,7 @@
           const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
           showAlert(`Image is too large (${fileSizeMB}MB). Please choose an image smaller than 5MB.`, 'danger');
           fileInput.value = ''; // Clear the input
+          isProcessing = false;
           return;
         }
 
@@ -582,7 +584,9 @@
 
             // Add success feedback
             uploadArea.style.borderColor = '#22c55e';
-            showAlert(`Image "${file.name}" uploaded successfully!`, 'success');
+
+            // Reset processing flag
+            isProcessing = false;
           }, 500);
         };
 
@@ -592,6 +596,7 @@
           progressBar.style.width = '0%';
           showAlert('Failed to process the image. Please try again.', 'danger');
           fileInput.value = '';
+          isProcessing = false;
         };
 
         reader.readAsDataURL(file);
@@ -608,6 +613,7 @@
         imagePreview.classList.add('d-none');
         uploadArea.classList.remove('has-file');
         uploadArea.style.borderColor = '';
+        isProcessing = false; // Reset processing flag
       };
 
       // Enhanced alert function

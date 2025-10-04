@@ -225,6 +225,58 @@ class SellerController extends Controller
     }
 
     /**
+     * Display full activity page with all transactions
+     */
+    public function activity(Request $request)
+    {
+        $seller = Auth::guard('seller')->user();
+
+        // Get transaction history with pagination
+        $query = PointTransaction::where('point_transactions.seller_id', $seller->id)
+            ->leftJoin('consumers', 'point_transactions.consumer_id', '=', 'consumers.id')
+            ->leftJoin('qr_codes', 'point_transactions.qr_code_id', '=', 'qr_codes.id')
+            ->leftJoin('items', 'qr_codes.item_id', '=', 'items.id')
+            ->select([
+                'point_transactions.*',
+                'consumers.full_name as consumer_name',
+                'items.name as item_name',
+                'items.points_per_unit'
+            ])
+            ->orderBy('point_transactions.scanned_at', 'desc')
+            ->orderBy('point_transactions.created_at', 'desc');
+
+        // Apply filter if requested
+        $filter = $request->get('filter', 'all');
+        if ($filter === 'earn' || $filter === 'spend') {
+            $query->where('point_transactions.type', $filter);
+        }
+
+        $transactions = $query->paginate(50);
+
+        // Get statistics
+        $pointsGiven = PointTransaction::where('seller_id', $seller->id)
+            ->where('type', 'earn')
+            ->sum('points') ?? 0;
+
+        $pointsFromRedemptions = PointTransaction::where('seller_id', $seller->id)
+            ->where('type', 'spend')
+            ->sum('points') ?? 0;
+
+        $totalCustomers = PointTransaction::where('seller_id', $seller->id)
+            ->distinct('consumer_id')
+            ->count('consumer_id') ?? 0;
+
+        return view('sellers.activity', compact(
+            'seller',
+            'transactions',
+            'filter',
+            'pointsGiven',
+            'pointsFromRedemptions',
+            'totalCustomers'
+        ));
+    }
+
+    /**
      * Get transaction details via AJAX
      */
     public function getTransactionDetail($id)
@@ -372,7 +424,7 @@ class SellerController extends Controller
                 ]);
             }
         }
-        return redirect()->back()->with('success', 'Photo uploaded successfully! 📷');
+        return redirect()->back();
     }
     /**
      * Update the seller's profile
@@ -397,8 +449,7 @@ class SellerController extends Controller
             // Update the seller's profile
             $seller->update($validated);
 
-            return redirect()->route('seller.account')
-                ->with('success', 'Profile updated successfully!');
+            return redirect()->route('seller.account');
         } catch (Exception $e) {
             Log::error('Profile update error: ' . $e->getMessage());
             return redirect()->route('seller.account')

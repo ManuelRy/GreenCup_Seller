@@ -69,7 +69,7 @@ class ReceiptController extends Controller
             $request->validate([
                 'items' => 'required|array|min:1',
                 'items.*.item_id' => 'required|integer|exists:items,id',
-                'items.*.quantity' => 'required|integer|min:1|max:10',
+                'items.*.quantity' => 'required|integer|min:1',
                 'expires_hours' => 'nullable|integer|min:1|max:168' // Max 1 week
             ]);
 

@@ -11,14 +11,18 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-    background: linear-gradient(135deg, #00b09b 0%, #00cdac 50%, #00dfa8 100%);
     min-height: 100vh;
     color: #333333;
+    position: relative;
+    overflow-x: hidden;
 }
+
 
 .edit-container {
     min-height: 100vh;
     padding: 20px;
+    position: relative;
+    z-index: 1;
 }
 
 /* Header */
@@ -76,34 +80,69 @@ body {
 
 /* Form Container */
 .form-container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
     background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 24px;
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255,255,255,0.1);
     overflow: hidden;
+    animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .form-header {
     background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
-    padding: 30px;
+    padding: 40px 30px;
     text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.form-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10%);
+    background-size: 30px 30px;
+    animation: headerPattern 30s linear infinite;
+}
+
+@keyframes headerPattern {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .form-title {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 700;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
 }
 
 .form-subtitle {
     font-size: 16px;
-    opacity: 0.9;
+    opacity: 0.95;
+    position: relative;
+    z-index: 1;
 }
 
 .form-content {
-    padding: 40px;
+    padding: 50px 40px;
 }
 
 /* Form Groups */
@@ -134,11 +173,11 @@ body {
 .form-textarea,
 .form-select {
     width: 100%;
-    padding: 12px 16px;
+    padding: 14px 18px;
     border: 2px solid #e5e7eb;
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 16px;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background: white;
 }
 
@@ -147,7 +186,8 @@ body {
 .form-select:focus {
     outline: none;
     border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(59, 130, 246, 0.15);
+    transform: translateY(-2px);
 }
 
 .form-textarea {
@@ -202,34 +242,67 @@ body {
 
 /* File Upload */
 .file-upload-container {
-    border: 2px dashed #d1d5db;
-    border-radius: 8px;
-    padding: 30px;
+    border: 3px dashed #d1d5db;
+    border-radius: 16px;
+    padding: 40px;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    position: relative;
+    background: #fafafa;
+}
+
+.file-upload-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(37, 99, 235, 0.05));
+    opacity: 0;
+    transition: opacity 0.4s;
 }
 
 .file-upload-container:hover {
     border-color: #3b82f6;
     background: #eff6ff;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.15);
+}
+
+.file-upload-container:hover::before {
+    opacity: 1;
 }
 
 .file-upload-icon {
-    font-size: 48px;
+    font-size: 56px;
     color: #9ca3af;
     margin-bottom: 15px;
+    transition: transform 0.3s;
+    position: relative;
+    z-index: 1;
+}
+
+.file-upload-container:hover .file-upload-icon {
+    transform: scale(1.1) rotate(5deg);
+    color: #3b82f6;
 }
 
 .file-upload-text {
     color: #374151;
     font-weight: 600;
     margin-bottom: 5px;
+    position: relative;
+    z-index: 1;
 }
 
 .file-upload-hint {
     color: #6b7280;
     font-size: 14px;
+    position: relative;
+    z-index: 1;
 }
 
 .file-input {
@@ -238,17 +311,25 @@ body {
 
 /* Stats Info */
 .stats-info {
-    background: #f0f9ff;
-    border: 1px solid #bae6fd;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 2px solid #bae6fd;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1); }
+    50% { box-shadow: 0 6px 20px rgba(59, 130, 246, 0.15); }
 }
 
 .stats-title {
-    font-weight: 600;
+    font-weight: 700;
     color: #0c4a6e;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    font-size: 16px;
 }
 
 .stats-row {
@@ -260,14 +341,24 @@ body {
 
 .stat-item {
     background: white;
-    padding: 10px;
-    border-radius: 6px;
+    padding: 15px;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.stat-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.15);
 }
 
 .stat-value {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 700;
-    color: #1e40af;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .stat-label {
@@ -287,25 +378,51 @@ body {
 }
 
 .btn {
-    padding: 14px 28px;
+    padding: 16px 32px;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
     display: inline-block;
     text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 .btn-primary {
     background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
 }
 
 .btn-primary:hover {
     background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+.btn-primary:active {
     transform: translateY(-1px);
     box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
 }
@@ -477,23 +594,25 @@ body {
                     </div>
 
                     <div class="form-group">
-                        <label for="valid_from" class="form-label">Valid From *</label>
-                        <input type="date" id="valid_from" name="valid_from" class="form-input"
-                               value="{{ old('valid_from', $reward->valid_from->format('Y-m-d')) }}" required>
+                        <label for="valid_from" class="form-label">Valid From (Date & Time) *</label>
+                        <input type="datetime-local" id="valid_from" name="valid_from" class="form-input"
+                               value="{{ old('valid_from', $reward->valid_from->format('Y-m-d\TH:i')) }}" required>
                         @error('valid_from')
                             <div class="form-error">{{ $message }}</div>
                         @enderror
+                        <div class="helper-text">When the reward becomes available</div>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="valid_until" class="form-label">Valid Until *</label>
-                        <input type="date" id="valid_until" name="valid_until" class="form-input"
-                               value="{{ old('valid_until', $reward->valid_until->format('Y-m-d')) }}" required>
+                        <label for="valid_until" class="form-label">Valid Until (Date & Time) *</label>
+                        <input type="datetime-local" id="valid_until" name="valid_until" class="form-input"
+                               value="{{ old('valid_until', $reward->valid_until->format('Y-m-d\TH:i')) }}" required>
                         @error('valid_until')
                             <div class="form-error">{{ $message }}</div>
                         @enderror
+                        <div class="helper-text">When the reward expires</div>
                     </div>
 
                     <div class="form-group">

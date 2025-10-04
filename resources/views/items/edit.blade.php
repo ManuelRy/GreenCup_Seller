@@ -1,187 +1,108 @@
-@extends('master')
+@extends('layouts.app')
 
-@section('content')
+@section('title', 'Edit Item - Green Cup App')
+@section('page-title', 'Edit Item')
+@section('page-subtitle', 'Update item details')
+
+@push('styles')
 <style>
-/* Reset and Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
-
-html {
-    font-size: 16px;
-    -webkit-text-size-adjust: 100%;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-    background: #ffffff;
-    color: #333333;
-    line-height: 1.6;
-    min-height: 100vh;
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-}
-
-/* Container with Gradient Background */
-.dashboard-container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #00b09b 0%, #00cdac 50%, #00dfa8 100%);
-    padding-bottom: 40px;
-}
-
-/* Header */
-.dashboard-header {
-    background: #374151;
-    padding: 20px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.header-content {
-    max-width: 1200px;
+/* Form Container */
+.form-container {
+    max-width: 900px;
     margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Current Info Banner */
+.current-info-banner {
+    background: linear-gradient(135deg, #00b09b, #00d9a6);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    color: white;
+    box-shadow: 0 4px 20px rgba(0, 176, 155, 0.2);
+    animation: fadeInDown 0.4s ease;
+}
+
+.current-info-content {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.header-back-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-}
-
-.header-back-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateX(-2px);
-    color: white;
-    text-decoration: none;
-}
-
-.header-title-section {
-    color: white;
-}
-
-.app-title {
-    font-size: 24px;
+.current-item-details h3 {
+    font-size: 20px;
     font-weight: 700;
-    margin: 0;
-    color: white;
-}
-
-.app-subtitle {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.8);
-    margin: 0;
-}
-
-.back-button {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-.back-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    text-decoration: none;
-}
-
-/* Main Content */
-.main-content {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 24px 20px;
-}
-
-/* Alerts */
-.alert {
-    padding: 16px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    font-weight: 500;
+    margin: 0 0 8px 0;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
-.alert-error {
-    background: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #fca5a5;
+.current-item-meta {
+    font-size: 13px;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.current-item-image {
+    width: 70px;
+    height: 70px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Form Card */
 .form-card {
-    background: white;
-    border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 176, 155, 0.1);
+    animation: fadeInUp 0.4s ease;
     margin-bottom: 24px;
 }
 
 .form-header {
-    text-align: center;
-    margin-bottom: 32px;
+    border-bottom: 2px solid #f3f4f6;
+    padding-bottom: 20px;
+    margin-bottom: 28px;
 }
 
 .form-title {
-    font-size: 32px;
+    font-size: 24px;
     font-weight: 700;
-    color: #1a1a1a;
-    margin-bottom: 8px;
+    color: #1f2937;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-title i {
+    color: #00b09b;
 }
 
 .form-subtitle {
-    font-size: 16px;
-    color: #666;
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
 }
 
-.item-name-badge {
-    display: inline-block;
-    background: #e6fffa;
-    color: #047857;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-weight: 600;
-    margin: 0 8px;
-    border: 1px solid #a7f3d0;
-}
-
-/* Form Groups */
+/* Form Group */
 .form-group {
     margin-bottom: 24px;
 }
 
 .form-label {
     display: block;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: #374151;
     margin-bottom: 8px;
@@ -194,18 +115,19 @@ body {
 
 .form-input {
     width: 100%;
-    padding: 14px 16px;
-    border: 2px solid #e5e5e5;
-    border-radius: 12px;
-    font-size: 16px;
-    transition: all 0.2s ease;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
     background: white;
 }
 
 .form-input:focus {
     outline: none;
-    border-color: #10b981;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    border-color: #00b09b;
+    box-shadow: 0 0 0 3px rgba(0, 176, 155, 0.1);
 }
 
 .form-input.error {
@@ -217,289 +139,178 @@ body {
     box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
-.form-textarea {
-    min-height: 100px;
-    resize: vertical;
-}
-
 .form-help {
-    font-size: 14px;
-    color: #666;
+    font-size: 13px;
+    color: #6b7280;
     margin-top: 6px;
 }
 
 .form-error {
-    font-size: 14px;
+    font-size: 13px;
     color: #dc2626;
     margin-top: 6px;
     font-weight: 500;
 }
 
-/* Image Preview */
-.image-preview-container {
-    margin-top: 12px;
-}
-
-.image-preview {
-    max-width: 200px;
-    max-height: 200px;
-    border-radius: 12px;
-    border: 2px solid #e5e5e5;
-    padding: 8px;
-    background: #f8f8f8;
-}
-
-.image-preview img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-}
-
-.image-placeholder {
-    width: 200px;
-    height: 150px;
-    background: #f8f8f8;
-    border: 2px dashed #ccc;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #666;
-    font-size: 48px;
-}
-
-/* Buttons */
-.form-actions {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    margin-top: 32px;
-    flex-wrap: wrap;
-}
-
-.btn {
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 140px;
-    justify-content: center;
-}
-
-.btn-primary {
-    background: #10b981;
-    color: white;
-}
-
-.btn-primary:hover {
-    background: #059669;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-    color: white;
-    text-decoration: none;
-}
-
-.btn-secondary {
-    background: #f3f4f6;
-    color: #374151;
-    border: 1px solid #d1d5db;
-}
-
-.btn-secondary:hover {
-    background: #e5e7eb;
-    color: #374151;
-    text-decoration: none;
-}
-
-.btn-danger {
-    background: #fee2e2;
-    color: #dc2626;
-    border: 1px solid #fca5a5;
-}
-
-.btn-danger:hover {
-    background: #fecaca;
-    color: #dc2626;
-    text-decoration: none;
-}
-
-.btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none !important;
-}
-
 /* Input Icons */
-.input-group {
+.input-wrapper {
     position: relative;
 }
 
 .input-icon {
     position: absolute;
-    left: 16px;
+    left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 18px;
-    color: #666;
-    pointer-events: none;
+    color: #9ca3af;
+    font-size: 16px;
 }
 
-.input-group .form-input {
-    padding-left: 48px;
+.input-wrapper .form-input {
+    padding-left: 44px;
 }
 
-/* Points Input Special Styling */
-.points-input-container {
+/* Points Input */
+.points-wrapper {
     position: relative;
 }
 
 .points-suffix {
     position: absolute;
-    right: 16px;
+    right: 14px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 16px;
-    color: #10b981;
+    font-size: 14px;
+    color: #00b09b;
     font-weight: 600;
-    pointer-events: none;
 }
 
-.points-input {
+.points-wrapper .form-input {
     padding-right: 70px;
 }
 
-/* File Upload Styling */
-.file-upload-container {
-    position: relative;
-}
-
-.file-input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.file-upload-label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 20px;
-    border: 2px dashed #ccc;
+/* Current Image Display */
+.current-image-section {
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
     border-radius: 12px;
-    background: #f8f9fa;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: center;
+    padding: 16px;
+    margin-bottom: 16px;
 }
 
-.file-upload-label:hover {
-    border-color: #10b981;
-    background: #f0fdf4;
-}
-
-.file-upload-label.dragover {
-    border-color: #10b981;
-    background: #ecfdf5;
-    transform: scale(1.02);
-}
-
-.file-upload-icon {
-    font-size: 48px;
+.current-image-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
     margin-bottom: 12px;
-    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.file-upload-text {
-    font-size: 16px;
+.current-image-display {
+    max-width: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #e5e7eb;
+}
+
+.current-image-display img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Image Upload */
+.image-upload-area {
+    border: 2px dashed #d1d5db;
+    border-radius: 12px;
+    padding: 32px 20px;
+    text-align: center;
+    background: #f9fafb;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.image-upload-area:hover {
+    border-color: #00b09b;
+    background: rgba(0, 176, 155, 0.05);
+}
+
+.image-upload-area.dragover {
+    border-color: #00b09b;
+    background: rgba(0, 176, 155, 0.1);
+    transform: scale(1.01);
+}
+
+.upload-icon {
+    font-size: 48px;
+    color: #9ca3af;
+    margin-bottom: 12px;
+}
+
+.upload-text {
+    font-size: 15px;
     font-weight: 600;
     color: #374151;
     margin-bottom: 4px;
 }
 
-.file-upload-subtext {
-    font-size: 14px;
+.upload-subtext {
+    font-size: 13px;
     color: #6b7280;
 }
 
-.file-selected .file-upload-label {
-    border-color: #10b981;
-    background: #ecfdf5;
+.file-input {
+    display: none;
 }
 
-.file-selected .file-upload-icon {
-    color: #10b981;
+.image-upload-area.has-file {
+    border-color: #00b09b;
+    background: rgba(0, 176, 155, 0.05);
 }
 
-.file-selected .file-upload-text {
-    color: #10b981;
+.image-upload-area.has-file .upload-icon {
+    color: #00b09b;
 }
 
-/* Current Image Info */
-.current-image-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-    padding: 12px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    border: 1px solid #e9ecef;
+.image-upload-area.has-file .upload-text {
+    color: #00b09b;
 }
 
-.current-image-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #374151;
+/* Image Preview */
+.image-preview-container {
+    margin-top: 16px;
+    display: none;
 }
 
-.current-image-thumb {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 2px solid #e5e5e5;
-}
-
-/* Image Preview Updates */
 .image-preview {
     position: relative;
-    max-width: 200px;
-    max-height: 200px;
+    max-width: 250px;
+    margin: 0 auto;
     border-radius: 12px;
-    border: 2px solid #e5e5e5;
-    padding: 8px;
-    background: #f8f8f8;
     overflow: hidden;
+    border: 2px solid #e5e7eb;
 }
 
 .image-preview img {
     width: 100%;
     height: auto;
-    border-radius: 8px;
     display: block;
 }
 
 .remove-image-btn {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 24px;
-    height: 24px;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: rgba(220, 38, 38, 0.9);
     color: white;
     border: none;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -511,121 +322,113 @@ body {
     transform: scale(1.1);
 }
 
-/* Item Info Panel */
-.item-info-panel {
-    background: #f8f9fa;
-    border: 2px solid #e9ecef;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 32px;
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 2px solid #f3f4f6;
 }
 
-.item-info-header {
+.btn {
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #00b09b, #00d9a6);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 176, 155, 0.25);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 176, 155, 0.35);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+    color: #1f2937;
+    text-decoration: none;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Danger Zone */
+.danger-zone {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 24px 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 2px solid #fee2e2;
+    animation: fadeInUp 0.4s ease 0.1s both;
+}
+
+.danger-zone-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 10px;
+    margin-bottom: 12px;
 }
 
-.item-info-title {
+.danger-zone-title {
     font-size: 18px;
-    font-weight: 600;
-    color: #374151;
-}
-
-.item-current-image {
-    width: 80px;
-    height: 80px;
-    border-radius: 12px;
-    object-fit: cover;
-    border: 2px solid #e5e5e5;
-}
-
-.item-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 16px;
-}
-
-.stat-item {
-    text-align: center;
-    padding: 12px;
-    background: white;
-    border-radius: 12px;
-    border: 1px solid #e5e5e5;
-}
-
-.stat-value {
-    font-size: 20px;
     font-weight: 700;
-    color: #10b981;
-    margin-bottom: 4px;
+    color: #dc2626;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.stat-label {
-    font-size: 12px;
-    color: #666;
-    font-weight: 500;
-    text-transform: uppercase;
+.danger-zone-description {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0 0 20px 0;
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-    .main-content {
-        padding: 16px;
-    }
-
-    .form-card {
-        padding: 24px 20px;
-    }
-
-    .form-title {
-        font-size: 28px;
-    }
-
-    .form-actions {
-        flex-direction: column;
-    }
-
-    .btn {
-        width: 100%;
-    }
-
-    .item-info-header {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .item-stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
+.btn-danger {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 2px solid #fecaca;
 }
 
-@media (max-width: 480px) {
-    .header-content {
-        flex-direction: column;
-        gap: 16px;
-        align-items: flex-start;
-    }
-
-    .form-card {
-        padding: 20px 16px;
-    }
-
-    .item-stats {
-        grid-template-columns: 1fr;
-    }
+.btn-danger:hover {
+    background: #fecaca;
+    color: #b91c1c;
+    border-color: #fca5a5;
 }
 
 /* Animations */
-.fade-in {
-    animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
+@keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
@@ -633,285 +436,268 @@ body {
     }
 }
 
-/* Loading State */
-.loading {
-    opacity: 0.7;
-    pointer-events: none;
-}
-
-.loading .btn {
-    position: relative;
-}
-
-.loading .btn::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border: 2px solid transparent;
-    border-top: 2px solid currentColor;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
     }
-    100% {
-        transform: rotate(360deg);
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-container {
+        padding: 0 16px;
+    }
+
+    .form-card,
+    .danger-zone {
+        padding: 24px 20px;
+    }
+
+    .current-info-banner {
+        padding: 16px 20px;
+    }
+
+    .current-info-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-card,
+    .danger-zone {
+        padding: 20px 16px;
+    }
+
+    .form-title {
+        font-size: 20px;
+    }
+
+    .current-item-details h3 {
+        font-size: 18px;
     }
 }
 </style>
+@endpush
 
-<div class="dashboard-container">
-    <!-- Header -->
-    <header class="dashboard-header">
-        <div class="header-content">
-            <div class="header-left">
-                <a href="{{ route('item.index') }}" class="header-back-btn">
-                    ←
-                </a>
-                <div class="header-title-section">
-                    <h1 class="app-title">✏️ Edit Item</h1>
-                    <p class="app-subtitle">Update the details for <span class="item-name-badge">{{ $item->name ?? 'this item' }}</span></p>
-                </div>
+@section('content')
+<div class="form-container">
+    <!-- Current Item Info Banner -->
+    <div class="current-info-banner">
+        <div class="current-info-content">
+            <div class="current-item-details">
+                <h3>
+                    <i class="fas fa-box"></i>
+                    {{ $item->name }}
+                </h3>
+                <p class="current-item-meta">
+                    <i class="fas fa-clock"></i> Created {{ $item->created_at->format('M j, Y') }} ·
+                    <i class="fas fa-calendar"></i> Updated {{ $item->updated_at->format('M j, Y') }}
+                </p>
             </div>
-            <a href="{{ route('item.index') }}" class="back-button">
-                ← Back to Items
-            </a>
+            @if($item->image_url)
+                <img src="{{ $item->image_url }}" alt="{{ $item->name }}" class="current-item-image">
+            @endif
         </div>
-    </header>
+    </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Validation Errors -->
-        @if($errors->any())
-            <div class="alert alert-error fade-in">
-                ❌ Please fix the following errors:
-                <ul style="margin: 8px 0 0 20px;">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+    <!-- Edit Form Card -->
+    <div class="form-card">
+        <div class="form-header">
+            <h2 class="form-title">
+                <i class="fas fa-edit"></i>
+                Edit Item Details
+            </h2>
+            <p class="form-subtitle">Update the information below. Only change the fields you want to modify.</p>
+        </div>
 
-        <!-- Current Item Info Panel -->
-        <div class="item-info-panel fade-in">
-            <div class="item-info-header">
-                <div>
-                    <h3 class="item-info-title">📦 Current Item Details</h3>
-                    <p style="color: #666; margin: 4px 0 0 0;">Created {{ $item->created_at->format('M j, Y') }}</p>
+        <form method="POST" action="{{ route('item.update', $item) }}" id="itemForm" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+
+            <!-- Item Name -->
+            <div class="form-group">
+                <label for="name" class="form-label required">Item Name</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-box input-icon"></i>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        class="form-input @error('name') error @enderror"
+                        value="{{ old('name', $item->name) }}"
+                        placeholder="e.g., Reusable Cup, Coffee Grounds"
+                        maxlength="255"
+                        required
+                        autofocus
+                    >
                 </div>
+                @error('name')
+                    <div class="form-error">{{ $message }}</div>
+                @enderror
+                <div class="form-help">Enter a clear, descriptive name that customers will recognize</div>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="form-group">
+                <label class="form-label">Item Image</label>
+
                 @if($item->image_url)
-                    <img src="{{ $item->image_url }}" alt="{{ $item->name }}" class="item-current-image">
+                    <div class="current-image-section">
+                        <div class="current-image-label">
+                            <i class="fas fa-image"></i>
+                            Current Image
+                        </div>
+                        <div class="current-image-display">
+                            <img src="{{ $item->image_url }}" alt="{{ $item->name }}">
+                        </div>
+                    </div>
                 @endif
-            </div>
 
-            <div class="item-stats">
-                <div class="stat-item">
-                    <div class="stat-value">{{ $item->points_per_unit }}</div>
-                    <div class="stat-label">Points Each</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">{{ $item->updated_at->format('M j') }}</div>
-                    <div class="stat-label">Last Updated</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">{{ $item->image_url ? 'Yes' : 'No' }}</div>
-                    <div class="stat-label">Has Image</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Form Card -->
-        <div class="form-card fade-in">
-            <div class="form-header">
-                <h2 class="form-title">✏️ Update Item</h2>
-                <p class="form-subtitle">Make changes to the item details below</p>
-            </div>
-
-            <form method="POST" action="{{ route('item.update', $item) }}" id="itemForm" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-
-                <!-- Item Name -->
-                <div class="form-group">
-                    <label for="name" class="form-label required">Item Name</label>
-                    <div class="input-group">
-                        <span class="input-icon">📦</span>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            class="form-input @error('name') error @enderror"
-                            value="{{ old('name', $item->name) }}"
-                            placeholder="Enter item name (e.g., Reusable Cup, Coffee Grounds)"
-                            maxlength="255"
-                            required
-                        >
+                <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    class="file-input @error('image') error @enderror"
+                    accept="image/jpeg,image/png,image/jpg,image/gif"
+                >
+                <div class="image-upload-area" id="uploadArea" onclick="document.getElementById('image').click()">
+                    <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                    <div class="upload-text">
+                        @if($item->image_url)
+                            Replace with new image
+                        @else
+                            Click to upload or drag and drop
+                        @endif
                     </div>
-                    @error('name')
-                        <div class="form-error">{{ $message }}</div>
-                    @enderror
-                    <div class="form-help">
-                        Choose a clear, descriptive name for your item that customers will easily recognize.
-                    </div>
+                    <div class="upload-subtext">JPEG, PNG, JPG, GIF (Max: 5MB)</div>
                 </div>
-
-                <!-- Points Per Unit -->
-                <div class="form-group">
-                    <label for="points_per_unit" class="form-label required">Points Per Unit</label>
-                    <div class="input-group points-input-container">
-                        <span class="input-icon">⭐</span>
-                        <input
-                            type="number"
-                            id="points_per_unit"
-                            name="points_per_unit"
-                            class="form-input points-input @error('points_per_unit') error @enderror"
-                            value="{{ old('points_per_unit', $item->points_per_unit) }}"
-                            placeholder="Enter points value"
-                            min="1"
-                            max="1000"
-                            required
-                        >
-                        <span class="points-suffix">points</span>
-                    </div>
-                    @error('points_per_unit')
-                        <div class="form-error">{{ $message }}</div>
-                    @enderror
-                    <div class="form-help">
-                        Set the points value customers earn for each unit of this item (1-1000 points).
-                    </div>
-                </div>
-
-                <!-- Image Upload -->
-                <div class="form-group">
-                    <label for="image" class="form-label">Item Image</label>
+                @error('image')
+                    <div class="form-error">{{ $message }}</div>
+                @enderror
+                <div class="form-help">
                     @if($item->image_url)
-                        <div class="current-image-info">
-                            <span class="current-image-label">Current Image:</span>
-                            <img src="{{ $item->image_url }}" alt="{{ $item->name }}" class="current-image-thumb">
-                        </div>
+                        Upload a new image to replace the current one, or leave as is to keep the existing image
+                    @else
+                        Upload an image to help customers identify this item
                     @endif
-                    <div class="file-upload-container">
-                        <input
-                            type="file"
-                            id="image"
-                            name="image"
-                            class="form-input file-input @error('image') error @enderror"
-                            accept="image/jpeg,image/png,image/jpg,image/gif"
-                        >
-                        <div class="file-upload-label" onclick="document.getElementById('image').click()">
-                            <span class="file-upload-icon">📁</span>
-                            <span class="file-upload-text">
-                                @if($item->image_url)
-                                    Replace Image
-                                @else
-                                    Choose Image File
-                                @endif
-                            </span>
-                            <span class="file-upload-subtext">JPEG, PNG, JPG, GIF (Max: 5MB)</span>
-                        </div>
-                    </div>
-                    @error('image')
-                        <div class="form-error">{{ $message }}</div>
-                    @enderror
-                    <div class="form-help">
-                        Optional: Upload a new image to replace the current one. Leave blank to keep the existing image.
-                    </div>
-
-                    <!-- Image Preview -->
-                    <div class="image-preview-container" id="imagePreview" style="display: none;">
-                        <div class="image-preview">
-                            <img id="previewImg" src="" alt="Item preview">
-                            <button type="button" class="remove-image-btn" onclick="removeImage()">✕</button>
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Form Actions -->
-                <div class="form-actions">
-                    <a href="{{ route('item.index') }}" class="btn btn-secondary">
-                        ❌ Cancel
-                    </a>
-                    <button type="submit" class="btn btn-primary" id="submitBtn">
-                        💾 Update Item
-                    </button>
+                <!-- New Image Preview -->
+                <div class="image-preview-container" id="imagePreview">
+                    <div class="image-preview">
+                        <img id="previewImg" src="" alt="Preview">
+                        <button type="button" class="remove-image-btn" onclick="removeImage()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                 </div>
-            </form>
-
-            <!-- Delete Form -->
-            <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e5e5;">
-                <h4 style="color: #666; margin-bottom: 16px;">⚠️ Danger Zone</h4>
-                <form method="POST" action="{{ route('item.destroy', $item) }}"
-                      onsubmit="return confirm('Are you sure you want to delete this item? This action cannot be undone!')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">
-                        🗑️ Delete Item
-                    </button>
-                </form>
             </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <a href="{{ route('item.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <i class="fas fa-save"></i>
+                    Update Item
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="danger-zone">
+        <div class="danger-zone-header">
+            <h3 class="danger-zone-title">
+                <i class="fas fa-exclamation-triangle"></i>
+                Danger Zone
+            </h3>
         </div>
-    </main>
+        <p class="danger-zone-description">
+            Once you delete this item, there is no going back. This action cannot be undone.
+        </p>
+        <form method="POST" action="{{ route('item.destroy', $item) }}"
+              onsubmit="return confirm('Are you sure you want to permanently delete {{ $item->name }}? This action cannot be undone!')">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash-alt"></i>
+                Delete Item Permanently
+            </button>
+        </form>
+    </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const imageInput = document.getElementById('image');
+    const uploadArea = document.getElementById('uploadArea');
     const imagePreview = document.getElementById('imagePreview');
     const previewImg = document.getElementById('previewImg');
-    const fileUploadLabel = document.querySelector('.file-upload-label');
-    const fileUploadContainer = document.querySelector('.file-upload-container');
     const form = document.getElementById('itemForm');
     const submitBtn = document.getElementById('submitBtn');
+    const hasCurrentImage = {{ $item->image_url ? 'true' : 'false' }};
 
-    // File input change handler
+    // File input change
     imageInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
-            handleFileSelect(file);
+            handleFile(file);
         }
     });
 
-    // Drag and drop functionality
-    fileUploadLabel.addEventListener('dragover', function(e) {
+    // Drag and drop
+    uploadArea.addEventListener('dragover', function(e) {
         e.preventDefault();
         this.classList.add('dragover');
     });
 
-    fileUploadLabel.addEventListener('dragleave', function(e) {
+    uploadArea.addEventListener('dragleave', function(e) {
         e.preventDefault();
         this.classList.remove('dragover');
     });
 
-    fileUploadLabel.addEventListener('drop', function(e) {
+    uploadArea.addEventListener('drop', function(e) {
         e.preventDefault();
         this.classList.remove('dragover');
-
         const files = e.dataTransfer.files;
         if (files.length > 0) {
             const file = files[0];
             if (file.type.startsWith('image/')) {
                 imageInput.files = files;
-                handleFileSelect(file);
+                handleFile(file);
             } else {
                 alert('Please select an image file.');
             }
         }
     });
 
-    function handleFileSelect(file) {
-        // Validate file size (5MB = 5120KB)
+    function handleFile(file) {
+        // Validate size (5MB)
         if (file.size > 5120 * 1024) {
             alert('File size must be less than 5MB.');
             imageInput.value = '';
             return;
         }
 
-        // Validate file type
+        // Validate type
         const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
         if (!allowedTypes.includes(file.type)) {
             alert('Please select a valid image file (JPEG, PNG, JPG, GIF).');
@@ -924,11 +710,9 @@ document.addEventListener('DOMContentLoaded', function() {
         reader.onload = function(e) {
             previewImg.src = e.target.result;
             imagePreview.style.display = 'block';
-            fileUploadContainer.classList.add('file-selected');
-
-            // Update upload label text
-            document.querySelector('.file-upload-text').textContent = file.name;
-            document.querySelector('.file-upload-subtext').textContent = formatFileSize(file.size);
+            uploadArea.classList.add('has-file');
+            uploadArea.querySelector('.upload-text').textContent = 'New image: ' + file.name;
+            uploadArea.querySelector('.upload-subtext').textContent = formatFileSize(file.size);
         };
         reader.readAsDataURL(file);
     }
@@ -941,34 +725,23 @@ document.addEventListener('DOMContentLoaded', function() {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
-    // Remove image function
     window.removeImage = function() {
         imageInput.value = '';
         imagePreview.style.display = 'none';
-        fileUploadContainer.classList.remove('file-selected');
+        uploadArea.classList.remove('has-file');
 
-        // Reset upload label text
-        const hasCurrentImage = document.querySelector('.current-image-info') !== null;
-        document.querySelector('.file-upload-text').textContent = hasCurrentImage ? 'Replace Image' : 'Choose Image File';
-        document.querySelector('.file-upload-subtext').textContent = 'JPEG, PNG, JPG, GIF (Max: 5MB)';
+        if (hasCurrentImage) {
+            uploadArea.querySelector('.upload-text').textContent = 'Replace with new image';
+        } else {
+            uploadArea.querySelector('.upload-text').textContent = 'Click to upload or drag and drop';
+        }
+        uploadArea.querySelector('.upload-subtext').textContent = 'JPEG, PNG, JPG, GIF (Max: 5MB)';
     };
 
-    // Form submission with loading state
+    // Form submission
     form.addEventListener('submit', function() {
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '💾 Updating...';
-        form.classList.add('loading');
-    });
-
-    // Auto-focus first input
-    document.getElementById('name').focus();
-
-    // Points input validation
-    const pointsInput = document.getElementById('points_per_unit');
-    pointsInput.addEventListener('input', function() {
-        const value = parseInt(this.value);
-        if (value < 1) this.value = 1;
-        if (value > 1000) this.value = 1000;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
     });
 });
 </script>

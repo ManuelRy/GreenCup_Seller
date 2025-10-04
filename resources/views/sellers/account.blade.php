@@ -27,6 +27,7 @@
 .rank-badge.gold { background: linear-gradient(135deg, #ffd700, #ffb300); }
 .rank-badge.silver { background: linear-gradient(135deg, #c0c0c0, #999999); }
 .rank-badge.bronze { background: linear-gradient(135deg, #cd7f32, #a0522d); }
+.rank-badge.standard { background: linear-gradient(135deg, #667eea, #764ba2); }
 .progress-bar-fill { background: linear-gradient(90deg, #667eea, #764ba2) !important; }
 .stat-card {
     border: 1px solid #e8ecf4;
@@ -180,6 +181,7 @@
                             @case('Gold') 🏆 @break
                             @case('Silver') 🥈 @break
                             @case('Bronze') 🥉 @break
+                            @case('Standard') ⭐ @break
                             @default ⭐
                         @endswitch
                     </span>
@@ -248,227 +250,7 @@
         </div>
     @endif
 
-    <!-- Transaction History -->
-    <div class="card card-premium border-0 fade-in">
-        <div class="card-header bg-white border-0 p-4">
-            <div class="row align-items-center">
-                <div class="col-12 col-md-6">
-                    <h3 class="h4 fw-bold mb-0 text-gradient">
-                        <i class="fas fa-chart-line me-2"></i>Transaction History
-                    </h3>
-                </div>
-                <div class="col-12 col-md-6 mt-3 mt-md-0">
-                    <div class="d-flex gap-3 justify-content-md-end">
-                        <button class="btn btn-outline-secondary" onclick="exportTransactions()">
-                            <i class="fas fa-download me-2"></i>Export CSV
-                        </button>
-                        <select class="form-select" style="width: 200px;" onchange="filterTransactions(this.value)">
-                            <option value="all" {{ $filter == 'all' ? 'selected' : '' }}>All Transactions</option>
-                            <option value="earn" {{ $filter == 'earn' ? 'selected' : '' }}>Points Given</option>
-                            <option value="spend" {{ $filter == 'spend' ? 'selected' : '' }}>Redemptions</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card-body p-4">
-            @forelse($transactions as $transaction)
-                <div class="transaction-card card mb-4" onclick="showTransactionModal({{ json_encode($transaction) }})">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="d-flex align-items-center fw-bold fs-5">
-                                @if ($transaction->type === 'earn')
-                                    @if ($transaction->receipt_code)
-                                        <i class="fas fa-receipt text-primary me-3"></i>Receipt Transaction
-                                    @else
-                                        <i class="fas fa-share text-primary me-3"></i>Points Given
-                                    @endif
-                                @else
-                                    <i class="fas fa-download text-success me-3"></i>Points Redeemed
-                                @endif
-                            </div>
-                            <div class="h4 fw-bold {{ $transaction->type === 'earn' ? 'text-danger' : 'text-success' }} mb-0">
-                                {{ $transaction->type === 'earn' ? '-' : '+' }}{{ number_format($transaction->points) }}
-                            </div>
-                        </div>
-
-                        <div class="row g-3 text-muted mb-3">
-                            <div class="col-12 col-md-6">
-                                <i class="fas fa-user me-2"></i>
-                                <strong>{{ $transaction->consumer_name ?? 'Customer #' . $transaction->consumer_id }}</strong>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <i class="fas fa-box me-2"></i>
-                                @if ($transaction->item_name)
-                                    {{ $transaction->item_name }}
-                                @elseif(isset($transaction->extracted_items))
-                                    {{ $transaction->extracted_items }}
-                                @elseif($transaction->description && str_contains($transaction->description, 'Purchased:'))
-                                    @php
-                                        $desc = $transaction->description;
-                                        if (preg_match('/Purchased:\s*([^f]+?)\s+from/i', $desc, $matches)) {
-                                            $items = trim($matches[1]);
-                                            echo strlen($items) > 30 ? substr($items, 0, 30) . '...' : $items;
-                                        } else {
-                                            echo 'Receipt Items';
-                                        }
-                                    @endphp
-                                @elseif($transaction->receipt_code)
-                                    Receipt #{{ $transaction->receipt_code }}
-                                @elseif($transaction->qr_code_id)
-                                    Item #{{ $transaction->qr_code_id }}
-                                @else
-                                    Direct Transaction
-                                @endif
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <i class="fas fa-sort-numeric-up me-2"></i>{{ $transaction->units_scanned ?? 1 }} units scanned
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <i class="fas fa-bolt me-2"></i>
-                                @if ($transaction->points_per_unit)
-                                    {{ $transaction->points_per_unit }} pts/unit
-                                @else
-                                    {{ number_format($transaction->points / ($transaction->units_scanned ?? 1), 1) }} pts/unit
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
-                            <span class="badge bg-light text-dark">ID: {{ str_pad($transaction->id, 6, '0', STR_PAD_LEFT) }}</span>
-                            <span class="text-muted">{{ \Carbon\Carbon::parse($transaction->scanned_at ?? $transaction->created_at)->format('M d, Y • h:i A') }}</span>
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <div class="text-center py-5">
-                    <div class="display-1 mb-4 opacity-50">📊</div>
-                    <h3 class="h4 fw-bold mb-3">No transactions yet</h3>
-                    <p class="text-muted mb-4 fs-5">Start scanning customer QR codes to see your transaction history and earn rank points!</p>
-                    <a href="{{ route('seller.scanner') }}" class="btn btn-gradient btn-lg px-5 py-3">
-                        <i class="fas fa-qrcode me-2"></i>Open QR Scanner
-                    </a>
-                </div>
-            @endforelse
-
-            @if ($transactions->count() > 0)
-                <div class="d-flex justify-content-between align-items-center pt-4 border-top">
-                    <div class="text-muted">Showing {{ $transactions->count() }} of {{ $transactions->total() }} transactions</div>
-                    @if ($transactions->hasMorePages())
-                        <a href="{{ $transactions->nextPageUrl() }}" class="btn btn-outline-primary">
-                            Load More <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
-                    @endif
-                </div>
-            @endif
-        </div>
-    </div>
-</main>
-
-<!-- Transaction Detail Modal -->
-<div id="transactionModal" class="modal-backdrop d-flex align-items-center justify-content-center p-4" onclick="closeTransactionModal(event)">
-    <div class="modal-content bg-white rounded-4 shadow-lg border-0" style="max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto;" onclick="event.stopPropagation()">
-        <div class="text-white p-4 rounded-top-4 d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #667eea, #764ba2);">
-            <h3 class="h4 mb-0 fw-bold"><i class="fas fa-receipt me-2"></i>Transaction Details</h3>
-            <button class="btn btn-link text-white p-0 fs-3" onclick="closeTransactionModal()" style="text-decoration: none;">&times;</button>
-        </div>
-
-        <div class="p-5">
-            <!-- Transaction Summary -->
-            <div class="mb-5 pb-4 border-bottom">
-                <h4 class="h5 fw-bold mb-4 text-gradient"><i class="fas fa-credit-card me-2"></i>Transaction Summary</h4>
-                <div class="row g-4">
-                    <div class="col-6 col-md-3">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Transaction ID</div>
-                        <div class="fw-bold" id="modalTransactionId">-</div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Type</div>
-                        <div class="fw-bold" id="modalTransactionType">-</div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Points</div>
-                        <div class="fw-bold" id="modalPoints">-</div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Date & Time</div>
-                        <div class="fw-bold" id="modalDateTime">-</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Customer Information -->
-            <div class="mb-5 pb-4 border-bottom">
-                <h4 class="h5 fw-bold mb-4 text-gradient"><i class="fas fa-user me-2"></i>Customer Information</h4>
-                <div class="row g-4">
-                    <div class="col-6">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Customer Name</div>
-                        <div class="fw-bold" id="modalCustomerName">-</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Customer ID</div>
-                        <div class="fw-bold" id="modalCustomerId">-</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Item Details -->
-            <div class="mb-5 pb-4 border-bottom">
-                <h4 class="h5 fw-bold mb-4 text-gradient"><i class="fas fa-box me-2"></i>Item Details</h4>
-                <div class="row g-4">
-                    <div class="col-6">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Item Name</div>
-                        <div class="fw-bold" id="modalItemName">-</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Quantity Scanned</div>
-                        <div class="fw-bold" id="modalUnitsScanned">-</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Points Per Unit</div>
-                        <div class="fw-bold" id="modalPointsPerUnit">-</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Total Points</div>
-                        <div class="fw-bold" id="modalTotalPoints">-</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">QR Code ID</div>
-                        <div class="fw-bold" id="modalQRCodeId">-</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Receipt Code</div>
-                        <div class="fw-bold" id="modalReceiptCode">-</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Transaction Source</div>
-                        <div class="fw-bold" id="modalTransactionSource">-</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Description</div>
-                        <div class="fw-bold" id="modalDescription">-</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Impact Information -->
-            <div class="mb-0">
-                <h4 class="h5 fw-bold mb-4 text-gradient"><i class="fas fa-trophy me-2"></i>Business Impact</h4>
-                <div class="row g-4">
-                    <div class="col-6">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Rank Points Impact</div>
-                        <div class="fw-bold" id="modalRankImpact">-</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">Current Total Points</div>
-                        <div class="fw-bold">{{ number_format($totalRankPoints) }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    
 
 <script>
 function showTransactionModal(transaction) {
@@ -476,7 +258,7 @@ function showTransactionModal(transaction) {
 
     let transactionType = transaction.type === 'earn' ? (transaction.receipt_code ? 'Receipt Transaction' : 'Points Given') : 'Points Redeemed';
     document.getElementById('modalTransactionType').textContent = transactionType;
-    document.getElementById('modalPoints').textContent = (transaction.type === 'earn' ? '-' : '+') + transaction.points + ' points';
+    document.getElementById('modalPoints').textContent = transaction.points + ' points';
     document.getElementById('modalDateTime').textContent = new Date(transaction.scanned_at || transaction.created_at).toLocaleString();
 
     document.getElementById('modalCustomerName').textContent = transaction.consumer_name || 'Customer #' + transaction.consumer_id;
@@ -526,7 +308,7 @@ function showTransactionModal(transaction) {
     document.getElementById('modalReceiptCode').textContent = receiptCode;
     document.getElementById('modalTransactionSource').textContent = transactionSource;
     document.getElementById('modalDescription').textContent = transaction.description || 'No description available';
-    document.getElementById('modalRankImpact').textContent = '+' + transaction.points + ' points';
+    document.getElementById('modalRankImpact').textContent = transaction.points + ' points';
 
     document.getElementById('transactionModal').classList.add('active');
     document.body.style.overflow = 'hidden';

@@ -1,116 +1,167 @@
 @extends('layouts.app')
 
-@section('title', 'Rewards - Green Cup App')
+@section('title', 'Rewards Management')
 @section('page-title', 'Rewards')
-@section('page-subtitle', 'Manage your rewards')
 
 @push('styles')
 <style>
-.dashboard-container {
+/* Modern Professional Design */
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --danger-gradient: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.page-wrapper {
     min-height: 100vh;
-    background: linear-gradient(-45deg, #00b09b, #00c9a1, #00d9a6, #00e8ab, #00b09b);
-    background-size: 400% 400%;
-    animation: gradientShift 20s ease infinite;
-    padding-bottom: 40px;
+    padding: 2rem 0;
 }
 
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-.main-content {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 32px 20px;
-}
-
-.rewards-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border-radius: 20px;
-    padding: 32px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    border: 1px solid rgba(255,255,255,0.3);
-    margin-bottom: 32px;
-}
-
-.action-btn {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    color: white;
-    padding: 12px 24px;
-    border-radius: 12px;
+/* Header Card */
+.header-card {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
     border: none;
-    font-weight: 600;
-    transition: all 0.3s;
-    text-decoration: none;
-    display: inline-block;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    margin-bottom: 2rem;
+    overflow: hidden;
 }
 
-.action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-    color: white;
-    text-decoration: none;
+.header-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
 }
 
-.btn-orange {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-}
-
-.btn-orange:hover {
-    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
-}
-
-.stats-row {
+/* Stats Cards */
+.stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 32px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .stat-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(25px);
-    border-radius: 18px;
-    padding: 28px 24px;
-    text-align: center;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-    border: 1px solid rgba(255,255,255,0.3);
-    transition: all 0.4s;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    border: none;
+    padding: 2rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, transparent 0%, rgba(102, 126, 234, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.4s;
 }
 
 .stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.25);
 }
 
+.stat-card:hover::before {
+    opacity: 1;
+}
+
+.stat-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 1rem;
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Rewards Grid */
 .rewards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
 }
 
 .reward-card {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(20px);
-    border-radius: 20px;
+    border-radius: 24px;
+    border: none;
     overflow: hidden;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-    border: 1px solid rgba(255,255,255,0.3);
-    transition: all 0.4s;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.reward-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 24px;
+    padding: 2px;
+    background: var(--primary-gradient);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
 }
 
 .reward-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+    transform: translateY(-12px);
+    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.25);
 }
 
-.reward-image {
-    height: 200px;
-    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+.reward-card:hover::after {
+    opacity: 1;
+}
+
+.reward-image-container {
+    height: 220px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -119,152 +170,415 @@
     overflow: hidden;
 }
 
-.reward-image img {
+.reward-image-container img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.reward-card:hover .reward-image img {
+.reward-card:hover .reward-image-container img {
     transform: scale(1.1);
+}
+
+.reward-image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.reward-card:hover .reward-image-overlay {
+    opacity: 1;
 }
 
 .points-badge {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    background: rgba(255,255,255,0.95);
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-weight: 700;
-    color: #00b09b;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    top: 16px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    padding: 12px 20px;
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 1rem;
+    color: #667eea;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
 }
 
+.reward-card:hover .points-badge {
+    transform: scale(1.1) rotate(-5deg);
+    box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+}
+
+.reward-body {
+    padding: 1.5rem;
+}
+
+.reward-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.reward-description {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.reward-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 2px solid #f1f5f9;
+    font-size: 0.8125rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* Status Badges */
 .status-badge {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 11px;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+}
+
+.status-badge i {
+    font-size: 0.875rem;
 }
 
 .status-active {
-    background: #d1fae5;
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
     color: #065f46;
 }
 
 .status-inactive {
-    background: #fee2e2;
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
     color: #991b1b;
 }
 
 .status-expired {
-    background: #fef3c7;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
     color: #92400e;
 }
 
+/* Action Buttons */
+.btn-modern {
+    padding: 0.875rem 1.75rem;
+    border-radius: 14px;
+    border: none;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.btn-modern::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-modern:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-modern:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+.btn-primary-modern {
+    background: var(--primary-gradient);
+    color: white;
+}
+
+.btn-success-modern {
+    background: var(--success-gradient);
+    color: white;
+}
+
+.btn-modern-outline {
+    background: rgba(255, 255, 255, 0.98);
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.btn-modern-outline:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+/* Empty State */
+.empty-state {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 4rem 2rem;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state-icon {
+    font-size: 6rem;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+}
+
+.empty-state-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 1rem;
+}
+
+.empty-state-text {
+    font-size: 1.125rem;
+    color: #64748b;
+    margin-bottom: 2rem;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    .stats-row {
-        grid-template-columns: 1fr;
+    .page-wrapper {
+        padding: 1rem 0;
     }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
     .rewards-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
+
+    .stat-card {
+        padding: 1.5rem;
+    }
+
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+        font-size: 24px;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .btn-modern {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .header-card .d-flex {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeInUp 0.6s ease-out;
 }
 </style>
 @endpush
 
 @section('content')
-<div class="dashboard-container">
-    <div class="main-content">
+<div class="page-wrapper">
+    <div class="container-fluid px-4">
 
-        @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-
-        <div class="rewards-card">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h2 class="fw-bold mb-1">Rewards</h2>
-                    <p class="text-muted mb-0">Manage your rewards</p>
-                </div>
-                <div class="d-flex gap-2">
-                    <a href="{{ route('reward.create') }}" class="action-btn">
-                        <i class="fas fa-plus me-2"></i>Add Reward
-                    </a>
-                    <a href="{{ route('reward.redemptions') }}" class="action-btn btn-orange">
-                        <i class="fas fa-gift me-2"></i>Redemptions
-                    </a>
+        <!-- Header Card -->
+        <div class="header-card position-relative animate-fade-in">
+            <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h1 class="h2 fw-bold mb-2" style="color: #1e293b;">
+                            <i class="fas fa-gift me-2" style="color: #667eea;"></i>
+                            Rewards Management
+                        </h1>
+                        <p class="text-muted mb-0">Create and manage loyalty rewards for your customers</p>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{{ route('reward.create') }}" class="btn-modern btn-primary-modern">
+                            <i class="fas fa-plus"></i>
+                            <span>Add Reward</span>
+                        </a>
+                        <a href="{{ route('reward.redemptions') }}" class="btn-modern btn-success-modern">
+                            <i class="fas fa-receipt"></i>
+                            <span>Redemptions</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="stats-row">
+        <!-- Statistics Cards -->
+        <div class="stats-grid animate-fade-in">
             <div class="stat-card">
-                <div style="font-size: 2.5rem;">🎁</div>
-                <h3 class="fw-bold mt-2">{{ $rewards->total() }}</h3>
-                <p class="text-muted mb-0 small">TOTAL REWARDS</p>
+                <div class="stat-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div class="stat-value">{{ $rewards->total() }}</div>
+                <div class="stat-label">Total Rewards</div>
             </div>
+
             <div class="stat-card">
-                <div style="font-size: 2.5rem;">✅</div>
-                <h3 class="fw-bold mt-2">{{ $rewards->where('is_active', true)->count() }}</h3>
-                <p class="text-muted mb-0 small">ACTIVE</p>
+                <div class="stat-icon" style="background: var(--success-gradient);">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-value" style="background: var(--success-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                    {{ $rewards->where('is_active', true)->count() }}
+                </div>
+                <div class="stat-label">Active Rewards</div>
             </div>
+
             <div class="stat-card">
-                <div style="font-size: 2.5rem;">⭐</div>
-                <h3 class="fw-bold mt-2">{{ $rewards->sum('quantity_redeemed') }}</h3>
-                <p class="text-muted mb-0 small">TOTAL REDEEMED</p>
+                <div class="stat-icon" style="background: var(--warning-gradient);">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-value" style="background: var(--warning-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                    {{ $rewards->sum('quantity_redeemed') }}
+                </div>
+                <div class="stat-label">Total Redeemed</div>
             </div>
+
             <div class="stat-card">
-                <div style="font-size: 2.5rem;">📦</div>
-                <h3 class="fw-bold mt-2">{{ $rewards->sum('quantity') - $rewards->sum('quantity_redeemed') }}</h3>
-                <p class="text-muted mb-0 small">AVAILABLE STOCK</p>
+                <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="stat-value" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                    {{ $rewards->sum(function($reward) { return $reward->available_quantity; }) }}
+                </div>
+                <div class="stat-label">Available Stock</div>
             </div>
         </div>
 
+        <!-- Rewards Grid -->
         @if($rewards->count() > 0)
         <div class="rewards-grid">
             @foreach($rewards as $reward)
-            <div class="reward-card">
-                <div class="reward-image">
+            <div class="reward-card animate-fade-in" style="animation-delay: {{ $loop->index * 0.1 }}s;">
+                <div class="reward-image-container">
                     @if($reward->image_path)
                         <img src="{{ $reward->image_path }}" alt="{{ $reward->name }}">
                     @else
-                        🎁
+                        <i class="fas fa-gift" style="color: #cbd5e1;"></i>
                     @endif
-                    <div class="points-badge">{{ number_format($reward->points_required) }} pts</div>
+                    <div class="reward-image-overlay"></div>
+                    <div class="points-badge">
+                        <i class="fas fa-coins"></i>
+                        {{ number_format($reward->points_required) }} pts
+                    </div>
                 </div>
-                <div class="p-4">
+
+                <div class="reward-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="fw-bold mb-0">{{ $reward->name }}</h5>
-                        @if($reward->isValid())
-                            <span class="status-badge status-active">Active</span>
-                        @elseif($reward->valid_until < now()->toDateString())
-                            <span class="status-badge status-expired">Expired</span>
+                        <h3 class="reward-title mb-0">{{ $reward->name }}</h3>
+                        @if($reward->is_active)
+                            <span class="status-badge status-active">
+                                <i class="fas fa-check"></i>
+                                Active
+                            </span>
                         @else
-                            <span class="status-badge status-inactive">Inactive</span>
+                            <span class="status-badge status-inactive">
+                                <i class="fas fa-times"></i>
+                                Inactive
+                            </span>
                         @endif
                     </div>
-                    <p class="text-muted small mb-3">{{ Str::limit($reward->description ?? 'Reward', 80) }}</p>
-                    <div class="d-flex justify-content-between mb-3 small">
-                        <span class="text-muted">Available: <strong>{{ $reward->available_quantity }}</strong></span>
-                        <span class="text-muted">Valid until: <strong>{{ $reward->valid_until->format('M d, Y') }}</strong></span>
+
+                    <p class="reward-description">
+                        {{ Str::limit($reward->description ?? 'No description available', 100) }}
+                    </p>
+
+                    <div class="reward-meta">
+                        <span>
+                            <i class="fas fa-box me-1"></i>
+                            Stock: <strong>{{ $reward->available_quantity }}/{{ $reward->quantity }}</strong>
+                        </span>
+                        <span>
+                            <i class="fas fa-calendar-alt me-1"></i>
+                            Until: <strong>{{ \Carbon\Carbon::parse($reward->valid_until)->format('M d, Y') }}</strong>
+                        </span>
                     </div>
-                    <a href="{{ route('reward.edit', $reward) }}" class="action-btn w-100 text-center">Edit Reward</a>
+
+                    <div class="mt-3">
+                        <a href="{{ route('reward.edit', $reward) }}" class="btn-modern btn-modern-outline w-100">
+                            <i class="fas fa-edit"></i>
+                            <span>Edit Reward</span>
+                        </a>
+                    </div>
                 </div>
             </div>
             @endforeach
         </div>
         @else
-        <div class="rewards-card text-center py-5">
-            <div style="font-size: 5rem;">🎁</div>
-            <h3 class="fw-bold mt-3">No Rewards</h3>
-            <p class="text-muted">Create your first reward</p>
-            <a href="{{ route('reward.create') }}" class="action-btn mt-3">Add Reward</a>
+        <div class="empty-state animate-fade-in">
+            <div class="empty-state-icon">
+                <i class="fas fa-gift"></i>
+            </div>
+            <h2 class="empty-state-title">No Rewards Yet</h2>
+            <p class="empty-state-text">Start creating rewards to engage your customers</p>
+            <a href="{{ route('reward.create') }}" class="btn-modern btn-primary-modern">
+                <i class="fas fa-plus"></i>
+                <span>Create Your First Reward</span>
+            </a>
         </div>
         @endif
+
     </div>
 </div>
 @endsection

@@ -115,6 +115,10 @@
                                 <i class="fas fa-user-circle"></i>
                                 <span>Account Settings</span>
                             </a>
+                            <a href="{{ route('seller.activity') }}" class="dropdown-item {{ request()->routeIs('seller.activity') ? 'active' : '' }}">
+                                <i class="fas fa-history"></i>
+                                <span>Activity History</span>
+                            </a>
                             <a href="{{ route('seller.photos') }}" class="dropdown-item {{ request()->routeIs('seller.photos.*') ? 'active' : '' }}">
                                 <i class="fas fa-images"></i>
                                 <span>Photo Gallery</span>
@@ -122,10 +126,6 @@
                             <a href="{{ route('location.show') }}" class="dropdown-item {{ request()->routeIs('location.*') ? 'active' : '' }}">
                                 <i class="fas fa-map-marker-alt"></i>
                                 <span>Location</span>
-                            </a>
-                            <a href="{{ route('seller.scanner') }}" class="dropdown-item {{ request()->routeIs('seller.scanner') ? 'active' : '' }}">
-                                <i class="fas fa-qrcode"></i>
-                                <span>QR Scanner</span>
                             </a>
                         </div>
 
@@ -216,6 +216,11 @@
                         <span>Account Settings</span>
                         <i class="fas fa-chevron-right"></i>
                     </a>
+                    <a href="{{ route('seller.activity') }}" class="mobile-nav-item {{ request()->routeIs('seller.activity') ? 'active' : '' }}">
+                        <i class="fas fa-history"></i>
+                        <span>Activity History</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
                     <a href="{{ route('seller.photos') }}" class="mobile-nav-item {{ request()->routeIs('seller.photos.*') ? 'active' : '' }}">
                         <i class="fas fa-images"></i>
                         <span>Photo Gallery</span>
@@ -224,11 +229,6 @@
                     <a href="{{ route('location.show') }}" class="mobile-nav-item {{ request()->routeIs('location.*') ? 'active' : '' }}">
                         <i class="fas fa-map-marker-alt"></i>
                         <span>Location</span>
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                    <a href="{{ route('seller.scanner') }}" class="mobile-nav-item {{ request()->routeIs('seller.scanner') ? 'active' : '' }}">
-                        <i class="fas fa-qrcode"></i>
-                        <span>QR Scanner</span>
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 </div>

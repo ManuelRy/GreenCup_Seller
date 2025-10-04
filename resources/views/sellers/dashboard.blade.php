@@ -1182,7 +1182,15 @@
             <div class="progress-section">
                 <div class="progress-header">
                     <span class="rank-badge">
-                        🏆 {{ $currentRank->name }} Seller
+                        @switch($currentRank->name)
+                            @case('Platinum') 💎 @break
+                            @case('Gold') 🏆 @break
+                            @case('Silver') 🥈 @break
+                            @case('Bronze') 🥉 @break
+                            @case('Standard') ⭐ @break
+                            @default ⭐
+                        @endswitch
+                        {{ $currentRank->name }} Seller
                     </span>
                     <span class="progress-text">
                         @if($nextRank)
@@ -1355,7 +1363,7 @@
             <div class="activity-header">
                 <h3 class="activity-title">⚡ Recent Activity</h3>
                 @if($totalTransactions > 0)
-                <a href="{{ route('seller.account') }}" class="view-all">View All →</a>
+                <a href="{{ route('seller.activity') }}" class="view-all">View All →</a>
                 @endif
             </div>
 
@@ -1406,11 +1414,7 @@
                             </div>
                         </div>
                         <div class="activity-points">
-                            @if($transaction->type === 'earn')
-                                +{{ $transaction->points }} pts
-                            @else
-                                -{{ $transaction->points }} pts
-                            @endif
+                            {{ $transaction->points }} pts
                         </div>
                     </div>
                     @endforeach

@@ -126,9 +126,24 @@ class Seller extends Authenticatable
 
     public function getCurrentRank()
     {
-        return Rank::where('min_points', '<=', $this->total_points)
+        $rank = Rank::where('min_points', '<=', $this->total_points)
             ->orderBy('min_points', 'desc')
             ->first();
+
+        // If no rank found, get the lowest rank (should be Bronze at 0 points)
+        if (!$rank) {
+            $rank = Rank::orderBy('min_points', 'asc')->first();
+        }
+
+        // Last resort fallback if ranks table is completely empty
+        if (!$rank) {
+            return (object)[
+                'name' => 'Standard',
+                'min_points' => 0
+            ];
+        }
+
+        return $rank;
     }
 
     public function getNextRank()
@@ -171,7 +186,7 @@ class Seller extends Authenticatable
     public function updateRank()
     {
         $newRank = $this->getCurrentRank();
-        if ($newRank) {
+        if ($newRank && isset($newRank->id)) {
             $existingHistory = SellerRankHistory::where('seller_id', $this->id)
                 ->where('rank_id', $newRank->id)
                 ->exists();

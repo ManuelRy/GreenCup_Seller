@@ -104,6 +104,7 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
         |--------------------------------------------------------------------------
         */
         Route::get('/account', [SellerController::class, 'account'])->name('account');
+        Route::get('/activity', [SellerController::class, 'activity'])->name('activity');
         Route::get('/account/transaction/{id}', [SellerController::class, 'getTransactionDetail'])->name('account.transaction');
         Route::get('/account/download-receipt/{id}', [SellerController::class, 'downloadReceipt'])->name('account.download-receipt');
         Route::get('/account/export', [SellerController::class, 'exportTransactions'])->name('account.export');

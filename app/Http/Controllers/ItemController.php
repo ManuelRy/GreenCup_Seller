@@ -44,7 +44,6 @@ class ItemController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:items,name',
-            // 'points_per_unit' => 'required|integer|min:1|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
         // Handle image upload
@@ -59,8 +58,8 @@ class ItemController extends Controller
         }
 
         $this->iRepo->create([
-            ...$request->all(),
-            'points_per_unit' => 1, // Default value
+            'name' => $request->name,
+            'points_per_unit' => 1, // Always 1 point per item
             'seller_id' => Auth::id(),
             'image_url' => $imageUrl
         ]);
@@ -83,6 +82,12 @@ class ItemController extends Controller
     public function edit($id)
     {
         $item = $this->iRepo->get($id, Auth::id());
+
+        if (!$item) {
+            return redirect()->route('item.index')
+                ->with('error', 'Item not found or you do not have permission to edit it.');
+        }
+
         return view('items.edit', compact('item'));
     }
 
@@ -93,24 +98,34 @@ class ItemController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            // 'points_per_unit' => 'required|integer|min:1|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
-        $imageUrl = null;
+
+        // Get existing item to preserve image if not uploading new one
+        $item = $this->iRepo->get($id, Auth::id());
+
+        if (!$item) {
+            return redirect()->route('item.index')
+                ->with('error', 'Item not found or you do not have permission to update it.');
+        }
+
+        // Prepare update data (name only, points always stay at 1)
+        $updateData = [
+            'name' => $request->name,
+        ];
+
+        // Only update image if a new one is uploaded
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $response = $this->fRepo->upload("items", $file);
             if ($response->successful()) {
                 $data = $response->json();
-                $imageUrl = $this->fRepo->get($data['path']);
+                $updateData['image_url'] = $this->fRepo->get($data['path']);
             }
         }
+        // If no new image uploaded, keep the existing image_url (don't set it to null)
 
-        $this->iRepo->update($id, Auth::id(), [
-            ...$request->all(),
-            'points_per_unit' => 1, // Default value
-            'image_url' => $imageUrl
-        ]);
+        $this->iRepo->update($id, Auth::id(), $updateData);
 
         return redirect()->route('item.index')
             ->with('success', 'Item updated successfully!');
