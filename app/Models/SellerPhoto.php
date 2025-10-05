@@ -24,6 +24,7 @@ class SellerPhoto extends Model
     protected $fillable = [
         'seller_id',
         'photo_url',
+        'photo_caption',
         'caption',
         'category',
         'is_featured',
@@ -47,8 +48,34 @@ class SellerPhoto extends Model
     {
         return $this->belongsTo(Seller::class);
     }
+
+    /**
+     * Check if photo is frozen by admin
+     */
+    public function isFrozen(): bool
+    {
+        return str_starts_with($this->photo_caption ?? '', '[FROZEN] ');
+    }
+
+    /**
+     * Get the original caption without the frozen prefix
+     */
+    public function getOriginalCaptionAttribute(): ?string
+    {
+        $caption = $this->photo_caption ?? '';
+
+        if (str_starts_with($caption, '[FROZEN] ')) {
+            return substr($caption, 9);
+        }
+
+        return $caption ?: null;
+    }
+
+    /**
+     * Get caption with frozen prefix removed (for backward compatibility)
+     */
     public function trimCaption(): string
     {
-        return preg_replace('/^\[frozen\]\s*/i', '', $this->caption);
+        return $this->original_caption ?? '';
     }
 }

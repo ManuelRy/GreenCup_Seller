@@ -21,6 +21,7 @@ class RedeemHistoryRepository
   public function pending($seller_id): Collection
   {
     return RedeemHistory::with(['reward', 'consumer'])
+      ->where('status', 'pending')
       ->whereHas('reward', function ($query) use ($seller_id) {
         $query->where('seller_id', $seller_id);
       })
@@ -35,7 +36,8 @@ class RedeemHistoryRepository
     $redemption = RedeemHistory::create([
       'consumer_id' => $consumer_id,
       'reward_id' => $reward_id,
-      'is_redeemed' => false
+      'is_redeemed' => false,
+      'status' => 'pending',
     ]);
 
     // Increment the reward's quantity_redeemed
@@ -53,13 +55,19 @@ class RedeemHistoryRepository
   {
     $rh = $this->get($id);
     return $rh ? $rh->update([
-      'is_redeemed' => true
+      'is_redeemed' => true,
+      'status' => 'approved',
+      'approved_at' => now(),
     ]) : false;
   }
 
-  public function reject($id): bool
+  public function reject($id, $reason = null): bool
   {
     $rh = $this->get($id);
-    return $rh ? $rh->delete() : false;
+    return $rh ? $rh->update([
+      'status' => 'rejected',
+      'rejected_at' => now(),
+      'rejection_reason' => $reason,
+    ]) : false;
   }
 }
