@@ -149,6 +149,21 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
         // Receipt route
         Route::get('/receipts/export', [ReceiptController::class, 'export'])->name('receipts.export');
         Route::get('/receipts/{id}/qr', [ReceiptController::class, 'print'])->name('receipts.qr');
+        
+        // Test endpoint for debugging
+        Route::post('/test-json', function(\Illuminate\Http\Request $request) {
+            \Log::info('Test JSON endpoint hit', [
+                'data' => $request->all(),
+                'headers' => $request->headers->all()
+            ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'JSON POST working correctly',
+                'received_data' => $request->all(),
+                'timestamp' => now()->toDateTimeString()
+            ]);
+        })->name('test-json');
+        
         Route::resource('receipts', ReceiptController::class)->names('receipts');
     });
 });

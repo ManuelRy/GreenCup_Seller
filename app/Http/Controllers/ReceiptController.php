@@ -66,6 +66,16 @@ class ReceiptController extends Controller
     public function store(Request $request)
     {
         try {
+            // Log incoming request
+            Log::info('Receipt store request received', [
+                'seller_id' => Auth::id(),
+                'request_data' => $request->all(),
+                'headers' => [
+                    'content-type' => $request->header('Content-Type'),
+                    'accept' => $request->header('Accept')
+                ]
+            ]);
+
             $request->validate([
                 'items' => 'required|array|min:1',
                 'items.*.item_id' => 'required|integer|exists:items,id',
@@ -81,7 +91,13 @@ class ReceiptController extends Controller
 
             foreach ($request->items as $item) {
                 $i = $this->iRepo->get($item['item_id'], $seller_id);
-                if (!$i) continue;
+                if (!$i) {
+                    Log::warning('Item not found or not owned by seller', [
+                        'item_id' => $item['item_id'],
+                        'seller_id' => $seller_id
+                    ]);
+                    continue;
+                }
                 $qty = (int) $item['quantity'];
                 $pt = $i->points_per_unit * $qty;
 
@@ -94,6 +110,10 @@ class ReceiptController extends Controller
                 $qantity += $qty;
             }
 
+            if (empty($items)) {
+                throw new Exception('No valid items found for receipt');
+            }
+
             $receipt = $this->pTRepo->create([
                 'seller_id' => $seller_id,
                 'items' => $items,
@@ -102,12 +122,29 @@ class ReceiptController extends Controller
                 'expires_at' => Carbon::now()->addHours($expiresAt),
             ]);
 
+            Log::info('Receipt created successfully', ['receipt_id' => $receipt->id]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Receipt created successfully!',
                 'receipt' => $receipt->toArray()
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Receipt validation error', [
+                'errors' => $e->errors(),
+                'seller_id' => Auth::id()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
         } catch (\Throwable $e) {
+            Log::error('Receipt creation error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'seller_id' => Auth::id()
+            ]);
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()

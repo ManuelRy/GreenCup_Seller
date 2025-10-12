@@ -133,6 +133,11 @@ function getItemIcon($itemName) {
 
                 <!-- Generate Button -->
                 <div class="generate-section">
+                    <!-- Test Connection Button (Remove after testing) -->
+                    <button type="button" onclick="testConnection()" class="generate-btn" style="background: #6c757d; margin-bottom: 10px;">
+                        <span>🔍 Test Server Connection</span>
+                    </button>
+                    
                     <button type="button" onclick="generateReceipt()" class="generate-btn" id="generate-btn" disabled>
                         <span class="btn-text">
                             <span class="btn-icon">🎯</span>
@@ -1174,6 +1179,62 @@ function clearAll() {
     }
 }
 
+// Test server connection function
+async function testConnection() {
+    console.log('=== Testing Server Connection ===');
+    
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    if (!csrfToken) {
+        alert('❌ CSRF token not found! This is the problem.');
+        return;
+    }
+    
+    console.log('✓ CSRF token found:', csrfToken.content.substring(0, 10) + '...');
+    
+    try {
+        console.log('Sending test request to:', '{{ route("seller.test-json") }}');
+        
+        const response = await fetch('{{ route("seller.test-json") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken.content,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                test: 'data',
+                timestamp: new Date().toISOString()
+            })
+        }).catch(err => {
+            console.error('❌ Network error:', err);
+            alert('❌ Network Error: ' + err.message + '\n\nThis means:\n- Server is unreachable\n- CORS issue\n- Firewall blocking request');
+            throw err;
+        });
+        
+        console.log('✓ Response received. Status:', response.status);
+        console.log('✓ Response headers:', [...response.headers.entries()]);
+        
+        const text = await response.text();
+        console.log('✓ Response text:', text);
+        
+        const data = JSON.parse(text);
+        console.log('✓ Parsed JSON:', data);
+        
+        if (data.success) {
+            alert('✅ SUCCESS!\n\nServer connection is working perfectly.\nThe issue must be with the receipt endpoint specifically.\n\nCheck Laravel logs at: storage/logs/laravel.log');
+        } else {
+            alert('⚠️ Server responded but with error:\n' + data.message);
+        }
+        
+    } catch (error) {
+        console.error('❌ Test failed:', error);
+        alert('❌ Test Failed: ' + error.message);
+    }
+    
+    console.log('=== Test Complete ===');
+}
+
 // Generate receipt
 async function generateReceipt() {
     const selectedItemsArray = Object.values(selectedItems);
@@ -1194,6 +1255,12 @@ async function generateReceipt() {
 
     try {
         const expiresHours = document.getElementById('expires_hours').value;
+        
+        // Check CSRF token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
+        if (!csrfToken) {
+            throw new Error('CSRF token not found. Please refresh the page.');
+        }
 
         const requestData = {
             items: selectedItemsArray.map(item => ({
@@ -1204,23 +1271,42 @@ async function generateReceipt() {
         };
 
         console.log('Sending request:', requestData);
+        console.log('Route URL:', '{{ route("seller.receipts.store") }}');
+        console.log('CSRF Token:', csrfToken.content);
 
         const response = await fetch('{{ route("seller.receipts.store") }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json'
+                'X-CSRF-TOKEN': csrfToken.content,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify(requestData)
+        }).catch(networkError => {
+            console.error('Network error:', networkError);
+            throw new Error('Network connection failed. Please check your internet connection and try again.');
         });
 
         console.log('Response status:', response.status);
+        console.log('Response headers:', [...response.headers.entries()]);
 
-        const data = await response.json();
+        // Get response text first to handle non-JSON responses
+        const responseText = await response.text();
+        console.log('Response text:', responseText);
+
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('Failed to parse JSON:', parseError);
+            console.error('Response was:', responseText);
+            throw new Error('Server returned invalid response. Please contact support.');
+        }
+
         console.log('Response data:', data);
 
-        if (data.success) {
+        if (response.ok && data.success) {
             generatedReceiptId = data.receipt.id;
             showSuccessModal(data.receipt);
             showToast('Receipt generated successfully!', 'success');
@@ -1235,7 +1321,13 @@ async function generateReceipt() {
 
     } catch (error) {
         console.error('Generate receipt error:', error);
-        showToast('Network error. Please try again.', 'error');
+        console.error('Error type:', error.name);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        
+        // Show more specific error message
+        const errorMessage = error.message || 'Network error. Please try again.';
+        showToast(errorMessage, 'error');
     } finally {
         isGenerating = false;
 
