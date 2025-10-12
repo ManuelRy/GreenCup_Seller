@@ -149,7 +149,7 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
         // Receipt route
         Route::get('/receipts/export', [ReceiptController::class, 'export'])->name('receipts.export');
         Route::get('/receipts/{id}/qr', [ReceiptController::class, 'print'])->name('receipts.qr');
-        
+
         // Test endpoint for debugging
         Route::post('/test-json', function(\Illuminate\Http\Request $request) {
             \Log::info('Test JSON endpoint hit', [
@@ -163,7 +163,7 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
                 'timestamp' => now()->toDateTimeString()
             ]);
         })->name('test-json');
-        
+
         Route::resource('receipts', ReceiptController::class)->names('receipts');
     });
 });
