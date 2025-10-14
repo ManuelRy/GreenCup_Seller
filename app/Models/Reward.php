@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\NormalizesRemoteUrl;
 
 class Reward extends Model
 {
-    use HasFactory;
+    use HasFactory, NormalizesRemoteUrl;
 
     protected $fillable = [
         'name',
@@ -116,5 +117,10 @@ class Reward extends Model
                     ->where('valid_from', '<=', $now)
                     ->where('valid_until', '>=', $now)
                     ->whereRaw('quantity > quantity_redeemed');
+    }
+
+    public function getImagePathAttribute($value): ?string
+    {
+        return $this->normalizeRemoteUrl($value);
     }
 }

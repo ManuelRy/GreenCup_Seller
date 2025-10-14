@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Hash;
+use App\Traits\NormalizesRemoteUrl;
 
 class Seller extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, NormalizesRemoteUrl;
 
     // Status constants
     const STATUS_PENDING = 'pending';
@@ -104,6 +105,14 @@ class Seller extends Authenticatable
     public function photos()
     {
         return $this->hasMany(SellerPhoto::class);
+    }
+
+    /**
+     * Ensure the stored profile photo URL is always HTTPS and fully qualified.
+     */
+    public function getPhotoUrlAttribute($value): ?string
+    {
+        return $this->normalizeRemoteUrl($value);
     }
 
     // === FIXED POINT METHODS ===

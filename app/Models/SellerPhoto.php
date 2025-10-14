@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\NormalizesRemoteUrl;
 
 class SellerPhoto extends Model
 {
-    use HasFactory;
+    use HasFactory, NormalizesRemoteUrl;
 
     /**
      * The table associated with the model.
@@ -77,5 +78,13 @@ class SellerPhoto extends Model
     public function trimCaption(): string
     {
         return $this->original_caption ?? '';
+    }
+
+    /**
+     * Normalize stored photo URLs to always serve over HTTPS.
+     */
+    public function getPhotoUrlAttribute($value): ?string
+    {
+        return $this->normalizeRemoteUrl($value);
     }
 }
