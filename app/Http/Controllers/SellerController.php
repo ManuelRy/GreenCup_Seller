@@ -426,7 +426,7 @@ class SellerController extends Controller
                 $data = $response->json();
 
                 $this->sRepo->update(Auth::id(), [
-                    'photo_url'  => $this->fRepo->get($data['path'] ?? null),
+                    'photo_url'  => $data['path'] ?? null,
                 ]);
             }
         }

@@ -53,7 +53,7 @@ class ItemController extends Controller
             $response = $this->fRepo->upload("items", $file);
             if ($response->successful()) {
                 $data = $response->json();
-                $imageUrl = $this->fRepo->get($data['path']);
+                $imageUrl = $data['path'] ?? null;
             }
         }
 
@@ -120,7 +120,7 @@ class ItemController extends Controller
             $response = $this->fRepo->upload("items", $file);
             if ($response->successful()) {
                 $data = $response->json();
-                $updateData['image_url'] = $this->fRepo->get($data['path']);
+                $updateData['image_url'] = $data['path'] ?? null;
             }
         }
         // If no new image uploaded, keep the existing image_url (don't set it to null)

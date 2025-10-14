@@ -68,7 +68,7 @@ class GalleryController extends Controller
 
             if ($response->successful()) {
                 $data = $response->json();
-                $photoUrl = $this->fRepo->get($data['path']);
+                $photoUrl = $data['path'] ?? null;
             }
 
             $photo = $this->sGRepo->create([

@@ -74,7 +74,7 @@
                     <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
                         <div class="me-3" style="width: 80px; height: 80px; border-radius: 16px; overflow: hidden; background: linear-gradient(135deg, #00b09b, #00d9a6); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0, 176, 155, 0.3);">
                             @if($seller->photo_url)
-                                <img src="{{ asset($seller->photo_url) }}" alt="{{ $seller->business_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                <img src="{{ $seller->photo_url }}" alt="{{ $seller->business_name }}" style="width: 100%; height: 100%; object-fit: cover;">
                             @else
                                 <i class="bi bi-shop text-white fs-2"></i>
                             @endif

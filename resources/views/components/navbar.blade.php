@@ -72,7 +72,7 @@
                     <div class="account-info" onclick="toggleAccountDropdown()">
                         <div class="user-avatar">
                             @if(auth('seller')->user()->photo_url)
-                                <img src="{{ asset(auth('seller')->user()->photo_url) }}"
+                                <img src="{{ auth('seller')->user()->photo_url }}"
                                      alt="Profile" class="user-photo">
                             @else
                                 <i class="fas fa-store"></i>
@@ -91,7 +91,7 @@
                             <div class="user-info-full">
                                 <div class="user-avatar-large">
                                     @if(auth('seller')->user()->photo_url)
-                                        <img src="{{ asset(auth('seller')->user()->photo_url) }}"
+                                        <img src="{{ auth('seller')->user()->photo_url }}"
                                              alt="Profile" class="user-photo">
                                     @else
                                         <i class="fas fa-store"></i>
@@ -154,7 +154,7 @@
                     <div class="user-info-mobile">
                         <div class="user-avatar-mobile">
                             @if(auth('seller')->user()->photo_url)
-                                <img src="{{ asset(auth('seller')->user()->photo_url) }}"
+                                <img src="{{ auth('seller')->user()->photo_url }}"
                                      alt="Profile" class="user-photo">
                             @else
                                 <i class="fas fa-store"></i>

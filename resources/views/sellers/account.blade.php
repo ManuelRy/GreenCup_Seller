@@ -90,7 +90,7 @@
             <div class="d-flex justify-content-center mb-4">
                 <div class="profile-avatar rounded-circle d-flex align-items-center justify-content-center">
                     @if ($seller->photo_url)
-                        <img src="{{ asset($seller->photo_url) }}" alt="Profile" id="profileImage" class="rounded-circle">
+                        <img src="{{ $seller->photo_url }}" alt="Profile" id="profileImage" class="rounded-circle">
                     @else
                         <span id="profileInitials" class="fs-1 fw-bold text-white">{{ strtoupper(substr($seller->business_name ?? 'NA', 0, 2)) }}</span>
                     @endif

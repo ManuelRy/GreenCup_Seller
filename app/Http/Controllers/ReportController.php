@@ -65,7 +65,7 @@ class ReportController extends Controller
 
                     $this->rRepo->createEvidence([
                         'report_id' => $report->id,
-                        'file_url'  => $this->fRepo->get($data['path'] ?? null),
+                        'file_url'  => $data['path'] ?? null,
                     ]);
                 }
             }
