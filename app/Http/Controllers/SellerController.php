@@ -59,6 +59,12 @@ class SellerController extends Controller
             // Get current rank and next rank
             $currentRank = $seller->getCurrentRank();
             $nextRank = $seller->getNextRank();
+            
+            // If no next rank is found but current rank is not Platinum, manually get Bronze rank
+            if (!$nextRank && $currentRank && $currentRank->name !== 'Platinum') {
+                $nextRank = Rank::where('name', 'Bronze')->first();
+            }
+            
             $pointsToNext = $nextRank ? $nextRank->min_points - $totalRankPoints : 0;
 
             // Get points given to customers (all 'earn' transactions by this seller)

@@ -1193,10 +1193,12 @@
                         {{ $currentRank->name }} Seller
                     </span>
                     <span class="progress-text">
-                        @if($nextRank)
+                        @if($currentRank && $currentRank->name === 'Platinum' && !$nextRank)
+                            🎉 Maximum rank achieved!
+                        @elseif($nextRank)
                             {{ number_format($pointsToNext) }} points to {{ $nextRank->name }}
                         @else
-                            🎉 Maximum rank achieved!
+                            Keep earning points!
                         @endif
                     </span>
                 </div>
