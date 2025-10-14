@@ -162,11 +162,11 @@
                                 <small class="text-muted me-3">
                                   <i class="fas fa-paperclip me-1"></i>Attachments:
                                 </small>
-                                <div class="d-flex gap-2">
+                                <div class="d-flex gap-2 flex-wrap">
                                   @foreach($report->evidences as $evidence)
-                                    <a href="{{ $evidence->file_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                                      <i class="fas fa-image me-1"></i>View
-                                    </a>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="openImageModal('{{ $evidence->file_url }}', 'Evidence {{ $loop->iteration }}')">
+                                      <i class="fas fa-image me-1"></i>View Image {{ $loop->iteration }}
+                                    </button>
                                   @endforeach
                                 </div>
                               </div>
@@ -215,6 +215,29 @@
           </div>
         </div>
 
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Modal -->
+  <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="imageModalLabel">Evidence Image</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <img id="modalImage" src="" alt="Evidence" class="img-fluid rounded" style="max-height: 70vh; width: auto;">
+        </div>
+        <div class="modal-footer">
+          <a id="downloadImageBtn" href="" download class="btn btn-primary me-auto">
+            <i class="fas fa-download me-2"></i>Download
+          </a>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times me-2"></i>Close
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -365,9 +388,129 @@
       background-color: #1dd1a1;
       border-color: #1dd1a1;
     }
+
+    /* Image Modal Styling */
+    #imageModal .modal-content {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      border: none;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    #imageModal .modal-header {
+      border-bottom: 2px solid #f0f0f0;
+      padding: 1.5rem;
+    }
+
+    #imageModal .modal-body {
+      padding: 2rem;
+      background: #f8f9fa;
+    }
+
+    #imageModal .modal-footer {
+      border-top: 2px solid #f0f0f0;
+      padding: 1rem 1.5rem;
+    }
+
+    #modalImage {
+      border: 3px solid #fff;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease;
+    }
+
+    #modalImage:hover {
+      transform: scale(1.02);
+    }
+
+    /* Fade in animation for modal */
+    .modal.fade .modal-dialog {
+      transition: transform 0.3s ease-out;
+    }
+
+    /* Modal backdrop */
+    .modal-backdrop.show {
+      opacity: 0.7;
+      backdrop-filter: blur(5px);
+    }
+
+    /* Loading spinner for image */
+    .modal-body {
+      position: relative;
+      min-height: 200px;
+    }
+
+    #modalImage {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    #modalImage.loaded {
+      opacity: 1;
+    }
+
+    .image-loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      color: #1dd1a1;
+    }
   </style>
 
   <script>
+    // Function to open image in modal
+    function openImageModal(imageUrl, imageTitle) {
+      const modal = document.getElementById('imageModal');
+      const modalImage = document.getElementById('modalImage');
+      const modalTitle = document.getElementById('imageModalLabel');
+      const modalBody = modal.querySelector('.modal-body');
+      const downloadBtn = document.getElementById('downloadImageBtn');
+
+      // Reset image
+      modalImage.classList.remove('loaded');
+      modalImage.src = '';
+
+      // Set download button
+      downloadBtn.href = imageUrl;
+      downloadBtn.download = imageTitle || 'evidence-image.jpg';
+
+      // Add loading spinner
+      const loadingSpinner = document.createElement('div');
+      loadingSpinner.className = 'image-loading';
+      loadingSpinner.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      modalBody.appendChild(loadingSpinner);
+
+      // Set title
+      modalTitle.textContent = imageTitle || 'Evidence Image';
+
+      // Show the modal using Bootstrap
+      const bsModal = new bootstrap.Modal(modal);
+      bsModal.show();
+
+      // Load image
+      const img = new Image();
+      img.onload = function() {
+        modalImage.src = imageUrl;
+        modalImage.classList.add('loaded');
+        // Remove loading spinner
+        if (loadingSpinner && loadingSpinner.parentNode) {
+          loadingSpinner.remove();
+        }
+      };
+      img.onerror = function() {
+        // Remove loading spinner
+        if (loadingSpinner && loadingSpinner.parentNode) {
+          loadingSpinner.remove();
+        }
+        modalImage.src = imageUrl; // Still try to load it
+        modalImage.classList.add('loaded');
+        alert('Failed to load image. Please try again.');
+      };
+      img.src = imageUrl;
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       // Animate cards on scroll
       const observerOptions = {
