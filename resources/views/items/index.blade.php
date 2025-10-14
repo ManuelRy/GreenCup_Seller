@@ -998,8 +998,8 @@
             @foreach($items as $item)
             <div class="item-card">
                 <div class="item-image-container">
-                    @if($item->image_full_url)
-                        <img src="{{ $item->image_full_url }}" alt="{{ $item->name }}">
+                    @if($item->image_url)
+                        <img src="{{ $item->image_url }}" alt="{{ $item->name }}">
                     @else
                         <i class="fas fa-box"></i>
                     @endif

@@ -171,24 +171,6 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
             ]);
         })->name('test-json');
 
-        // Debug route to check image URLs
-        Route::get('/debug-images', function() {
-            $items = \App\Models\Item::whereNotNull('image_url')->take(5)->get(['id', 'name', 'image_url']);
-            $fRepo = new \App\Repository\FileRepository();
-
-            return response()->json([
-                'environment' => [
-                    'APP_ENV' => env('APP_ENV'),
-                    'APP_URL' => env('APP_URL'),
-                    'FILE_SERVER_URL' => env('FILE_SERVER_URL'),
-                    'FILE_SERVER_PUBLIC_URL' => env('FILE_SERVER_PUBLIC_URL'),
-                    'USE_IMAGE_PROXY' => env('USE_IMAGE_PROXY'),
-                ],
-                'items' => $items,
-                'test_url' => $items->first() ? $fRepo->get($items->first()->image_url) : 'No items with images',
-            ]);
-        })->name('debug-images');
-
         Route::resource('receipts', ReceiptController::class)->names('receipts');
     });
 });

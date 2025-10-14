@@ -20,24 +20,8 @@ class Item extends Model
         'points_per_unit' => 'integer',
     ];
 
-    protected $appends = ['image_full_url'];
-
     public function qrCodes(): HasMany
     {
         return $this->hasMany(QrCode::class);
-    }
-
-    /**
-     * Get the full image URL
-     * Converts stored path to full URL using FileRepository
-     */
-    public function getImageFullUrlAttribute(): ?string
-    {
-        if (!$this->image_url) {
-            return null;
-        }
-
-        $fRepo = app(\App\Repository\FileRepository::class);
-        return $fRepo->get($this->image_url);
     }
 }

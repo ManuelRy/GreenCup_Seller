@@ -41,8 +41,8 @@ function getItemIcon($itemName) {
                     @foreach($items as $item)
                         <div class="item-card" id="item-card-{{ $item->id }}">
                             <div class="item-icon">
-                                @if($item->image_full_url)
-                                    <img src="{{ $item->image_full_url }}" alt="{{ $item->name }}" loading="lazy">
+                                @if($item->image_url)
+                                    <img src="{{ $item->image_url }}" alt="{{ $item->name }}" loading="lazy">
                                 @else
                                     {{ getItemIcon($item->name) }}
                                 @endif
