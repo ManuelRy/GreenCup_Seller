@@ -256,9 +256,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 @endif
                 @if($seller->phone)
                 <div class="mt-3">
-                    <a href="tel:{{ $seller->phone }}" class="btn btn-sm btn-outline-primary me-2">
-                        <i class="bi bi-telephone me-1"></i>Call
-                    </a>
                     <a href="https://maps.google.com?q={{ $seller->latitude }},{{ $seller->longitude }}"
                        target="_blank" class="btn btn-sm btn-outline-success">
                         <i class="bi bi-navigation me-1"></i>Directions
