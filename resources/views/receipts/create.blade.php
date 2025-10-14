@@ -133,11 +133,6 @@ function getItemIcon($itemName) {
 
                 <!-- Generate Button -->
                 <div class="generate-section">
-                    <!-- Test Connection Button (Remove after testing) -->
-                    <button type="button" onclick="testConnection()" class="generate-btn" style="background: #6c757d; margin-bottom: 10px;">
-                        <span>🔍 Test Server Connection</span>
-                    </button>
-
                     <button type="button" onclick="generateReceipt()" class="generate-btn" id="generate-btn" disabled>
                         <span class="btn-text">
                             <span class="btn-icon">🎯</span>
@@ -1177,71 +1172,6 @@ function clearAll() {
         updateButtons();
         showToast('All items cleared!', 'success');
     }
-}
-
-// Test server connection function
-async function testConnection() {
-    console.log('=== Testing Server Connection ===');
-
-    const csrfToken = document.querySelector('meta[name="csrf-token"]');
-    if (!csrfToken) {
-        alert('❌ CSRF token not found! This is the problem.');
-        return;
-    }
-
-    console.log('✓ CSRF token found:', csrfToken.content.substring(0, 10) + '...');
-
-    // Debug: Check generated URL vs relative URL
-    const routeUrl = '{{ route("seller.test-json") }}';
-    const relativeUrl = '/seller/test-json';
-    console.log('Route URL:', routeUrl);
-    console.log('Relative URL:', relativeUrl);
-    console.log('Current page:', window.location.href);
-    console.log('Protocol:', window.location.protocol);
-
-    try {
-        console.log('Sending test request to:', relativeUrl);
-
-        // Use relative URL to avoid protocol/domain issues
-        const response = await fetch(relativeUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken.content,
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-                test: 'data',
-                timestamp: new Date().toISOString()
-            })
-        }).catch(err => {
-            console.error('❌ Network error:', err);
-            alert('❌ Network Error: ' + err.message + '\n\nThis means:\n- Server is unreachable\n- CORS issue\n- Firewall blocking request');
-            throw err;
-        });
-
-        console.log('✓ Response received. Status:', response.status);
-        console.log('✓ Response headers:', [...response.headers.entries()]);
-
-        const text = await response.text();
-        console.log('✓ Response text:', text);
-
-        const data = JSON.parse(text);
-        console.log('✓ Parsed JSON:', data);
-
-        if (data.success) {
-            alert('✅ SUCCESS!\n\nServer connection is working perfectly.\nThe issue must be with the receipt endpoint specifically.\n\nCheck Laravel logs at: storage/logs/laravel.log');
-        } else {
-            alert('⚠️ Server responded but with error:\n' + data.message);
-        }
-
-    } catch (error) {
-        console.error('❌ Test failed:', error);
-        alert('❌ Test Failed: ' + error.message);
-    }
-
-    console.log('=== Test Complete ===');
 }
 
 // Generate receipt
