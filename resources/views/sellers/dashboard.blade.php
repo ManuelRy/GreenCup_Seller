@@ -1203,14 +1203,24 @@
                     </span>
                 </div>
 
+                {{-- Show progress bar for all ranks except Platinum at max --}}
                 @if($nextRank)
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: {{ min(100, (($totalRankPoints - $currentRank->min_points) / ($nextRank->min_points - $currentRank->min_points)) * 100) }}%"></div>
-                </div>
-                <div class="progress-labels">
-                    <span>{{ $currentRank->name }} ({{ number_format($currentRank->min_points) }})</span>
-                    <span>{{ $nextRank->name }} ({{ number_format($nextRank->min_points) }})</span>
-                </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ min(100, (($totalRankPoints - $currentRank->min_points) / ($nextRank->min_points - $currentRank->min_points)) * 100) }}%"></div>
+                    </div>
+                    <div class="progress-labels">
+                        <span>{{ $currentRank->name }} ({{ number_format($currentRank->min_points) }})</span>
+                        <span>{{ $nextRank->name }} ({{ number_format($nextRank->min_points) }})</span>
+                    </div>
+                @elseif($currentRank && $currentRank->name !== 'Platinum')
+                    {{-- Fallback: Show progress to Bronze if no next rank but not at Platinum --}}
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ min(100, ($totalRankPoints / 100) * 100) }}%"></div>
+                    </div>
+                    <div class="progress-labels">
+                        <span>{{ $currentRank->name }} ({{ number_format($totalRankPoints) }})</span>
+                        <span>Bronze (100)</span>
+                    </div>
                 @endif
             </div>
         </div>

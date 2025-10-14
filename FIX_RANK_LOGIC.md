@@ -49,7 +49,7 @@ $pointsToNext = $nextRank ? $nextRank->min_points - $totalRankPoints : 0;
 
 ### 2. View Fix (`dashboard.blade.php`)
 
-Changed the display logic to explicitly check for Platinum rank:
+Changed the display logic to explicitly check for Platinum rank AND added progress bar for all ranks:
 
 ```blade
 <span class="progress-text">
@@ -61,12 +61,34 @@ Changed the display logic to explicitly check for Platinum rank:
         Keep earning points!
     @endif
 </span>
+
+{{-- Show progress bar for all ranks except Platinum at max --}}
+@if($nextRank)
+    <div class="progress-bar">
+        <div class="progress-fill" style="width: {{ ... }}%"></div>
+    </div>
+    <div class="progress-labels">
+        <span>{{ $currentRank->name }} ({{ number_format($currentRank->min_points) }})</span>
+        <span>{{ $nextRank->name }} ({{ number_format($nextRank->min_points) }})</span>
+    </div>
+@elseif($currentRank && $currentRank->name !== 'Platinum')
+    {{-- Fallback: Show progress to Bronze if no next rank but not at Platinum --}}
+    <div class="progress-bar">
+        <div class="progress-fill" style="width: {{ ($totalRankPoints / 100) * 100 }}%"></div>
+    </div>
+    <div class="progress-labels">
+        <span>{{ $currentRank->name }} ({{ number_format($totalRankPoints) }})</span>
+        <span>Bronze (100)</span>
+    </div>
+@endif
 ```
 
 **Changes made:**
 1. **First condition:** Only show "Maximum rank achieved!" if user is at Platinum AND no next rank exists
 2. **Second condition:** Show points needed for next rank (normal case)
-3. **Fallback:** Show encouragement message if something goes wrong
+3. **Progress bar always shows** unless at Platinum maximum
+4. **Fallback progress bar:** Shows progression to Bronze (100 points) if $nextRank is missing
+5. **Labels show:** Current rank with current points → Target rank with required points
 
 ## Rank Structure (for reference)
 
@@ -83,17 +105,20 @@ Changed the display logic to explicitly check for Platinum rank:
 ### Test Case 1: Standard Rank (0-99 points)
 **Given:** User has 2 points
 **Expected:**
-- Current Rank: Standard
+- Current Rank: Standard ⭐
 - Display: "98 points to Bronze"
-- Progress bar showing minimal progress
+- Progress bar showing: "Standard (2) ────[2%]──────────── Bronze (100)"
+- Progress bar fill: 2% (2 out of 100 points)
 
-✅ **Fixed:** No longer shows "Maximum rank achieved!"
+✅ **Fixed:** Shows progress bar with visual progression to Bronze rank
 
 ### Test Case 2: Bronze Rank (100-499 points)
 **Given:** User has 150 points
 **Expected:**
-- Current Rank: Bronze  
+- Current Rank: Bronze 🥉
 - Display: "350 points to Silver"
+- Progress bar: "Bronze (100) ────[12.5%]──────────── Silver (500)"
+- Progress bar fill: 12.5% (50 out of 400 points in this tier)
 
 ### Test Case 3: Platinum Rank (2000+ points)
 **Given:** User has 2500 points
