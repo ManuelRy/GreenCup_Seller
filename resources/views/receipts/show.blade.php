@@ -61,7 +61,7 @@
                 <div class="product-card">
                     <div class="product-image">
                         @if(isset($item['image_url']) && $item['image_url'])
-                            <img src="{{ asset($item['image_url']) }}" alt="{{ $item['name'] }}">
+                            <img src="{{ $item['image_url'] }}" alt="{{ $item['name'] }}">
                         @else
                             <div class="product-placeholder">{{ getItemIcon($item['name']) }}</div>
                         @endif
