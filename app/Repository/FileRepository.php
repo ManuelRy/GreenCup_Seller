@@ -8,7 +8,8 @@ class FileRepository
 {
   public function host(): string
   {
-    return 'https://188.166.186.208';
+    // Use environment variable if set, otherwise default to HTTP
+    return env('FILE_SERVER_URL', 'http://188.166.186.208');
   }
 
   public function base(): string
