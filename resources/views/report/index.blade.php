@@ -219,22 +219,25 @@
     </div>
   </div>
 
-  <!-- Image Modal -->
-  <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="imageModalLabel">Evidence Image</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <!-- Image Modal (Custom Implementation) -->
+  <div class="custom-image-modal" id="imageModal" style="display: none;">
+    <div class="custom-modal-backdrop" onclick="closeImageModal()"></div>
+    <div class="custom-modal-dialog">
+      <div class="custom-modal-content">
+        <div class="custom-modal-header">
+          <h5 class="custom-modal-title" id="imageModalLabel">Evidence Image</h5>
+          <button type="button" class="custom-btn-close" onclick="closeImageModal()" aria-label="Close">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        <div class="modal-body text-center">
-          <img id="modalImage" src="" alt="Evidence" class="img-fluid rounded" style="max-height: 70vh; width: auto;">
+        <div class="custom-modal-body">
+          <img id="modalImage" src="" alt="Evidence">
         </div>
-        <div class="modal-footer">
-          <a id="downloadImageBtn" href="" download class="btn btn-primary me-auto">
+        <div class="custom-modal-footer">
+          <a id="downloadImageBtn" href="" download class="custom-btn custom-btn-primary">
             <i class="fas fa-download me-2"></i>Download
           </a>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <button type="button" class="custom-btn custom-btn-secondary" onclick="closeImageModal()">
             <i class="fas fa-times me-2"></i>Close
           </button>
         </div>
@@ -389,64 +392,170 @@
       border-color: #1dd1a1;
     }
 
-    /* Image Modal Styling */
-    #imageModal .modal-content {
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(10px);
-      border-radius: 15px;
-      border: none;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    /* Custom Image Modal - Isolated Styles */
+    .custom-image-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
     }
 
-    #imageModal .modal-header {
-      border-bottom: 2px solid #f0f0f0;
-      padding: 1.5rem;
+    .custom-image-modal.show {
+      opacity: 1;
+      visibility: visible;
     }
 
-    #imageModal .modal-body {
-      padding: 2rem;
-      background: #f8f9fa;
-    }
-
-    #imageModal .modal-footer {
-      border-top: 2px solid #f0f0f0;
-      padding: 1rem 1.5rem;
-    }
-
-    #modalImage {
-      border: 3px solid #fff;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-      transition: transform 0.3s ease;
-    }
-
-    #modalImage:hover {
-      transform: scale(1.02);
-    }
-
-    /* Fade in animation for modal */
-    .modal.fade .modal-dialog {
-      transition: transform 0.3s ease-out;
-    }
-
-    /* Modal backdrop */
-    .modal-backdrop.show {
-      opacity: 0.7;
+    .custom-modal-backdrop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(5px);
     }
 
-    /* Loading spinner for image */
-    .modal-body {
+    .custom-modal-dialog {
+      position: relative;
+      z-index: 10001;
+      max-width: 90%;
+      max-height: 90vh;
+      width: 800px;
+      animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        transform: translateY(-50px) scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .custom-modal-content {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .custom-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem;
+      border-bottom: 2px solid #e8ecf4;
+      background: linear-gradient(135deg, #1dd1a1, #10ac84);
+    }
+
+    .custom-modal-title {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    .custom-btn-close {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+      transition: all 0.2s ease;
+    }
+
+    .custom-btn-close:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: rotate(90deg);
+    }
+
+    .custom-modal-body {
+      padding: 2rem;
+      background: #f8f9fa;
+      text-align: center;
       position: relative;
       min-height: 200px;
+      max-height: 60vh;
+      overflow: auto;
     }
 
-    #modalImage {
+    .custom-modal-body img {
+      max-width: 100%;
+      max-height: 60vh;
+      width: auto;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
-    #modalImage.loaded {
+    .custom-modal-body img.loaded {
       opacity: 1;
+    }
+
+    .custom-modal-body img:hover {
+      transform: scale(1.02);
+    }
+
+    .custom-modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      border-top: 2px solid #e8ecf4;
+      background: #fff;
+    }
+
+    .custom-btn {
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    .custom-btn-primary {
+      background: linear-gradient(135deg, #1dd1a1, #10ac84);
+      color: white;
+    }
+
+    .custom-btn-primary:hover {
+      background: linear-gradient(135deg, #10ac84, #0e8e71);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(29, 209, 161, 0.3);
+    }
+
+    .custom-btn-secondary {
+      background: #64748b;
+      color: white;
+    }
+
+    .custom-btn-secondary:hover {
+      background: #475569;
+      transform: translateY(-2px);
     }
 
     .image-loading {
@@ -454,8 +563,36 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 2rem;
+      font-size: 2.5rem;
       color: #1dd1a1;
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .custom-modal-dialog {
+        max-width: 95%;
+        width: 95%;
+      }
+
+      .custom-modal-header {
+        padding: 1rem;
+      }
+
+      .custom-modal-body {
+        padding: 1rem;
+        max-height: 50vh;
+      }
+
+      .custom-modal-footer {
+        padding: 0.75rem 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .custom-btn {
+        width: 100%;
+        justify-content: center;
+      }
     }
   </style>
 
@@ -465,7 +602,7 @@
       const modal = document.getElementById('imageModal');
       const modalImage = document.getElementById('modalImage');
       const modalTitle = document.getElementById('imageModalLabel');
-      const modalBody = modal.querySelector('.modal-body');
+      const modalBody = modal.querySelector('.custom-modal-body');
       const downloadBtn = document.getElementById('downloadImageBtn');
 
       // Reset image
@@ -485,9 +622,14 @@
       // Set title
       modalTitle.textContent = imageTitle || 'Evidence Image';
 
-      // Show the modal using Bootstrap
-      const bsModal = new bootstrap.Modal(modal);
-      bsModal.show();
+      // Show the modal (custom implementation)
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        modal.classList.add('show');
+      }, 10);
+
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
 
       // Load image
       const img = new Image();
@@ -510,6 +652,29 @@
       };
       img.src = imageUrl;
     }
+
+    // Function to close image modal
+    function closeImageModal() {
+      const modal = document.getElementById('imageModal');
+      modal.classList.remove('show');
+
+      // Restore body scroll
+      document.body.style.overflow = '';
+
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 300);
+    }
+
+    // Close modal on ESC key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('imageModal');
+        if (modal.classList.contains('show')) {
+          closeImageModal();
+        }
+      }
+    });
 
     document.addEventListener('DOMContentLoaded', function() {
       // Animate cards on scroll
