@@ -47,13 +47,14 @@ class ItemController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
         // Handle image upload
-        $imageUrl = null;
+        $imagePath = null;
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $response = $this->fRepo->upload("items", $file);
             if ($response->successful()) {
                 $data = $response->json();
-                $imageUrl = $this->fRepo->get($data['path']);
+                // Store only the path, not the full URL
+                $imagePath = $data['path'];
             }
         }
 
@@ -61,7 +62,7 @@ class ItemController extends Controller
             'name' => $request->name,
             'points_per_unit' => 1, // Always 1 point per item
             'seller_id' => Auth::id(),
-            'image_url' => $imageUrl
+            'image_url' => $imagePath
         ]);
 
         return redirect()->route('item.index')
@@ -120,7 +121,8 @@ class ItemController extends Controller
             $response = $this->fRepo->upload("items", $file);
             if ($response->successful()) {
                 $data = $response->json();
-                $updateData['image_url'] = $this->fRepo->get($data['path']);
+                // Store only the path, not the full URL
+                $updateData['image_url'] = $data['path'];
             }
         }
         // If no new image uploaded, keep the existing image_url (don't set it to null)

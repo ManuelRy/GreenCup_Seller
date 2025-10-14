@@ -69,7 +69,8 @@ class RewardController extends Controller
                 $response = $this->fRepo->upload("rewards", $file);
                 if ($response->successful()) {
                     $data = $response->json();
-                    $imagePath = $this->fRepo->get($data['path']);
+                    // Store only the path, not the full URL
+                    $imagePath = $data['path'];
                 }
             }
 
@@ -117,10 +118,11 @@ class RewardController extends Controller
             $imagePath = null;
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
-                $response = $this->fRepo->upload("items", $file);
+                $response = $this->fRepo->upload("rewards", $file);
                 if ($response->successful()) {
                     $data = $response->json();
-                    $imagePath = $this->fRepo->get($data['path']);
+                    // Store only the path, not the full URL
+                    $imagePath = $data['path'];
                 }
             }
             $this->rRepo->update($reward->id, Auth::id(), [
