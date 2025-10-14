@@ -209,4 +209,43 @@ class Seller extends Authenticatable
             }
         }
     }
+
+    /**
+     * Safely update seller points and adjust rank accordingly
+     * Used for error corrections and fraud recovery (called from admin panel)
+     */
+    public function updatePointsAndRank($newPoints, $reason = null)
+    {
+        $oldPoints = $this->total_points;
+        $oldRank = $this->getCurrentRank();
+
+        // Update the points
+        $this->update(['total_points' => $newPoints]);
+
+        // Update rank after points change
+        $this->updateRank();
+
+        $newRank = $this->getCurrentRank();
+
+        // Log this change for audit purposes
+        \Log::info("Seller points manually updated", [
+            'seller_id' => $this->id,
+            'seller_name' => $this->business_name,
+            'old_points' => $oldPoints,
+            'new_points' => $newPoints,
+            'old_rank' => $oldRank ? $oldRank->name : 'No Rank',
+            'new_rank' => $newRank ? $newRank->name : 'No Rank',
+            'reason' => $reason,
+            'updated_by' => 'Admin',
+            'updated_at' => now()
+        ]);
+
+        return [
+            'old_points' => $oldPoints,
+            'new_points' => $newPoints,
+            'old_rank' => $oldRank,
+            'new_rank' => $newRank,
+            'rank_changed' => ($oldRank?->id !== $newRank?->id)
+        ];
+    }
 }

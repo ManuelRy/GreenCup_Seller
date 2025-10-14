@@ -10,7 +10,8 @@
       "Bash(php:*)",
       "Bash(git restore:*)",
       "Bash(git revert:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Read(//c/Users/ASUS/Desktop/work/**)"
     ],
     "deny": [],
     "ask": []
