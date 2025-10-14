@@ -9,6 +9,7 @@ use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RewardController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\ImageProxyController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes - Clean Version
@@ -19,6 +20,12 @@ use App\Http\Controllers\LocationController;
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
+
+// Image proxy route (public, no auth needed)
+// Proxies images from HTTP file server through HTTPS to avoid mixed content errors
+Route::get('/proxy/images/{path}', [ImageProxyController::class, 'proxy'])
+    ->where('path', '.*')
+    ->name('image.proxy');
 
 // Inactive seller status routes (accessible without auth)
 Route::get('/pending', function () {
