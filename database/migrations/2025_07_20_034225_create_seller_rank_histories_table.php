@@ -10,20 +10,21 @@ class CreateSellerRankHistoriesTable extends Migration
 {
     public function up(): void
     {
-        Schema::create('seller_rank_history', function (Blueprint $table) {
+        Schema::create('seller_rank_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('seller_id')
-                  ->constrained()
+                  ->constrained('sellers')
                   ->cascadeOnDelete();
             $table->foreignId('rank_id')
-                  ->constrained()
+                  ->constrained('ranks')
                   ->cascadeOnDelete();
             $table->timestamp('achieved_at')->useCurrent();
+            $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('seller_rank_history');
+        Schema::dropIfExists('seller_rank_histories');
     }
 }
