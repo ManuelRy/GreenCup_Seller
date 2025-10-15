@@ -137,18 +137,18 @@
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">Created:</span>
-                                <span class="detail-value">{{ $receipt->created_at }}</span>
+                                <span class="detail-value">{{ $receipt->formatted_created_at }}</span>
                             </div>
                             @if($receipt->expires_at)
                                 <div class="detail-row">
                                     <span class="detail-label">Expires:</span>
-                                    <span class="detail-value">{{ $receipt->expires_at }}</span>
+                                    <span class="detail-value">{{ $receipt->formatted_expires_at }}</span>
                                 </div>
                             @endif
                             @if($receipt->claimed_at)
                                 <div class="detail-row">
                                     <span class="detail-label">Claimed:</span>
-                                    <span class="detail-value">{{ $receipt->claimed_at }}</span>
+                                    <span class="detail-value">{{ $receipt->formatted_claimed_at }}</span>
                                 </div>
                             @endif
                         </div>

@@ -47,7 +47,7 @@
         <div class="summary-card">
             <div class="summary-icon">📅</div>
             <div class="summary-content">
-                <div class="summary-value">{{ $receipt->created_at->format('M j') }}</div>
+                <div class="summary-value">{{ $receipt->created_at->timezone('Asia/Phnom_Penh')->format('M j') }}</div>
                 <div class="summary-label">Created</div>
             </div>
         </div>
@@ -87,7 +87,7 @@
                 <div class="customer-info">
                     <div class="customer-name">{{ $receipt->consumer->full_name }}</div>
                     <div class="customer-email">{{ $receipt->consumer->email }}</div>
-                    <div class="claimed-date">Claimed: {{ $receipt->claimed_at->format('M j, Y g:i A') }}</div>
+                    <div class="claimed-date">Claimed: {{ $receipt->formatted_claimed_at }}</div>
                 </div>
             </div>
         </div>

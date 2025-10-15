@@ -291,9 +291,9 @@ class ReceiptController extends Controller
                         count($items),
                         $receipt->total_quantity,
                         $receipt->total_points,
-                        $receipt->created_at,
-                        $receipt->expires_at,
-                        $receipt->claimed_at,
+                        $receipt->created_at ? $receipt->created_at->timezone('Asia/Phnom_Penh')->format('M d, Y g:i A') : '',
+                        $receipt->expires_at ? $receipt->expires_at->timezone('Asia/Phnom_Penh')->format('M d, Y g:i A') : '',
+                        $receipt->claimed_at ? $receipt->claimed_at->timezone('Asia/Phnom_Penh')->format('M d, Y g:i A') : '',
                         $customerEmail
                     ]);
                 }
