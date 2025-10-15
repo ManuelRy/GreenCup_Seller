@@ -41,7 +41,7 @@ class Reward extends Model
 
     public function isValid()
     {
-        $now = now();
+        $now = now('Asia/Phnom_Penh');
         return $this->is_active &&
                $this->valid_from <= $now &&
                $this->valid_until >= $now &&
@@ -54,7 +54,7 @@ class Reward extends Model
             return null;
         }
 
-        $now = now();
+        $now = now('Asia/Phnom_Penh');
         $diff = $now->diff($this->valid_until);
 
         return [
@@ -76,7 +76,7 @@ class Reward extends Model
             return 'Expired';
         }
 
-        $now = now();
+        $now = now('Asia/Phnom_Penh');
         $diff = $now->diff($this->valid_until);
 
         if ($diff->days > 0) {
@@ -96,7 +96,7 @@ class Reward extends Model
             return false;
         }
 
-        return now()->diffInHours($this->valid_until) <= $hours;
+        return now('Asia/Phnom_Penh')->diffInHours($this->valid_until) <= $hours;
     }
 
     /**
@@ -112,7 +112,7 @@ class Reward extends Model
      */
     public function scopeCurrentlyValid($query)
     {
-        $now = now();
+        $now = now('Asia/Phnom_Penh');
         return $query->where('is_active', true)
                     ->where('valid_from', '<=', $now)
                     ->where('valid_until', '>=', $now)

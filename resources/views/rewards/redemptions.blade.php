@@ -320,8 +320,12 @@
 
             <div style="background: #f8fafc; padding: 1rem; border-radius: 16px; margin-bottom: 1rem;">
                 <h6 class="fw-bold mb-1" style="color: #1e293b;">{{ $redemption->reward->name }}</h6>
+                <p class="text-muted mb-1" style="font-size: 0.875rem;">
+                    <i class="fas fa-coins me-2"></i>{{ number_format($redemption->reward->points_required) }} points each
+                </p>
                 <p class="text-muted mb-0" style="font-size: 0.875rem;">
-                    <i class="fas fa-coins me-2"></i>{{ number_format($redemption->reward->points_required) }} points
+                    <i class="fas fa-box me-2"></i>Quantity: {{ $redemption->quantity ?? 1 }} item(s)
+                    <strong class="ms-2" style="color: #667eea;">Total: {{ number_format(($redemption->reward->points_required * ($redemption->quantity ?? 1))) }} points</strong>
                 </p>
             </div>
 

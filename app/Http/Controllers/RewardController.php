@@ -114,19 +114,21 @@ class RewardController extends Controller
         ]);
 
         try {
-            $imagePath = null;
+            // Only update image if a new one is uploaded, otherwise keep existing
+            $updateData = $request->all();
+
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
-                $response = $this->fRepo->upload("items", $file);
+                $response = $this->fRepo->upload("rewards", $file);
                 if ($response->successful()) {
                     $data = $response->json();
-                    $imagePath = $data['path'] ?? null;
+                    $updateData['image_path'] = $data['path'] ?? null;
                 }
             }
-            $this->rRepo->update($reward->id, Auth::id(), [
-                ...$request->all(),
-                'image_path' => $imagePath,
-            ]);
+            // If no new image uploaded, remove image_path from update data to preserve existing
+            // The spreading of $request->all() won't include the file anyway
+
+            $this->rRepo->update($reward->id, Auth::id(), $updateData);
 
             return redirect()->route('reward.index')
                 ->with('success', 'Reward updated successfully!');
@@ -193,15 +195,19 @@ class RewardController extends Controller
             if (!$rh || !$rh->reward) {
                 throw new Exception('Redemption could not be found!');
             }
-            
-            // add point to seller
-            $this->sRepo->addPoints(Auth::id(), $rh->reward->points_required);
-            
-            // update the status to redeem
+
+            // Calculate total points based on quantity redeemed
+            $quantity = $rh->quantity ?? 1;
+            $totalPoints = $rh->reward->points_required * $quantity;
+
+            // add points to seller
+            $this->sRepo->addPoints(Auth::id(), $totalPoints);
+
+            // update the status to approved
             $this->rHRepo->approve($id);
-            
+
             return redirect()->route('reward.redemptions')
-                ->with('success', 'Redemption approved successfully!');
+                ->with('success', "Redemption approved successfully! {$quantity} item(s) for {$totalPoints} points.");
         } catch (Exception $e) {
             Log::error($e->getMessage());
             return redirect()->back()
@@ -219,20 +225,24 @@ class RewardController extends Controller
             return redirect()->route('reward.redemptions')
                 ->with('error', 'Redemption could not be found!');
         }
+
         $consumer_id = $rh->consumer_id;
-        $reward_points = $rh->reward->points_required;
+        $quantity = $rh->quantity ?? 1;
+        $totalPoints = $rh->reward->points_required * $quantity;
         $reward_id = $rh->reward->id;
-        
-        // return the point to consumer
-        $this->cPRepo->refund($consumer_id, Auth::id(), $reward_points);
-        
+
+        // return the points to consumer (total based on quantity)
+        $this->cPRepo->refund($consumer_id, Auth::id(), $totalPoints);
+
         // restore the reward quantity by decrementing quantity_redeemed
-        $this->rRepo->decrementQuantityRedeemed($reward_id);
-        
-        // delete the redeem history
+        for ($i = 0; $i < $quantity; $i++) {
+            $this->rRepo->decrementQuantityRedeemed($reward_id);
+        }
+
+        // mark the redemption as rejected
         $this->rHRepo->reject($id);
-        
+
         return redirect()->route('reward.redemptions')
-            ->with('success', 'Redemption rejected successfully!');
+            ->with('success', "Redemption rejected successfully! {$quantity} item(s) restored, {$totalPoints} points refunded.");
     }
 }

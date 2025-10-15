@@ -19,8 +19,8 @@ return new class extends Migration
             $table->integer('quantity');
             $table->integer('quantity_redeemed')->default(0);
             $table->string('image_path')->nullable();
-            $table->date('valid_from');
-            $table->date('valid_until');
+            $table->dateTime('valid_from');
+            $table->dateTime('valid_until');
             $table->boolean('is_active')->default(true);
             $table->foreignId('seller_id')->constrained('sellers')->onDelete('cascade');
             $table->timestamps();
