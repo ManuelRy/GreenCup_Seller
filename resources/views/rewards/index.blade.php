@@ -556,31 +556,45 @@
                     </div>
 
                     <!-- Time Remaining Display -->
-                    <div class="mb-2" style="background: #f8fafc; padding: 0.75rem; border-radius: 12px; border-left: 4px solid
-                        @if($reward->isValid())
-                            @if($reward->isExpiringSoon(48))
-                                #f59e0b
-                            @else
-                                #10b981
-                            @endif
-                        @else
-                            #ef4444
-                        @endif
-                    ;">
+                    @php
+                        $now = \Carbon\Carbon::now('Asia/Phnom_Penh');
+                        $hasStarted = $now->isAfter($reward->valid_from);
+                        $isExpired = $now->isAfter($reward->valid_until);
+                        $isValid = $reward->isValid();
+
+                        // Determine status and border color
+                        if (!$hasStarted) {
+                            $borderColor = '#3b82f6'; // Blue for coming soon
+                            $statusIcon = 'fa-hourglass-start';
+                            $statusLabel = 'Coming Soon';
+                        } elseif ($isExpired) {
+                            $borderColor = '#ef4444'; // Red for expired
+                            $statusIcon = 'fa-times-circle';
+                            $statusLabel = 'Expired';
+                        } elseif ($reward->isExpiringSoon(48)) {
+                            $borderColor = '#f59e0b'; // Amber for expiring soon
+                            $statusIcon = 'fa-clock';
+                            $statusLabel = 'Time Remaining';
+                        } else {
+                            $borderColor = '#10b981'; // Green for active
+                            $statusIcon = 'fa-clock';
+                            $statusLabel = 'Time Remaining';
+                        }
+                    @endphp
+                    <div class="mb-2 reward-time-container" style="background: #f8fafc; padding: 0.75rem; border-radius: 12px; border-left: 4px solid {{ $borderColor }};">
                         <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">
-                            @if($reward->isValid())
-                                <i class="fas fa-clock me-1"></i>Time Remaining
-                            @else
-                                <i class="fas fa-times-circle me-1"></i>Expired
-                            @endif
+                            <i class="fas {{ $statusIcon }} me-1"></i>{{ $statusLabel }}
                         </div>
                         <div style="font-size: 0.875rem; font-weight: 700; color: #1e293b;"
                              class="time-remaining-live"
-                             data-expiry="{{ \Carbon\Carbon::parse($reward->valid_until)->toIso8601String() }}">
-                            @if($reward->isValid())
-                                {{ $reward->getHumanReadableTimeRemaining() }}
-                            @else
+                             data-expiry="{{ \Carbon\Carbon::parse($reward->valid_until)->toIso8601String() }}"
+                             data-start="{{ \Carbon\Carbon::parse($reward->valid_from)->toIso8601String() }}">
+                            @if(!$hasStarted)
+                                Starts {{ \Carbon\Carbon::parse($reward->valid_from)->diffForHumans() }}
+                            @elseif($isExpired)
                                 Expired {{ \Carbon\Carbon::parse($reward->valid_until)->diffForHumans() }}
+                            @else
+                                {{ $reward->getHumanReadableTimeRemaining() }}
                             @endif
                         </div>
                         <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">
@@ -624,20 +638,65 @@ function updateCountdowns() {
         const timeDisplay = card.querySelector('.time-remaining-live');
         if (!timeDisplay) return;
 
+        const startTime = new Date(timeDisplay.dataset.start).getTime();
         const expiryTime = new Date(timeDisplay.dataset.expiry).getTime();
         const now = new Date().getTime();
-        const distance = expiryTime - now;
+        const container = timeDisplay.closest('.reward-time-container');
+        const statusLabel = container.querySelector('.fas').parentElement;
 
-        if (distance < 0) {
-            timeDisplay.innerHTML = '<span style="color: #ef4444;">Expired</span>';
-            timeDisplay.closest('.mb-2').style.borderLeftColor = '#ef4444';
+        // Check if reward hasn't started yet
+        if (now < startTime) {
+            const distanceToStart = startTime - now;
+            const days = Math.floor(distanceToStart / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distanceToStart % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distanceToStart % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distanceToStart % (1000 * 60)) / 1000);
+
+            let timeString = 'Starts in ';
+            if (days > 0) {
+                timeString += `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            } else if (hours > 0) {
+                timeString += `${hours}h ${minutes}m ${seconds}s`;
+            } else if (minutes > 0) {
+                timeString += `${minutes}m ${seconds}s`;
+            } else {
+                timeString += `${seconds}s`;
+            }
+
+            timeDisplay.textContent = timeString;
+            container.style.borderLeftColor = '#3b82f6'; // Blue for coming soon
+            statusLabel.innerHTML = '<i class="fas fa-hourglass-start me-1"></i>COMING SOON';
             return;
         }
 
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        // Check if reward has expired
+        const distanceToExpiry = expiryTime - now;
+        if (distanceToExpiry < 0) {
+            // Calculate how long ago it expired
+            const expiredAgo = Math.abs(distanceToExpiry);
+            const days = Math.floor(expiredAgo / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((expiredAgo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+            let expiredText = 'Expired ';
+            if (days > 0) {
+                expiredText += `${days} day${days > 1 ? 's' : ''} ago`;
+            } else if (hours > 0) {
+                expiredText += `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            } else {
+                expiredText += 'recently';
+            }
+
+            timeDisplay.innerHTML = `<span style="color: #ef4444;">${expiredText}</span>`;
+            container.style.borderLeftColor = '#ef4444'; // Red for expired
+            statusLabel.innerHTML = '<i class="fas fa-times-circle me-1"></i>EXPIRED';
+            return;
+        }
+
+        // Reward is active - show time remaining
+        const days = Math.floor(distanceToExpiry / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distanceToExpiry % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distanceToExpiry % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distanceToExpiry % (1000 * 60)) / 1000);
 
         let timeString = '';
         if (days > 0) {
@@ -653,14 +712,16 @@ function updateCountdowns() {
         timeDisplay.textContent = timeString;
 
         // Update border color based on urgency
-        const totalHours = distance / (1000 * 60 * 60);
-        const container = timeDisplay.closest('.mb-2');
+        const totalHours = distanceToExpiry / (1000 * 60 * 60);
         if (totalHours <= 24) {
-            container.style.borderLeftColor = '#ef4444'; // Red
+            container.style.borderLeftColor = '#ef4444'; // Red - urgent!
+            statusLabel.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>TIME REMAINING';
         } else if (totalHours <= 48) {
-            container.style.borderLeftColor = '#f59e0b'; // Amber
+            container.style.borderLeftColor = '#f59e0b'; // Amber - expiring soon
+            statusLabel.innerHTML = '<i class="fas fa-clock me-1"></i>TIME REMAINING';
         } else {
-            container.style.borderLeftColor = '#10b981'; // Green
+            container.style.borderLeftColor = '#10b981'; // Green - plenty of time
+            statusLabel.innerHTML = '<i class="fas fa-clock me-1"></i>TIME REMAINING';
         }
     });
 }
