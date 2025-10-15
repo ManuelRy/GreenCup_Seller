@@ -544,15 +544,48 @@
                         {{ Str::limit($reward->description ?? 'No description available', 100) }}
                     </p>
 
-                    <div class="reward-meta">
+                    <div class="reward-meta mb-3">
                         <span>
                             <i class="fas fa-box me-1"></i>
                             Stock: <strong>{{ $reward->available_quantity }}/{{ $reward->quantity }}</strong>
                         </span>
                         <span>
                             <i class="fas fa-calendar-alt me-1"></i>
-                            Until: <strong>{{ \Carbon\Carbon::parse($reward->valid_until)->format('M d, Y') }}</strong>
+                            Redeemed: <strong>{{ $reward->quantity_redeemed }}</strong>
                         </span>
+                    </div>
+
+                    <!-- Time Remaining Display -->
+                    <div class="mb-2" style="background: #f8fafc; padding: 0.75rem; border-radius: 12px; border-left: 4px solid
+                        @if($reward->isValid())
+                            @if($reward->isExpiringSoon(48))
+                                #f59e0b
+                            @else
+                                #10b981
+                            @endif
+                        @else
+                            #ef4444
+                        @endif
+                    ;">
+                        <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">
+                            @if($reward->isValid())
+                                <i class="fas fa-clock me-1"></i>Time Remaining
+                            @else
+                                <i class="fas fa-times-circle me-1"></i>Expired
+                            @endif
+                        </div>
+                        <div style="font-size: 0.875rem; font-weight: 700; color: #1e293b;"
+                             class="time-remaining-live"
+                             data-expiry="{{ \Carbon\Carbon::parse($reward->valid_until)->toIso8601String() }}">
+                            @if($reward->isValid())
+                                {{ $reward->getHumanReadableTimeRemaining() }}
+                            @else
+                                Expired {{ \Carbon\Carbon::parse($reward->valid_until)->diffForHumans() }}
+                            @endif
+                        </div>
+                        <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">
+                            Valid: {{ \Carbon\Carbon::parse($reward->valid_from)->format('M d, Y g:i A') }} - {{ \Carbon\Carbon::parse($reward->valid_until)->format('M d, Y g:i A') }}
+                        </div>
                     </div>
 
                     <div class="mt-3">
@@ -582,3 +615,58 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+// Live countdown timer for rewards
+function updateCountdowns() {
+    document.querySelectorAll('.reward-card').forEach((card, index) => {
+        const timeDisplay = card.querySelector('.time-remaining-live');
+        if (!timeDisplay) return;
+
+        const expiryTime = new Date(timeDisplay.dataset.expiry).getTime();
+        const now = new Date().getTime();
+        const distance = expiryTime - now;
+
+        if (distance < 0) {
+            timeDisplay.innerHTML = '<span style="color: #ef4444;">Expired</span>';
+            timeDisplay.closest('.mb-2').style.borderLeftColor = '#ef4444';
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        let timeString = '';
+        if (days > 0) {
+            timeString = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        } else if (hours > 0) {
+            timeString = `${hours}h ${minutes}m ${seconds}s`;
+        } else if (minutes > 0) {
+            timeString = `${minutes}m ${seconds}s`;
+        } else {
+            timeString = `${seconds}s`;
+        }
+
+        timeDisplay.textContent = timeString;
+
+        // Update border color based on urgency
+        const totalHours = distance / (1000 * 60 * 60);
+        const container = timeDisplay.closest('.mb-2');
+        if (totalHours <= 24) {
+            container.style.borderLeftColor = '#ef4444'; // Red
+        } else if (totalHours <= 48) {
+            container.style.borderLeftColor = '#f59e0b'; // Amber
+        } else {
+            container.style.borderLeftColor = '#10b981'; // Green
+        }
+    });
+}
+
+// Update every second
+setInterval(updateCountdowns, 1000);
+updateCountdowns(); // Initial call
+</script>
+@endpush
