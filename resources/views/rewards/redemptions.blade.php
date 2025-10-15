@@ -329,17 +329,67 @@
                 </p>
             </div>
 
-            <p class="text-muted mb-3" style="font-size: 0.875rem;">
-                <i class="fas fa-clock me-2"></i>{{ $redemption->created_at->diffForHumans() }}
+            <p class="text-muted mb-2" style="font-size: 0.875rem;">
+                <i class="fas fa-clock me-2"></i>Redeemed {{ $redemption->created_at->diffForHumans() }}
             </p>
 
+            <!-- Expiration Status -->
+            @if($redemption->expires_at)
+            <div class="mb-3" style="background:
+                @if($redemption->isExpired())
+                    #fee2e2
+                @else
+                    #eff6ff
+                @endif
+            ; padding: 0.75rem; border-radius: 12px; border-left: 4px solid
+                @if($redemption->isExpired())
+                    #ef4444
+                @else
+                    #3b82f6
+                @endif
+            ;">
+                <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color:
+                    @if($redemption->isExpired())
+                        #991b1b
+                    @else
+                        #1e40af
+                    @endif
+                ; margin-bottom: 0.25rem;">
+                    @if($redemption->isExpired())
+                        <i class="fas fa-times-circle me-1"></i>EXPIRED
+                    @else
+                        <i class="fas fa-check-circle me-1"></i>VALID
+                    @endif
+                </div>
+                <div style="font-size: 0.875rem; font-weight: 700; color: #1e293b;">
+                    @if($redemption->isExpired())
+                        Expired {{ \Carbon\Carbon::parse($redemption->expires_at)->diffForHumans() }}
+                    @else
+                        Expires {{ \Carbon\Carbon::parse($redemption->expires_at)->diffForHumans() }}
+                    @endif
+                </div>
+                <div style="font-size: 0.7rem; color: #64748b; margin-top: 0.25rem;">
+                    {{ \Carbon\Carbon::parse($redemption->expires_at)->format('M d, Y g:i A') }}
+                </div>
+            </div>
+            @endif
+
             @if($redemption->is_redeemed === false)
+            <!-- Show expired warning if receipt has expired -->
+            @if($redemption->isExpired())
+            <div style="background: #fee2e2; color: #991b1b; padding: 0.75rem; border-radius: 12px; font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem;">
+                <i class="fas fa-exclamation-triangle me-2"></i>This receipt has expired and cannot be approved
+            </div>
+            @endif
+
             <div class="d-flex gap-2">
                 <form method="POST" action="{{ route('reward.redemptions.approve', $redemption->id) }}" class="flex-fill">
                     @csrf
-                    <button type="submit" class="btn-modern btn-success-modern w-100" onclick="return confirm('Approve this redemption?')">
+                    <button type="submit" class="btn-modern btn-success-modern w-100"
+                            @if($redemption->isExpired()) disabled style="opacity: 0.5; cursor: not-allowed;" @endif
+                            onclick="return confirm('Approve this redemption?')">
                         <i class="fas fa-check"></i>
-                        <span>Approve</span>
+                        <span>{{ $redemption->isExpired() ? 'Expired' : 'Approve' }}</span>
                     </button>
                 </form>
                 <form method="POST" action="{{ route('reward.redemptions.reject', $redemption->id) }}" class="flex-fill">

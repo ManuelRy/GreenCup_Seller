@@ -196,6 +196,18 @@ class RewardController extends Controller
                 throw new Exception('Redemption could not be found!');
             }
 
+            // Check if redemption receipt has expired
+            if ($rh->isExpired()) {
+                return redirect()->back()
+                    ->with('error', 'This redemption receipt has expired and can no longer be approved.');
+            }
+
+            // Check if already approved or rejected
+            if ($rh->status !== 'pending') {
+                return redirect()->back()
+                    ->with('error', 'This redemption has already been ' . $rh->status . '.');
+            }
+
             // Calculate total points based on quantity redeemed
             $quantity = $rh->quantity ?? 1;
             $totalPoints = $rh->reward->points_required * $quantity;
