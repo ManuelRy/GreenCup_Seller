@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Seller;
 use App\Models\PointTransaction;
+use App\Models\RedeemHistory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -37,9 +38,12 @@ class SellerAccountController extends Controller
                                      ->where('point_transactions.type', 'earn')
                                      ->sum('point_transactions.points') ?? 0;
 
-        $pointsFromRedemptions = PointTransaction::where('point_transactions.seller_id', $seller->id)
-                                               ->where('point_transactions.type', 'spend')
-                                               ->sum('point_transactions.points') ?? 0;
+        // Points from redemptions - only count approved redemptions
+        // Join redeem_histories with rewards to calculate total points from approved redemptions
+        $pointsFromRedemptions = RedeemHistory::join('rewards', 'redeem_histories.reward_id', '=', 'rewards.id')
+                                               ->where('rewards.seller_id', $seller->id)
+                                               ->where('redeem_histories.status', 'approved')
+                                               ->sum(DB::raw('rewards.points_required * COALESCE(redeem_histories.quantity, 1)')) ?? 0;
 
         $totalCustomers = PointTransaction::where('point_transactions.seller_id', $seller->id)
                                         ->distinct('point_transactions.consumer_id')
