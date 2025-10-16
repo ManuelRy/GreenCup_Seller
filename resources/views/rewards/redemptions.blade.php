@@ -270,26 +270,6 @@
             </div>
             <div class="stat-label">Pending</div>
         </div>
-        <!-- Approved Redemptions -->
-        <div class="stat-card">
-            <div class="stat-icon" style="background: var(--success-gradient);">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="stat-value" style="background: var(--success-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                {{ $redemptions->where('is_redeemed', true)->count() }}
-            </div>
-            <div class="stat-label">Approved</div>
-        </div>
-        <!-- Rejected Redemptions -->
-        <div class="stat-card">
-            <div class="stat-icon" style="background: var(--danger-gradient);">
-                <i class="fas fa-times-circle"></i>
-            </div>
-            <div class="stat-value" style="background: var(--danger-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                {{ $redemptions->where('is_redeemed', null)->count() }}
-            </div>
-            <div class="stat-label">Rejected</div>
-        </div>
         <!-- Total Requests -->
         <div class="stat-card">
             <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
