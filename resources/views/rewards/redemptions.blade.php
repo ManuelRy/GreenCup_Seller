@@ -260,18 +260,44 @@
 
     <!-- Stats Grid -->
     <div class="stats-grid">
+        <!-- Pending Redemptions -->
         <div class="stat-card">
-            <div class="stat-icon">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e42 100%);">
                 <i class="fas fa-hourglass-half"></i>
             </div>
-            <div class="stat-value">{{ $redemptions->where('is_redeemed', false)->count() }}</div>
+            <div class="stat-value" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e42 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                {{ $redemptions->where('is_redeemed', false)->count() }}
+            </div>
             <div class="stat-label">Pending</div>
-        </div
+        </div>
+        <!-- Approved Redemptions -->
         <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+            <div class="stat-icon" style="background: var(--success-gradient);">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-value" style="background: var(--success-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                {{ $redemptions->where('is_redeemed', true)->count() }}
+            </div>
+            <div class="stat-label">Approved</div>
+        </div>
+        <!-- Rejected Redemptions -->
+        <div class="stat-card">
+            <div class="stat-icon" style="background: var(--danger-gradient);">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <div class="stat-value" style="background: var(--danger-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                {{ $redemptions->where('is_redeemed', null)->count() }}
+            </div>
+            <div class="stat-label">Rejected</div>
+        </div>
+        <!-- Total Requests -->
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <i class="fas fa-chart-bar"></i>
             </div>
-            <div class="stat-value" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ $redemptions->count() }}</div>
+            <div class="stat-value" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                {{ $redemptions->count() }}
+            </div>
             <div class="stat-label">Total Requests</div>
         </div>
     </div>
