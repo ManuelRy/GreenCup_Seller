@@ -266,14 +266,7 @@
             </div>
             <div class="stat-value">{{ $redemptions->where('is_redeemed', false)->count() }}</div>
             <div class="stat-label">Pending</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon" style="background: var(--success-gradient);">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="stat-value" style="background: var(--success-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ $redemptions->where('is_redeemed', true)->count() }}</div>
-            <div class="stat-label">Approved</div>
-        </div>
+        </div
         <div class="stat-card">
             <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
                 <i class="fas fa-chart-bar"></i>
