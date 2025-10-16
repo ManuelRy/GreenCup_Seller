@@ -193,7 +193,7 @@
 
     <!-- Stats Grid -->
     <div class="row g-4 mb-5 fade-in">
-        <div class="col-6 col-lg-3">
+        <div class="col-6 col-lg-4">
             <div class="card stat-card border-0 h-100">
                 <div class="card-body text-center p-4">
                     <div class="text-primary mb-3" style="font-size: 3rem;">🏆</div>
@@ -202,7 +202,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-lg-3">
+        <div class="col-6 col-lg-4">
             <div class="card stat-card border-0 h-100">
                 <div class="card-body text-center p-4">
                     <div class="text-success mb-3" style="font-size: 3rem;">📤</div>
@@ -211,16 +211,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="card stat-card border-0 h-100">
-                <div class="card-body text-center p-4">
-                    <div class="text-info mb-3" style="font-size: 3rem;">📥</div>
-                    <div class="h2 text-info fw-bold mb-2">{{ number_format($pointsFromRedemptions) }}</div>
-                    <div class="text-muted fw-semibold">From Redemptions</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-lg-3">
+        <div class="col-6 col-lg-4">
             <div class="card stat-card border-0 h-100">
                 <div class="card-body text-center p-4">
                     <div class="text-warning mb-3" style="font-size: 3rem;">👥</div>
