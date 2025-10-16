@@ -108,26 +108,7 @@
                                 <i class="bi bi-geo-alt-fill me-2"></i>
                                 Use Current Location
                             </button>
-                            <button type="button" id="getApproximateLocation" class="btn btn-outline-info">
-                                <i class="bi bi-globe me-2"></i>
-                                Get Approximate Location
-                            </button>
                         </div>
-                    </div>
-
-                    <!-- Address Search -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold text-dark">
-                            <i class="bi bi-search me-2"></i>Search Address
-                        </label>
-                        <div class="position-relative">
-                            <input type="text" id="addressSearch" 
-                                   class="form-control form-control-lg" 
-                                   placeholder="Search for an address or place...">
-                            <div id="searchResults" class="position-absolute w-100 bg-white border rounded shadow-lg mt-1 d-none" 
-                                 style="z-index: 1000; max-height: 200px; overflow-y: auto;"></div>
-                        </div>
-                        <small class="text-muted">Type an address to search and select from results</small>
                     </div>
 
                     <!-- Location Form -->
