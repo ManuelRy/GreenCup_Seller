@@ -234,6 +234,11 @@
     <h1 class="main-title">Account Suspended</h1>
     <p class="main-description">Your seller account has been temporarily suspended</p>
 
+    <div id="status-check-message" style="display: none; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(13, 148, 136, 0.05)); border-left: 4px solid #10b981; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; text-align: center;">
+      <i class="fas fa-check-circle" style="color: #10b981; margin-right: 0.5rem;"></i>
+      <strong style="color: #10b981;">Good news! Your account has been reactivated. Redirecting...</strong>
+    </div>
+
     <div class="info-box">
       <strong><i class="fas fa-exclamation-triangle me-2"></i>Why was my account suspended?</strong>
       <p>Your account has been suspended due to a violation of our terms of service or platform policies.</p>
@@ -275,3 +280,59 @@
   </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get seller email from Laravel session (passed on redirect)
+    @if(session('seller_email'))
+        const sellerEmail = '{{ session('seller_email') }}';
+        // Store in localStorage for subsequent page refreshes
+        localStorage.setItem('suspended_seller_email', sellerEmail);
+    @else
+        // Try to get from localStorage (for page refreshes)
+        const sellerEmail = localStorage.getItem('suspended_seller_email');
+    @endif
+
+    if (!sellerEmail) {
+        console.warn('No seller email found');
+        return;
+    }
+
+    // Check status on page load
+    checkSellerStatus();
+
+    function checkSellerStatus() {
+        fetch('{{ route("seller.check-status") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                email: sellerEmail
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.is_approved) {
+                // Show success message
+                document.getElementById('status-check-message').style.display = 'block';
+
+                // Clear email from storage
+                localStorage.removeItem('suspended_seller_email');
+
+                // Redirect to login page after 2 seconds
+                setTimeout(function() {
+                    window.location.href = '{{ route("login") }}';
+                }, 2000);
+            }
+        })
+        .catch(error => {
+            console.error('Error checking status:', error);
+        });
+    }
+});
+</script>
+@endpush

@@ -57,6 +57,9 @@ class SellerAuthController extends Controller
 
                 // Check seller status before allowing access
                 if ($seller->status !== \App\Models\Seller::STATUS_APPROVED) {
+                    // Store email for status checking before logout
+                    $sellerEmail = $seller->email;
+
                     Auth::guard('seller')->logout();
                     $request->session()->invalidate();
                     $request->session()->regenerateToken();
@@ -64,11 +67,11 @@ class SellerAuthController extends Controller
                     // Redirect to appropriate inactive page based on status
                     switch ($seller->status) {
                         case \App\Models\Seller::STATUS_PENDING:
-                            return redirect()->route('sellers.pending');
+                            return redirect()->route('sellers.pending')->with('seller_email', $sellerEmail);
                         case \App\Models\Seller::STATUS_SUSPENDED:
-                            return redirect()->route('sellers.suspended');
+                            return redirect()->route('sellers.suspended')->with('seller_email', $sellerEmail);
                         case \App\Models\Seller::STATUS_REJECTED:
-                            return redirect()->route('sellers.rejected');
+                            return redirect()->route('sellers.rejected')->with('seller_email', $sellerEmail);
                         default:
                             return redirect()->route('login')
                                 ->with('error', 'Account status unknown. Please contact support.');
@@ -280,6 +283,47 @@ class SellerAuthController extends Controller
     }
 
     /**
+     * Check seller status (for AJAX polling from status pages)
+     */
+    public function checkStatus(Request $request)
+    {
+        try {
+            $email = $request->input('email');
+
+            if (!$email) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Email is required'
+                ], 400);
+            }
+
+            $seller = Seller::where('email', $email)->first();
+
+            if (!$seller) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Seller not found'
+                ], 404);
+            }
+
+            // Return seller status
+            return response()->json([
+                'success' => true,
+                'status' => $seller->status,
+                'is_approved' => $seller->status === Seller::STATUS_APPROVED,
+                'business_name' => $seller->business_name
+            ]);
+
+        } catch (Exception $e) {
+            Log::error('Error checking seller status: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error checking status'
+            ], 500);
+        }
+    }
+
+    /**
      * Get available working hours options for dropdowns
      */
     public static function getWorkingHoursOptions()
@@ -290,31 +334,31 @@ class SellerAuthController extends Controller
             'Mon-Fri 8AM-5PM',
             'Mon-Fri 9AM-6PM',
             'Mon-Fri 8AM-6PM',
-            
+
             // Including Saturday
             'Mon-Sat 9AM-5PM',
             'Mon-Sat 8AM-6PM',
             'Mon-Sat 10AM-6PM',
             'Tue-Sat 9AM-5PM',
-            
+
             // 7 Days a Week
             'Mon-Sun 9AM-5PM',
             'Mon-Sun 8AM-8PM',
             '24/7',
-            
+
             // Retail & Restaurant
             'Mon-Thu 10AM-9PM, Fri-Sat 10AM-10PM, Sun 12PM-8PM',
             'Mon-Sun 10AM-10PM',
             'Mon-Sun 11AM-11PM',
             'Mon-Thu 5PM-11PM, Fri-Sat 5PM-12AM, Sun 5PM-10PM',
-            
+
             // Flexible & Part-time
             'Mon-Wed-Fri 9AM-3PM',
             'Tue-Thu 2PM-8PM',
             'Weekends Only (Sat-Sun 9AM-6PM)',
             'By Appointment Only',
             'Seasonal Hours (Call for Schedule)',
-            
+
             // Professional Services
             'Mon-Fri 8AM-4PM',
             'Mon-Fri 10AM-7PM',

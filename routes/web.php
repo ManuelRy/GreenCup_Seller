@@ -45,6 +45,9 @@ Route::get('/unauthorize', function () {
     return view('sellers.pending');
 })->name('sellers.inactive');
 
+// Status check endpoint (no auth required, public endpoint)
+Route::post('/check-status', [SellerAuthController::class, 'checkStatus'])->name('seller.check-status');
+
 /*
 |--------------------------------------------------------------------------
 | Guest Routes (Authentication)

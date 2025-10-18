@@ -28,6 +28,9 @@ class CheckSellerActive
 
         // Check seller status and redirect accordingly
         if ($seller->status !== Seller::STATUS_APPROVED) {
+            // Store email for status checking before logout
+            $sellerEmail = $seller->email;
+
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
@@ -35,11 +38,11 @@ class CheckSellerActive
             // Redirect to appropriate inactive page based on status
             switch ($seller->status) {
                 case Seller::STATUS_PENDING:
-                    return redirect()->route('sellers.pending');
+                    return redirect()->route('sellers.pending')->with('seller_email', $sellerEmail);
                 case Seller::STATUS_SUSPENDED:
-                    return redirect()->route('sellers.suspended');
+                    return redirect()->route('sellers.suspended')->with('seller_email', $sellerEmail);
                 case Seller::STATUS_REJECTED:
-                    return redirect()->route('sellers.rejected');
+                    return redirect()->route('sellers.rejected')->with('seller_email', $sellerEmail);
                 default:
                     return redirect()->route('login')->with('error', 'Account status unknown. Please contact support.');
             }
