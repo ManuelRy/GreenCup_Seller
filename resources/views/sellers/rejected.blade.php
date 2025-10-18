@@ -239,6 +239,12 @@
       <strong style="color: #10b981;">Great news! Your account has been approved. Redirecting...</strong>
     </div>
 
+    @if(session('rejection_reason'))
+    <div class="info-box">
+      <strong><i class="fas fa-exclamation-triangle me-2"></i>Reason for Rejection:</strong>
+      <p style="margin-top: 1rem; white-space: pre-line;">{{ session('rejection_reason') }}</p>
+    </div>
+    @else
     <div class="info-box">
       <strong><i class="fas fa-info-circle me-2"></i>Common rejection reasons:</strong>
       <ul>
@@ -248,10 +254,11 @@
         <li>Business type not supported on the platform</li>
       </ul>
     </div>
+    @endif
 
     <div class="success-box">
-      <strong><i class="fas fa-redo me-2"></i>You can reapply!</strong>
-      <p>If you believe this was a mistake or if you've resolved the issues, you're welcome to submit a new application. Please contact our support team to learn more about the specific reasons and how to improve your application.</p>
+      <strong><i class="fas fa-redo me-2"></i>What you can do next:</strong>
+      <p>Please read the rejection reason above carefully and address the mentioned issues. Once you've resolved these concerns, contact our support team for guidance on reapplying. We're here to help you succeed!</p>
     </div>
 
     <a href="mailto:support@greencups.com" class="btn-primary-custom">

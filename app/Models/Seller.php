@@ -29,6 +29,8 @@ class Seller extends Authenticatable
         'phone',
         'is_active',
         'status',
+        'rejection_reason',
+        'rejected_at',
         'total_points',
         'photo_url',
         'photo_caption',

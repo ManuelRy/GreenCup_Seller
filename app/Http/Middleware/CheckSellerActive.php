@@ -30,6 +30,7 @@ class CheckSellerActive
         if ($seller->status !== Seller::STATUS_APPROVED) {
             // Store email for status checking before logout
             $sellerEmail = $seller->email;
+            $rejectionReason = $seller->rejection_reason;
 
             Auth::logout();
             $request->session()->invalidate();
@@ -42,7 +43,9 @@ class CheckSellerActive
                 case Seller::STATUS_SUSPENDED:
                     return redirect()->route('sellers.suspended')->with('seller_email', $sellerEmail);
                 case Seller::STATUS_REJECTED:
-                    return redirect()->route('sellers.rejected')->with('seller_email', $sellerEmail);
+                    return redirect()->route('sellers.rejected')
+                        ->with('seller_email', $sellerEmail)
+                        ->with('rejection_reason', $rejectionReason);
                 default:
                     return redirect()->route('login')->with('error', 'Account status unknown. Please contact support.');
             }
