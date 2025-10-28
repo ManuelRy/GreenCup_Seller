@@ -49,14 +49,14 @@ class GalleryController extends Controller
     {
         try {
             $request->validate([
-                'photo' => 'required|image|max:5120',
+                'photo' => 'required|image|max:102400',
                 'caption' => 'nullable|string|max:255',
                 'category' => 'nullable|in:store,products,ambiance',
                 'is_featured' => 'nullable|boolean'
             ], [
                 'photo.required' => 'Please select a photo to upload.',
                 'photo.image' => 'The file must be an image.',
-                'photo.max' => 'The photo may not be greater than 5MB.',
+                'photo.max' => 'The photo may not be greater than 100MB.',
                 'caption.max' => 'Caption must not exceed 255 characters.',
                 'category.in' => 'Please select a valid category.'
             ]);

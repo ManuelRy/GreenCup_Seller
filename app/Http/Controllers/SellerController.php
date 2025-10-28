@@ -412,9 +412,9 @@ class SellerController extends Controller
     public function updateProfilePhoto(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB = 5120KB
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:102400', // 100MB = 102400KB
         ], [
-            'image.max' => 'The image size must not exceed 5MB.',
+            'image.max' => 'The image size must not exceed 100MB.',
             'image.image' => 'The uploaded file must be a valid image.',
             'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif.',
         ]);

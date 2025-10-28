@@ -44,7 +44,7 @@ class ItemController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:items,name',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:102400',
         ]);
         // Handle image upload
         $imageUrl = null;
@@ -98,7 +98,7 @@ class ItemController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:102400',
         ]);
 
         // Get existing item to preserve image if not uploading new one

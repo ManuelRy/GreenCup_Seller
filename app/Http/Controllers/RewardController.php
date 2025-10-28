@@ -59,7 +59,7 @@ class RewardController extends Controller
             'quantity' => 'required|integer|min:1',
             'valid_from' => 'required|date|after_or_equal:today',
             'valid_until' => 'required|date|after_or_equal:valid_from',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB limit
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:102400', // 100MB limit
         ]);
 
         try {
@@ -109,7 +109,7 @@ class RewardController extends Controller
             'quantity' => 'required|integer|min:' . $reward->quantity_redeemed,
             'valid_from' => 'required|date',
             'valid_until' => 'required|date|after_or_equal:valid_from',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:102400',
             'is_active' => 'boolean',
         ]);
 
