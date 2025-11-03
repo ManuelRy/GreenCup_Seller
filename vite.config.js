@@ -10,4 +10,16 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    build: {
+        // Optimize chunk size
+        chunkSizeWarningLimit: 1000,
+        // Enable minification (esbuild is default and faster)
+        minify: 'esbuild',
+        // Optimize dependencies
+        rollupOptions: {
+            output: {
+                manualChunks: undefined, // Let Vite handle chunking automatically
+            },
+        },
+    },
 });
