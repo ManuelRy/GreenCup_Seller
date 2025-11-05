@@ -736,11 +736,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     let strength = 0;
-    if (password.length >= 8) strength++;
+    let requirements = [];
+
+    // Check minimum length (required)
+    if (password.length >= 8) {
+      strength++;
+    } else {
+      requirements.push('8+ characters');
+    }
+
+    // Check uppercase (required)
+    if (/[A-Z]/.test(password)) {
+      strength++;
+    } else {
+      requirements.push('uppercase letter');
+    }
+
+    // Check special character (required)
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      strength++;
+    } else {
+      requirements.push('special character');
+    }
+
+    // Bonus points for additional complexity
     if (/[a-z]/.test(password)) strength++;
-    if (/[A-Z]/.test(password)) strength++;
     if (/\d/.test(password)) strength++;
-    if (/[!@#$%^&*]/.test(password)) strength++;
 
     const colors = ['#ef4444', '#f59e0b', '#eab308', '#22c55e', '#10b981'];
     const labels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
@@ -748,8 +769,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     strengthBar.style.width = widths[strength - 1] || '20%';
     strengthBar.style.backgroundColor = colors[strength - 1] || colors[0];
-    strengthText.textContent = labels[strength - 1] || labels[0];
-    strengthText.style.color = colors[strength - 1] || colors[0];
+
+    if (requirements.length > 0) {
+      strengthText.textContent = 'Missing: ' + requirements.join(', ');
+      strengthText.style.color = '#ef4444';
+    } else {
+      strengthText.textContent = labels[strength - 1] || labels[0];
+      strengthText.style.color = colors[strength - 1] || colors[0];
+    }
   }
 
   document.getElementById('working_hours').addEventListener('change', function() {

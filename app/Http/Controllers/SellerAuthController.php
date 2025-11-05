@@ -174,7 +174,13 @@ class SellerAuthController extends Controller
                 'address'       => 'required|string|max:500|min:10',
                 'latitude'      => 'required|numeric|between:-90,90',
                 'longitude'     => 'required|numeric|between:-180,180',
-                'password'      => 'required|string|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+                'password'      => [
+                    'required',
+                    'string',
+                    'min:8',
+                    'confirmed',
+                    'regex:/^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).*$/'
+                ],
             ], [
                 // Custom error messages
                 'business_name.required' => 'Business name is required.',
@@ -198,9 +204,9 @@ class SellerAuthController extends Controller
                 'longitude.numeric' => 'Longitude must be a valid number.',
                 'longitude.between' => 'Longitude must be between -180 and 180.',
                 'password.required' => 'Password is required.',
-                'password.min' => 'Password must be at least 8 characters long.',
+                'password.min' => 'Password must be at least 8 characters.',
                 'password.confirmed' => 'Password confirmation does not match.',
-                'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, and one number.',
+                'password.regex' => 'Password must contain at least 1 uppercase letter and 1 special character (!@#$%^&*(),.?":{}|<>)',
             ]);
 
             // Sanitize working hours if provided

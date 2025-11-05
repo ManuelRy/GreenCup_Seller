@@ -14,7 +14,8 @@
       "Read(//c/Users/ASUS/Desktop/work/**)",
       "Bash(findstr:*)",
       "Bash(dir:*)",
-      "Bash(del databasemigrations2025_10_18_082621_add_rejection_fields_to_sellers_table.php)"
+      "Bash(del databasemigrations2025_10_18_082621_add_rejection_fields_to_sellers_table.php)",
+      "Bash(nul)"
     ],
     "deny": [],
     "ask": []
