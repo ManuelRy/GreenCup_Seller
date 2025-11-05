@@ -466,14 +466,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12">
-                    <div class="p-3 rounded-3" style="background: linear-gradient(135deg, #667eea15, #764ba215);">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-semibold">Rank Impact</span>
-                            <span class="fw-bold text-primary" id="modalRankImpact">0 points</span>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div class="text-center mt-4">
