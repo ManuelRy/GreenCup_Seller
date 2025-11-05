@@ -94,20 +94,19 @@
                     @else
                         <span id="profileInitials" class="fs-1 fw-bold text-white">{{ strtoupper(substr($seller->business_name ?? 'NA', 0, 2)) }}</span>
                     @endif
-                    <div class="profile-overlay rounded-circle d-flex align-items-center justify-content-center" onclick="showPhotoOptions()">
+                    <div class="profile-overlay rounded-circle d-flex align-items-center justify-content-center" onclick="document.getElementById('profilePictureInput').click();">
                         <div class="text-white text-center">
                             <i class="fas fa-camera fs-4 mb-2"></i>
                             <div class="small fw-semibold">Change Photo</div>
                         </div>
                     </div>
-                    <input type="file" id="profilePictureInput" name="image" class="profile-file-input" accept="image/*" onchange="previewAndSubmitImage(this)" form="profilePhotoForm">
-                    <input type="file" id="profileCameraInput" name="image" class="profile-file-input" accept="image/*" capture="user" onchange="previewAndSubmitImage(this)" form="profilePhotoForm">
+                    <input type="file" id="profilePictureInput" name="image" class="profile-file-input" accept="image/*" capture="user" onchange="previewAndSubmitImage(this)" form="profilePhotoForm">
                 </div>
             </div>
 
             <div class="d-flex align-items-center justify-content-center mb-4 text-muted">
                 <i class="fas fa-camera me-2"></i>
-                <span>Click on the avatar to take a photo or upload a picture (JPG, PNG, max 5MB)</span>
+                <span>Click on the avatar to change photo (JPG, PNG, max 5MB)</span>
             </div>
 
             <form id="profilePhotoForm" action="{{ route('seller.photo.update') }}" method="POST" enctype="multipart/form-data" class="d-none">@csrf</form>
@@ -386,16 +385,6 @@ function previewAndSubmitImage(input) {
                 location.reload();
             }
         }, 100);
-    }
-}
-
-function showPhotoOptions() {
-    if (confirm('Do you want to take a photo?\n\nClick OK to use camera\nClick Cancel to select from gallery')) {
-        // User wants to take a photo
-        document.getElementById('profileCameraInput').click();
-    } else {
-        // User wants to select existing file
-        document.getElementById('profilePictureInput').click();
     }
 }
 

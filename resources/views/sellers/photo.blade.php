@@ -2180,13 +2180,12 @@
 
             <div class="upload-section">
                 <!-- Upload Area -->
-                <div class="upload-area" onclick="showPhotoUploadOptions()" id="dropArea">
+                <div class="upload-area" onclick="document.getElementById('photoInput').click()" id="dropArea">
                 <div class="upload-icon">📸</div>
                 <div class="upload-text">Add photos to your post</div>
-                <div class="upload-subtext">Click to take a photo or select from gallery (Max 5MB each)</div>
+                <div class="upload-subtext">Click to select photos or drag and drop (Max 5MB each)</div>
                 </div>
-                <input type="file" id="photoInput" class="file-input" multiple accept="image/*">
-                <input type="file" id="photoCameraInput" class="file-input" multiple accept="image/*" capture="environment">
+                <input type="file" id="photoInput" class="file-input" multiple accept="image/*" capture="environment">
 
                 <!-- Photo Preview Grid -->
                 <div id="photoGrid" class="photo-preview-grid">
@@ -2437,24 +2436,8 @@
         document.getElementById('photoInput').click();
         }
 
-        // Show photo upload options
-        function showPhotoUploadOptions() {
-        if (confirm('Do you want to take a photo?\n\nClick OK to use camera\nClick Cancel to select from gallery')) {
-            // User wants to take a photo
-            document.getElementById('photoCameraInput').click();
-        } else {
-            // User wants to select existing files
-            document.getElementById('photoInput').click();
-        }
-        }
-
         // Handle file selection
         document.getElementById('photoInput').addEventListener('change', function(e) {
-        handleFiles(Array.from(e.target.files));
-        });
-
-        // Handle camera input
-        document.getElementById('photoCameraInput').addEventListener('change', function(e) {
         handleFiles(Array.from(e.target.files));
         });
 

@@ -196,21 +196,17 @@
                         <i class="fas fa-camera me-2"></i>Attach Screenshot or Photo (optional)
                       </label>
                       <div class="upload-area border-2 border-dashed rounded-3 p-4 text-center position-relative">
-                        <input class="d-none" type="file" id="image" name="image" accept="image/*">
-                        <input class="d-none" type="file" id="imageCamera" name="image" accept="image/*" capture="environment">
+                        <input class="d-none" type="file" id="image" name="image" accept="image/*" capture="environment">
                         <div id="uploadContent">
                           <div class="mb-3">
                             <i class="fas fa-camera fa-3x text-primary opacity-75"></i>
                           </div>
-                          <h6 class="fw-semibold text-dark mb-2">Take photo or select from gallery</h6>
+                          <h6 class="fw-semibold text-dark mb-2">Click to add photo or drop image here</h6>
                           <p class="text-muted small mb-3">
                             Screenshots or photos help us understand your issue better
                           </p>
-                          <button type="button" class="btn btn-outline-primary btn-sm me-2" onclick="document.getElementById('imageCamera').click()">
-                            <i class="fas fa-camera me-2"></i>Take Photo
-                          </button>
                           <button type="button" class="btn btn-outline-primary btn-sm" id="chooseFileBtn">
-                            <i class="fas fa-image me-2"></i>Choose File
+                            <i class="fas fa-camera me-2"></i>Add Photo
                           </button>
                           <div class="mt-2">
                             <small class="text-muted">JPG, PNG, GIF • Max 5MB</small>
@@ -490,20 +486,12 @@
       const previewImg = document.getElementById('previewImg');
       const fileName = document.getElementById('fileName');
       const chooseFileBtn = document.getElementById('chooseFileBtn');
-      const camerInput = document.getElementById('imageCamera');
       let isProcessing = false; // Guard to prevent double processing
 
       // Choose file button click
       chooseFileBtn.addEventListener('click', (e) => {
         e.stopPropagation(); // Prevent event bubbling
         fileInput.click();
-      });
-
-      // Handle camera input
-      camerInput.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) {
-          handleFileSelect(e.target.files[0]);
-        }
       });
 
       // Upload area click (only for drag/drop visual feedback, not for opening file picker)
