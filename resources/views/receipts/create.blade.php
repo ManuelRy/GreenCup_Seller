@@ -119,15 +119,12 @@ function getItemIcon($itemName) {
 
                 <!-- Expiration Settings -->
                 <div class="expiration-section">
-                    <label for="expires_hours">Receipt expires in:</label>
-                    <select id="expires_hours" name="expires_hours">
-                        <option value="1">1 hour</option>
-                        <option value="6">6 hours</option>
-                        <option value="12">12 hours</option>
-                        <option value="24" selected>24 hours (1 day)</option>
-                        <option value="48">48 hours (2 days)</option>
-                        <option value="72">72 hours (3 days)</option>
-                        <option value="168">1 week</option>
+                    <label for="expires_minutes">Receipt expires in:</label>
+                    <select id="expires_minutes" name="expires_minutes">
+                        <option value="1">1 minute</option>
+                        <option value="5" selected>5 minutes</option>
+                        <option value="60">1 hour</option>
+                        <option value="1440">24 hours</option>
                     </select>
                 </div>
 
@@ -1193,7 +1190,7 @@ async function generateReceipt() {
     btnLoading.style.display = 'flex';
 
     try {
-        const expiresHours = document.getElementById('expires_hours').value;
+        const expiresMinutes = document.getElementById('expires_minutes').value;
 
         // Check CSRF token
         const csrfToken = document.querySelector('meta[name="csrf-token"]');
@@ -1206,7 +1203,7 @@ async function generateReceipt() {
                 item_id: item.id,
                 quantity: item.quantity
             })),
-            expires_hours: parseInt(expiresHours)
+            expires_minutes: parseInt(expiresMinutes)
         };
 
         const routeUrl = '{{ route("seller.receipts.store") }}';

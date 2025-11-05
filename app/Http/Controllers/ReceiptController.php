@@ -80,11 +80,11 @@ class ReceiptController extends Controller
                 'items' => 'required|array|min:1',
                 'items.*.item_id' => 'required|integer|exists:items,id',
                 'items.*.quantity' => 'required|integer|min:1',
-                'expires_hours' => 'nullable|integer|min:1|max:168' // Max 1 week
+                'expires_minutes' => 'nullable|integer|min:1|max:10080' // Max 1 week (7 days * 24 hours * 60 minutes)
             ]);
 
             $seller_id  = Auth::id();
-            $expiresAt = $request->expires_hours ?? 24;
+            $expiresAt = $request->expires_minutes ?? 5; // Default 5 minutes
             $items = [];
             $points = 0;
             $qantity = 0;
@@ -119,7 +119,7 @@ class ReceiptController extends Controller
                 'items' => $items,
                 'total_points' => $points,
                 'total_quantity' => $qantity,
-                'expires_at' => Carbon::now()->addHours($expiresAt),
+                'expires_at' => Carbon::now()->addMinutes($expiresAt),
             ]);
 
             Log::info('Receipt created successfully', ['receipt_id' => $receipt->id]);
