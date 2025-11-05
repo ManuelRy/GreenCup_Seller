@@ -282,6 +282,7 @@
         padding: 0 32px;
         position: relative;
         gap: 32px;
+        overflow: visible;
     }
 
     /* Left Section */
@@ -291,6 +292,7 @@
         gap: 20px;
         min-width: 250px;
         flex-shrink: 0;
+        overflow: hidden;
     }
 
     .navbar-brand .app-title {
@@ -463,7 +465,8 @@
         min-width: 250px;
         justify-content: flex-end;
         position: relative;
-        flex-shrink: 0;
+        flex-shrink: 1;
+        overflow: visible;
     }
 
     .mobile-menu-toggle {
@@ -523,6 +526,7 @@
         position: relative;
         overflow: hidden;
         min-width: 180px;
+        max-width: 280px;
     }
 
     .account-info::before {
@@ -583,6 +587,8 @@
         display: flex;
         flex-direction: column;
         text-align: left;
+        flex: 1;
+        min-width: 0;
     }
 
     .user-name {
@@ -590,7 +596,6 @@
         font-weight: 600;
         font-size: 14px;
         line-height: 1.2;
-        max-width: 150px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -600,7 +605,6 @@
         color: rgba(255,255,255,0.7);
         font-size: 12px;
         line-height: 1.2;
-        max-width: 150px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -1017,19 +1021,14 @@
 
     /* Responsive Design */
     @media (max-width: 1400px) {
-        .navbar-container {
-            gap: 24px;
-            padding: 0 28px;
-        }
-
         .navbar-center {
-            max-width: 650px;
-            margin: 0 16px;
+            margin: 0 12px;
+            max-width: 700px;
         }
 
         .nav-item {
             padding: 12px 14px;
-            font-size: 13px;
+            font-size: 12px;
             gap: 6px;
         }
 
@@ -1037,27 +1036,37 @@
             gap: 6px;
             padding: 8px;
         }
+
+        .account-info {
+            padding: 10px 16px;
+            min-width: 160px;
+            max-width: 240px;
+            gap: 12px;
+        }
+
+        .user-name {
+            font-size: 13px;
+        }
+
+        .user-email {
+            font-size: 11px;
+        }
     }
 
     @media (max-width: 1200px) {
-        .navbar-container {
-            gap: 20px;
-            padding: 0 24px;
-        }
-
         .navbar-center {
-            max-width: 500px;
-            margin: 0 12px;
+            margin: 0 8px;
+            max-width: 600px;
         }
 
         .nav-item {
             padding: 10px 12px;
-            font-size: 12px;
-            gap: 6px;
+            font-size: 11px;
+            gap: 5px;
         }
 
         .nav-item span {
-            display: none;
+            font-size: 11px;
         }
 
         .main-nav {
@@ -1066,27 +1075,120 @@
         }
 
         .account-info {
-            padding: 10px 16px;
-            min-width: 160px;
+            min-width: 140px;
+            max-width: 200px;
+            padding: 8px 12px;
+            gap: 10px;
+        }
+
+        .user-name {
+            font-size: 12px;
+        }
+
+        .user-email {
+            font-size: 10px;
+        }
+
+        .dropdown-icon {
+            font-size: 10px;
         }
     }
 
     @media (max-width: 1100px) {
         .navbar-container {
-            gap: 16px;
+            gap: 12px;
+            padding: 0 20px;
         }
 
         .navbar-center {
-            margin: 0 8px;
+            margin: 0 4px;
+            max-width: 500px;
+        }
+
+        .navbar-left {
+            min-width: 200px;
+        }
+
+        .navbar-right {
+            min-width: 180px;
+            gap: 12px;
         }
 
         .nav-item {
-            padding: 8px 10px;
+            padding: 8px 8px;
+            font-size: 10px;
+            gap: 4px;
+        }
+
+        .nav-item span {
+            font-size: 10px;
+        }
+
+        .main-nav {
+            gap: 3px;
+            padding: 5px;
         }
 
         .account-info {
-            min-width: 140px;
-            padding: 8px 12px;
+            min-width: auto;
+            max-width: 160px;
+            padding: 8px 10px;
+            gap: 8px;
+        }
+
+        .user-name {
+            font-size: 11px;
+        }
+
+        .user-email {
+            font-size: 9px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 13px;
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .nav-item span {
+            display: none;
+        }
+
+        .nav-item {
+            padding: 10px;
+            min-width: 36px;
+            justify-content: center;
+        }
+
+        .nav-item i {
+            font-size: 16px;
+        }
+
+        .account-info {
+            min-width: auto;
+            max-width: 160px;
+            padding: 8px 10px;
+            gap: 8px;
+        }
+
+        .user-name {
+            font-size: 11px;
+        }
+
+        .user-email {
+            font-size: 9px;
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            font-size: 12px;
+        }
+
+        .dropdown-icon {
+            font-size: 9px;
         }
     }
 

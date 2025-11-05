@@ -241,7 +241,7 @@
         </div>
     @endif
 
-    
+
 
 <script>
 function showTransactionModal(transaction) {
