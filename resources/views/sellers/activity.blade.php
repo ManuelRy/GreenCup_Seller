@@ -529,7 +529,6 @@ function showTransactionModal(transaction) {
     document.getElementById('modalReceiptCode').textContent = receiptCode;
     document.getElementById('modalTransactionSource').textContent = transactionSource;
     document.getElementById('modalDescription').textContent = transaction.description || 'No description available';
-    document.getElementById('modalRankImpact').textContent = transaction.points + ' points';
 
     // Hide navbar to prevent z-index issues
     const navbar = document.querySelector('.navbar');
