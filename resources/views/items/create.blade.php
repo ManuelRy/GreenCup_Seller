@@ -391,10 +391,11 @@
                     name="image"
                     class="file-input @error('image') error @enderror"
                     accept="image/jpeg,image/png,image/jpg,image/gif"
+                    capture="environment"
                 >
                 <div class="image-upload-area" id="uploadArea" onclick="document.getElementById('image').click()">
-                    <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                    <div class="upload-text">Click to upload or drag and drop</div>
+                    <div class="upload-icon"><i class="fas fa-camera"></i></div>
+                    <div class="upload-text">Take photo or upload image</div>
                     <div class="upload-subtext">JPEG, PNG, JPG, GIF (Max: 5MB)</div>
                 </div>
                 @error('image')

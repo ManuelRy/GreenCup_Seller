@@ -495,20 +495,71 @@ body {
 }
 
 /* Responsive Design */
+@media (max-width: 991px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .filters-section {
+        padding: 0 1rem;
+    }
+
+    .consumers-section {
+        padding: 0 1rem;
+    }
+}
+
 @media (max-width: 768px) {
     .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
         padding: 1rem;
+    }
+
+    .stat-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        width: 50px;
+        height: 50px;
+    }
+
+    .stat-details .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .stat-details .stat-label {
+        font-size: 0.75rem;
     }
 
     .filters-form {
         flex-direction: column;
         align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .filter-group input,
+    .filter-group select {
+        width: 100%;
     }
 
     .filter-actions {
         margin-left: 0;
         justify-content: center;
+        width: 100%;
+    }
+
+    .filters-section {
+        padding: 0 1rem;
+        margin-bottom: 1rem;
     }
 
     .consumers-section {
@@ -519,27 +570,229 @@ body {
         flex-wrap: wrap;
     }
 
+    .consumer-avatar {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+
+    .consumer-name {
+        font-size: 1.1rem;
+    }
+
     .consumer-stats {
         grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
     }
 
     .consumer-contact {
         flex-direction: column;
         gap: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .stat-item .stat-value {
+        font-size: 1.1rem;
     }
 }
 
-@media (max-width: 480px) {
-    .stat-value {
-        font-size: 1.75rem;
+@media (max-width: 576px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        padding: 0.75rem;
+    }
+
+    .stat-card {
+        padding: 1.25rem 1rem;
+        gap: 1rem;
+    }
+
+    .consumers-section {
+        padding: 0 0.75rem;
+    }
+
+    .consumer-card {
+        padding: 1rem;
+    }
+
+    .consumer-avatar {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
     }
 
     .consumer-name {
         font-size: 1rem;
     }
 
+    .consumer-contact {
+        font-size: 0.75rem;
+    }
+
     .consumer-stats {
         grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .stat-item .stat-label {
+        font-size: 0.7rem;
+    }
+
+    .stat-item .stat-value {
+        font-size: 1rem;
+    }
+
+    .filter-group label {
+        font-size: 0.875rem;
+    }
+
+    .filter-group input,
+    .filter-group select {
+        padding: 0.6rem;
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .consumers-container {
+        padding: 0 0 1.5rem;
+    }
+
+    .stats-grid {
+        padding: 0.5rem;
+        gap: 0.5rem;
+    }
+
+    .stat-card {
+        padding: 1rem 0.75rem;
+    }
+
+    .stat-icon {
+        font-size: 1.75rem;
+        width: 45px;
+        height: 45px;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.7rem;
+    }
+
+    .filters-section {
+        padding: 0 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .consumers-section {
+        padding: 0 0.5rem;
+    }
+
+    .consumer-card {
+        padding: 0.875rem;
+        border-radius: 12px;
+    }
+
+    .consumer-name {
+        font-size: 0.95rem;
+    }
+
+    .consumer-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .consumer-contact {
+        font-size: 0.7rem;
+    }
+
+    .consumer-stats {
+        padding-top: 0.75rem;
+    }
+
+    .stat-item .stat-value {
+        font-size: 0.95rem;
+    }
+
+    .stat-item .stat-label {
+        font-size: 0.65rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .stats-grid {
+        padding: 0.5rem;
+    }
+
+    .stat-card {
+        padding: 0.875rem 0.625rem;
+    }
+
+    .stat-icon {
+        font-size: 1.5rem;
+        width: 40px;
+        height: 40px;
+    }
+
+    .stat-value {
+        font-size: 1.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.65rem;
+    }
+
+    .filters-section {
+        padding: 0 0.5rem;
+    }
+
+    .consumers-section {
+        padding: 0 0.5rem;
+    }
+
+    .consumer-card {
+        padding: 0.75rem;
+    }
+
+    .consumer-header {
+        gap: 0.75rem;
+    }
+
+    .consumer-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+    }
+
+    .consumer-name {
+        font-size: 0.9rem;
+    }
+
+    .consumer-contact {
+        font-size: 0.65rem;
+    }
+
+    .stat-item .stat-value {
+        font-size: 0.875rem;
+    }
+
+    .stat-item .stat-label {
+        font-size: 0.6rem;
+    }
+
+    .filter-group input,
+    .filter-group select {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .clear-filters {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
     }
 }
 </style>

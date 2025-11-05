@@ -16,7 +16,8 @@
       "Bash(dir:*)",
       "Bash(del databasemigrations2025_10_18_082621_add_rejection_fields_to_sellers_table.php)",
       "Bash(nul)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(tasklist:*)"
     ],
     "deny": [],
     "ask": []

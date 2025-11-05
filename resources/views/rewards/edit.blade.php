@@ -643,11 +643,11 @@ body {
                     <label for="image" class="form-label">Update Image</label>
                     <div class="file-upload-container" onclick="document.getElementById('image').click()">
                         <div class="file-upload-icon">📷</div>
-                        <div class="file-upload-text">Click to upload a new image</div>
+                        <div class="file-upload-text">Take photo or upload new image</div>
                         <div class="file-upload-hint">JPG, PNG, GIF up to 5MB (optional)</div>
                     </div>
                     <input type="file" id="image" name="image" class="file-input"
-                           accept="image/jpeg,image/png,image/jpg,image/gif">
+                           accept="image/jpeg,image/png,image/jpg,image/gif" capture="environment">
                     @error('image')
                         <div class="form-error">{{ $message }}</div>
                     @enderror

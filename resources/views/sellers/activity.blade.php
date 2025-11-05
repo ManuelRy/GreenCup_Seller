@@ -14,6 +14,8 @@
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
     margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
 }
 
 .stat-box {
@@ -35,6 +37,8 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     padding: 1rem;
     margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
 }
 
 .filter-tabs {
@@ -72,6 +76,8 @@
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     padding: 1.5rem;
+    position: relative;
+    z-index: 1;
 }
 
 .transaction-row {
@@ -151,6 +157,33 @@
     transition: all 0.3s ease;
     backdrop-filter: blur(4px);
     overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Lock body position when modal opens */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* Ensure activity page content stays below modal */
+body.modal-open .activity-page,
+body.modal-open .activity-header-card,
+body.modal-open .filter-card,
+body.modal-open .transactions-card {
+    position: relative;
+    z-index: 1 !important;
+}
+
+/* Force navbar and all its children to stay below modal */
+body.modal-open nav,
+body.modal-open .navbar,
+body.modal-open .navbar *,
+body.modal-open .account-dropdown,
+body.modal-open .mobile-nav-menu {
+    z-index: 999 !important;
 }
 
 .modal-backdrop.active {
@@ -357,199 +390,197 @@
 
 <!-- Transaction Detail Modal -->
 <div id="transactionModal" class="modal-backdrop" onclick="closeTransactionModal(event)">
-    <div class="container py-5">
-        <div class="modal-content bg-white rounded-4 shadow-lg p-4 p-lg-5 mx-auto" style="max-width: 700px;" onclick="event.stopPropagation();">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3 class="h4 fw-bold mb-0">
+    <div class="modal-content bg-white rounded-3 shadow-lg p-3" style="max-width: 550px; width: 100%;" onclick="event.stopPropagation();">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="h5 fw-bold mb-0">
                     <i class="fas fa-receipt text-primary me-2"></i>Transaction Details
                 </h3>
-                <button class="btn btn-light rounded-circle" onclick="closeTransactionModal(event)" style="width: 40px; height: 40px;">
+                <button class="btn btn-light rounded-circle p-0" onclick="closeTransactionModal(event)" style="width: 32px; height: 32px;">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="text-primary" style="font-size: 1.5rem;">🆔</div>
-                        <div>
-                            <div class="text-muted small mb-1">Transaction ID</div>
-                            <div class="fw-semibold" id="modalTransactionId">#000000</div>
-                        </div>
-                    </div>
+            <div class="row g-3">
+                <div class="col-6">
+                    <div class="text-muted small">Transaction ID</div>
+                    <div class="fw-semibold" id="modalTransactionId">#000000</div>
                 </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="text-success" style="font-size: 1.5rem;">📊</div>
-                        <div>
-                            <div class="text-muted small mb-1">Type</div>
-                            <div class="fw-semibold" id="modalTransactionType">Points Given</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="text-warning" style="font-size: 1.5rem;">⭐</div>
-                        <div>
-                            <div class="text-muted small mb-1">Points</div>
-                            <div class="fw-semibold" id="modalPoints">0 points</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="text-info" style="font-size: 1.5rem;">🕐</div>
-                        <div>
-                            <div class="text-muted small mb-1">Date & Time</div>
-                            <div class="fw-semibold" id="modalDateTime">-</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="text-primary" style="font-size: 1.5rem;">👤</div>
-                        <div>
-                            <div class="text-muted small mb-1">Consumer</div>
-                            <div class="fw-semibold" id="modalCustomerName">-</div>
-                            <div class="text-muted small" id="modalCustomerId">-</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="text-success" style="font-size: 1.5rem;">🛍️</div>
-                        <div>
-                            <div class="text-muted small mb-1">Item</div>
-                            <div class="fw-semibold" id="modalItemName">-</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="text-info" style="font-size: 1.5rem;">📦</div>
-                        <div>
-                            <div class="text-muted small mb-1">Quantity</div>
-                            <div class="fw-semibold" id="modalUnitsScanned">-</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="text-warning" style="font-size: 1.5rem;">💰</div>
-                        <div>
-                            <div class="text-muted small mb-1">Points Per Unit</div>
-                            <div class="fw-semibold" id="modalPointsPerUnit">-</div>
-                        </div>
-                    </div>
+                <div class="col-6">
+                    <div class="text-muted small">Type</div>
+                    <div class="fw-semibold" id="modalTransactionType">Points Given</div>
                 </div>
                 <div class="col-12">
-                    <div class="p-3 rounded-3 bg-light">
-                        <div class="text-muted small mb-2">Description</div>
-                        <div class="fw-semibold" id="modalDescription">-</div>
-                    </div>
+                    <div class="text-muted small">Total Points</div>
+                    <div class="fw-bold text-success" id="modalPoints">0 points</div>
                 </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-start gap-3">
-                        <div style="font-size: 1.5rem;">📄</div>
-                        <div>
-                            <div class="text-muted small mb-1">Receipt Code</div>
-                            <div class="fw-semibold" id="modalReceiptCode">-</div>
-                        </div>
-                    </div>
+                <div class="col-12">
+                    <div class="text-muted small">Consumer</div>
+                    <div class="fw-semibold" id="modalCustomerName">-</div>
+                    <div class="text-muted small" id="modalCustomerId">-</div>
                 </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-start gap-3">
-                        <div style="font-size: 1.5rem;">📱</div>
-                        <div>
-                            <div class="text-muted small mb-1">Source</div>
-                            <div class="fw-semibold" id="modalTransactionSource">-</div>
-                        </div>
-                    </div>
+                <div class="col-12" id="modalItemsSection">
+                    <div class="text-muted small" id="modalItemsLabel">Items</div>
+                    <div id="modalItemsList">-</div>
+                </div>
+                <div class="col-12" id="modalRewardSection" style="display: none;">
+                    <div class="text-muted small">Reward Redeemed</div>
+                    <div id="modalRewardInfo">-</div>
+                </div>
+                <div class="col-12">
+                    <div class="text-muted small">Date & Time</div>
+                    <div class="fw-semibold" id="modalDateTime">-</div>
                 </div>
             </div>
 
-            <div class="text-center mt-4">
-                <button class="btn btn-primary px-4" onclick="closeTransactionModal(event)">Close</button>
+            <div class="text-center mt-3">
+                <button class="btn btn-primary btn-sm px-4" onclick="closeTransactionModal(event)">Close</button>
             </div>
         </div>
-    </div>
 </div>
 
 <script>
 function showTransactionModal(transaction) {
     document.getElementById('modalTransactionId').textContent = '#' + String(transaction.id).padStart(6, '0');
 
-    let transactionType = transaction.type === 'earn' ? (transaction.receipt_code ? 'Receipt Transaction' : 'Points Given') : 'Points Redeemed';
+    // Determine transaction type
+    const isRedemption = transaction.type === 'spend';
+    const isReceiptTransaction = transaction.type === 'earn' && transaction.receipt_code;
+
+    let transactionType = '';
+    if (isRedemption) {
+        transactionType = '🎁 Redeemed Points (Reward)';
+    } else if (isReceiptTransaction) {
+        transactionType = '📄 Receipt Transaction (Items)';
+    } else {
+        transactionType = '📤 Points Given';
+    }
+
     document.getElementById('modalTransactionType').textContent = transactionType;
-    document.getElementById('modalPoints').textContent = transaction.points + ' points';
+
+    // Calculate and display total points
+    const totalPoints = transaction.points || 0;
+    document.getElementById('modalPoints').textContent = totalPoints + ' points';
+
     document.getElementById('modalDateTime').textContent = new Date(transaction.scanned_at || transaction.created_at).toLocaleString();
 
-    document.getElementById('modalCustomerName').textContent = transaction.consumer_name || 'Customer #' + transaction.consumer_id;
+    document.getElementById('modalCustomerName').textContent = transaction.consumer_name || 'Consumer #' + transaction.consumer_id;
     document.getElementById('modalCustomerId').textContent = '#' + String(transaction.consumer_id).padStart(6, '0');
 
-    let itemName = 'Direct Transaction';
-    if (transaction.item_name) {
-        itemName = transaction.item_name;
-    } else if (transaction.extracted_items) {
-        itemName = transaction.extracted_items;
-    } else if (transaction.description && transaction.description.includes('Purchased:')) {
-        const match = transaction.description.match(/Purchased:\s*([^f]+?)\s+from/i);
-        itemName = match && match[1] ? match[1].trim() : 'Receipt Items';
-    } else if (transaction.receipt_code) {
-        itemName = 'Receipt #' + transaction.receipt_code;
-    } else if (transaction.qr_code_id) {
-        itemName = 'Item #' + transaction.qr_code_id;
-    }
-    document.getElementById('modalItemName').textContent = itemName;
+    // Handle different transaction types
+    const itemsSection = document.getElementById('modalItemsSection');
+    const rewardSection = document.getElementById('modalRewardSection');
+    const itemsListEl = document.getElementById('modalItemsList');
+    const rewardInfoEl = document.getElementById('modalRewardInfo');
 
-    const quantity = transaction.units_scanned || 1;
-    document.getElementById('modalUnitsScanned').textContent = quantity + ' unit' + (quantity > 1 ? 's' : '');
+    if (isRedemption) {
+        // This is a REWARD redemption (spend type)
+        itemsSection.style.display = 'none';
+        rewardSection.style.display = 'block';
 
-    let pointsPerUnit = transaction.points_per_unit || (transaction.points && quantity ? Math.round((transaction.points / quantity) * 10) / 10 : 0);
-    document.getElementById('modalPointsPerUnit').textContent = pointsPerUnit + ' points/unit';
+        let rewardName = transaction.item_name || 'Reward Item';
+        let rewardDetails = '';
 
-    let receiptCode = 'N/A', transactionSource = 'Unknown';
-    if (transaction.receipt_code) {
-        receiptCode = transaction.receipt_code;
-        transactionSource = 'Receipt System';
-    } else if (transaction.qr_code_id) {
-        transactionSource = 'QR Code Scan';
-    } else if (transaction.description && transaction.description.includes('from ')) {
-        const match = transaction.description.match(/from\s+(.+?)$/i);
-        if (match) {
-            receiptCode = 'LEGACY_' + String(transaction.id).padStart(6, '0');
-            transactionSource = 'Legacy Transaction (' + match[1].trim() + ')';
-        } else {
-            transactionSource = 'Legacy Direct Entry';
+        if (transaction.description) {
+            // Extract reward details from description
+            const match = transaction.description.match(/Redeemed:\s*([^f]+?)\s+from/i);
+            if (match && match[1]) {
+                rewardName = match[1].trim();
+            }
         }
+
+        rewardInfoEl.innerHTML = `
+            <div class="p-3 bg-light rounded-3 border border-primary">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="font-size: 2.5rem;">🎁</div>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold text-dark">${rewardName}</div>
+                        <div class="text-muted small">Reward-based redemption</div>
+                        <div class="text-primary fw-semibold mt-1">${totalPoints} points redeemed</div>
+                    </div>
+                </div>
+            </div>
+        `;
     } else {
-        transactionSource = 'Direct Entry';
+        // This is an ITEM-based transaction (receipt transaction or direct QR scan)
+        itemsSection.style.display = 'block';
+        rewardSection.style.display = 'none';
+
+        // Update label based on transaction type
+        document.getElementById('modalItemsLabel').textContent = isReceiptTransaction ? 'Items Purchased' : 'Items';
+
+        // Try to parse receipt_items from pending_transactions
+        if (transaction.receipt_items) {
+            try {
+                const items = typeof transaction.receipt_items === 'string' ? JSON.parse(transaction.receipt_items) : transaction.receipt_items;
+                if (Array.isArray(items) && items.length > 0) {
+                    let itemsHtml = '<div class="list-unstyled mb-0 bg-light p-3 rounded-3">';
+                    items.forEach((item, index) => {
+                        const borderClass = index < items.length - 1 ? 'border-bottom' : '';
+                        itemsHtml += `
+                            <div class="d-flex justify-content-between align-items-center py-2 ${borderClass}">
+                                <div>
+                                    <div class="fw-semibold text-dark">${item.name}</div>
+                                    <div class="text-muted small">Qty: ${item.quantity}</div>
+                                </div>
+                                <span class="badge bg-success">${item.total_points} pts</span>
+                            </div>
+                        `;
+                    });
+                    itemsHtml += '</div>';
+                    itemsListEl.innerHTML = itemsHtml;
+                } else {
+                    displaySingleItem();
+                }
+            } catch (e) {
+                displaySingleItem();
+            }
+        } else {
+            displaySingleItem();
+        }
     }
 
-    document.getElementById('modalReceiptCode').textContent = receiptCode;
-    document.getElementById('modalTransactionSource').textContent = transactionSource;
-    document.getElementById('modalDescription').textContent = transaction.description || 'No description available';
+    function displaySingleItem() {
+        let itemName = 'Direct Transaction';
+        let quantity = transaction.units_scanned || totalPoints || 1;
 
-    // Hide navbar to prevent z-index issues
-    const navbar = document.querySelector('.navbar');
-    if (navbar) {
-        navbar.style.zIndex = '0';
+        if (transaction.item_name) {
+            itemName = transaction.item_name;
+        } else if (transaction.extracted_items) {
+            itemName = transaction.extracted_items;
+        } else if (transaction.description && transaction.description.includes('Purchased:')) {
+            const match = transaction.description.match(/Purchased:\s*([^f]+?)\s+from/i);
+            itemName = match && match[1] ? match[1].trim() : 'Receipt Items';
+        } else if (transaction.receipt_code) {
+            itemName = 'Receipt #' + transaction.receipt_code;
+        } else if (transaction.qr_code_id) {
+            itemName = 'Item #' + transaction.qr_code_id;
+        }
+
+        itemsListEl.innerHTML = `
+            <div class="bg-light p-3 rounded-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fw-semibold text-dark">${itemName}</div>
+                        <div class="text-muted small">Qty: ${quantity}</div>
+                    </div>
+                    <span class="badge bg-success">${totalPoints} pts</span>
+                </div>
+            </div>
+        `;
     }
+
+    // Add modal-open class to body (CSS will handle z-index and overflow)
+    document.body.classList.add('modal-open');
 
     document.getElementById('transactionModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
 }
 
 function closeTransactionModal(event) {
     if (!event || event.target === document.getElementById('transactionModal') || event.target.closest('.btn')) {
-        // Restore navbar z-index
-        const navbar = document.querySelector('.navbar');
-        if (navbar) {
-            navbar.style.zIndex = '1000';
-        }
+        // Remove modal-open class from body
+        document.body.classList.remove('modal-open');
 
         document.getElementById('transactionModal').classList.remove('active');
-        document.body.style.overflow = 'auto';
     }
 }
 </script>

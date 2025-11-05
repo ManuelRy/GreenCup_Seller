@@ -534,13 +534,13 @@ body::before {
                     <label for="image" class="form-label">Reward Image</label>
                     <div class="file-upload-container" onclick="document.getElementById('image').click()">
                         <div class="file-upload-icon">
-                            <i class="fas fa-cloud-upload-alt"></i>
+                            <i class="fas fa-camera"></i>
                         </div>
-                        <div class="file-upload-text">Click to upload an image</div>
+                        <div class="file-upload-text">Take photo or upload image</div>
                         <div class="file-upload-hint">JPG, PNG, GIF up to 5MB</div>
                     </div>
                     <input type="file" id="image" name="image" class="file-input"
-                           accept="image/jpeg,image/png,image/jpg,image/gif">
+                           accept="image/jpeg,image/png,image/jpg,image/gif" capture="environment">
                     @error('image')
                         <div class="form-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                     @enderror

@@ -1176,27 +1176,152 @@
         }
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 576px) {
         .navbar {
-            padding: 12px 0;
+            padding: 10px 0;
         }
 
         .navbar-container {
             padding: 0 12px;
             gap: 8px;
+            flex-wrap: nowrap;
         }
 
         .navbar-left {
             gap: 8px;
+            min-width: 0;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .navbar-right {
+            flex-shrink: 0;
         }
 
         .navbar-brand .app-title {
-            font-size: 18px;
+            font-size: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .navbar-brand .app-subtitle {
             font-size: 10px;
+            display: none; /* Hide subtitle on very small screens */
         }
+
+        .navbar-title .page-title {
+            font-size: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+        }
+
+        .navbar-title .page-subtitle {
+            display: none;
+        }
+
+        .back-btn {
+            width: 32px;
+            height: 32px;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 13px;
+        }
+
+        .mobile-menu-toggle {
+            padding: 4px;
+        }
+
+        .hamburger-line {
+            width: 20px;
+            height: 2px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .navbar {
+            padding: 10px 0;
+        }
+
+        .navbar-container {
+            padding: 0 10px;
+            gap: 6px;
+        }
+
+        .navbar-left {
+            gap: 6px;
+        }
+
+        .navbar-brand .app-title {
+            font-size: 15px;
+        }
+
+        .navbar-brand .app-subtitle {
+            font-size: 9px;
+            display: none;
+        }
+
+        .navbar-title .page-title {
+            font-size: 15px;
+            max-width: 150px;
+        }
+
+        .back-btn {
+            width: 30px;
+            height: 30px;
+            font-size: 13px;
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            font-size: 12px;
+        }
+    }
+
+    @media (max-width: 360px) {
+        .navbar-container {
+            padding: 0 8px;
+            gap: 4px;
+        }
+
+        .navbar-left {
+            gap: 4px;
+        }
+
+        .navbar-brand .app-title {
+            font-size: 14px;
+            max-width: 140px;
+        }
+
+        .navbar-title .page-title {
+            font-size: 14px;
+            max-width: 120px;
+        }
+
+        .back-btn {
+            width: 28px;
+            height: 28px;
+            font-size: 12px;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            font-size: 11px;
+        }
+
+        .hamburger-line {
+            width: 18px;
+        }
+    }
 
         .navbar-navigation {
             gap: 8px;

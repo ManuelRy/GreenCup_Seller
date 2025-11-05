@@ -53,7 +53,9 @@ function getItemIcon($itemName) {
                             <!-- Quantity Controls (initially hidden) -->
                             <div class="item-quantity-controls" id="qty-controls-{{ $item->id }}" style="display: none;">
                                 <button type="button" class="qty-btn" onclick="changeQuantity({{ $item->id }}, -1)">-</button>
-                                <span class="qty-display" id="qty-{{ $item->id }}">0</span>
+                                <input type="number" class="qty-input" id="qty-input-{{ $item->id }}" value="0" min="0" max="999"
+                                       onchange="updateQuantityFromInput({{ $item->id }})"
+                                       onclick="this.select()">
                                 <button type="button" class="qty-btn" onclick="changeQuantity({{ $item->id }}, 1)">+</button>
                             </div>
 
@@ -506,12 +508,34 @@ body::before {
     color: white;
 }
 
-.qty-display {
-    min-width: 32px;
+.qty-input {
+    width: 50px;
+    height: 32px;
     text-align: center;
     font-weight: 600;
-    font-size: 1.125rem;
+    font-size: 1rem;
     color: #10b981;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: white;
+    transition: all 0.2s ease;
+    -moz-appearance: textfield; /* Firefox */
+}
+
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.qty-input:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.qty-input:hover {
+    border-color: #10b981;
 }
 
 /* Receipt Preview */
@@ -524,39 +548,56 @@ body::before {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
 }
 
 .preview-header h3 {
-    font-size: 1.5rem;
-    font-weight: 800;
+    font-size: 1.25rem;
+    font-weight: 700;
     margin: 0;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .clear-btn {
-    background: #fee2e2;
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
     color: #dc2626;
-    border: none;
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
+    border: 1px solid #fca5a5;
+    border-radius: 10px;
+    padding: 0.625rem 1.25rem;
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.1);
 }
 
 .clear-btn:hover:not(:disabled) {
-    background: #dc2626;
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
     color: white;
+    border-color: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+}
+
+.clear-btn:active:not(:disabled) {
+    transform: translateY(0px);
 }
 
 .clear-btn:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
+    transform: none;
 }
 
 .receipt-paper {
@@ -1091,25 +1132,53 @@ function changeQuantity(itemId, change) {
     updateButtons();
 }
 
+// Update quantity from input field
+function updateQuantityFromInput(itemId) {
+    const inputField = document.getElementById(`qty-input-${itemId}`);
+    let newQuantity = parseInt(inputField.value) || 0;
+
+    // Ensure it's a positive number
+    if (newQuantity < 0) newQuantity = 0;
+    if (newQuantity > 999) newQuantity = 999;
+
+    if (newQuantity <= 0) {
+        // Remove item
+        delete selectedItems[itemId];
+        updateItemCard(itemId);
+    } else {
+        // Update quantity
+        if (!selectedItems[itemId]) {
+            // If item wasn't selected, we need to get its info
+            console.error('Item not in selectedItems, cannot update from input');
+            return;
+        }
+        selectedItems[itemId].quantity = newQuantity;
+        updateItemCard(itemId);
+    }
+
+    updateReceiptPreview();
+    updateButtons();
+}
+
 // Update individual item card UI
 function updateItemCard(itemId) {
     const card = document.getElementById(`item-card-${itemId}`);
     const addBtn = document.getElementById(`add-btn-${itemId}`);
     const qtyControls = document.getElementById(`qty-controls-${itemId}`);
-    const qtyDisplay = document.getElementById(`qty-${itemId}`);
+    const qtyInput = document.getElementById(`qty-input-${itemId}`);
 
     if (selectedItems[itemId]) {
         // Item is selected - show quantity controls
         card.classList.add('selected');
         addBtn.style.display = 'none';
         qtyControls.style.display = 'flex';
-        qtyDisplay.textContent = selectedItems[itemId].quantity;
+        qtyInput.value = selectedItems[itemId].quantity;
     } else {
         // Item is not selected - show add button
         card.classList.remove('selected');
         addBtn.style.display = 'flex';
         qtyControls.style.display = 'none';
-        qtyDisplay.textContent = '0';
+        qtyInput.value = '0';
     }
 }
 

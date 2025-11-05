@@ -54,12 +54,14 @@ class SellerAccountController extends Controller
             ->leftJoin('consumers', 'point_transactions.consumer_id', '=', 'consumers.id')
             ->leftJoin('qr_codes', 'point_transactions.qr_code_id', '=', 'qr_codes.id')
             ->leftJoin('items', 'qr_codes.item_id', '=', 'items.id')
+            ->leftJoin('pending_transactions', 'point_transactions.receipt_code', '=', 'pending_transactions.receipt_code')
             ->select([
                 'point_transactions.*',
                 'consumers.full_name as consumer_name',
                 'consumers.email as consumer_email',
                 'items.name as item_name',
-                'items.points_per_unit'
+                'items.points_per_unit',
+                'pending_transactions.items as receipt_items'
             ])
             ->orderBy('point_transactions.scanned_at', 'desc')
             ->orderBy('point_transactions.created_at', 'desc');
