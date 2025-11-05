@@ -390,7 +390,7 @@ body::before {
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s ease;
     position: relative;
     overflow: hidden;
 }
@@ -403,11 +403,8 @@ body::before {
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    transition: left 0.6s;
-}
-
-.stat-card:hover::before {
-    left: 100%;
+    transition: none;
+    display: none;
 }
 
 .stat-card:hover {
@@ -425,7 +422,7 @@ body::before {
     font-size: 2rem;
     flex-shrink: 0;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.15s ease;
 }
 
 .stat-card:hover .stat-icon {
@@ -488,7 +485,7 @@ body::before {
     box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
     position: relative;
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s ease;
 }
 
 .summary-card::before {
@@ -499,11 +496,8 @@ body::before {
     width: 100%;
     height: 200%;
     background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-    transition: transform 0.6s;
-}
-
-.summary-card:hover::before {
-    transform: rotate(180deg);
+    transition: none;
+    display: none;
 }
 
 .summary-card:hover {
@@ -654,7 +648,7 @@ body::before {
     border-radius: 20px;
     padding: 1.75rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.02);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s ease;
     border-left: 4px solid transparent;
     position: relative;
     overflow: hidden;
@@ -674,13 +668,10 @@ body::before {
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     opacity: 0;
-    transition: opacity 0.4s;
-    pointer-events: none; /* Allow clicks to pass through */
+    transition: none;
+    pointer-events: none;
     z-index: 0;
-}
-
-.receipt-card:hover::after {
-    opacity: 1;
+    display: none;
 }
 
 .receipt-card:hover {
@@ -988,21 +979,21 @@ body::before {
     justify-content: center;
     text-decoration: none;
     box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
     z-index: 100;
     cursor: pointer;
-    animation: fabBounce 0.6s ease-out;
+    animation: fabBounce 0.3s ease-out;
 }
 
 .fab:hover {
-    transform: scale(1.1) rotate(90deg);
+    transform: scale(1.1);
     box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5), 0 6px 12px rgba(0, 0, 0, 0.3);
     color: white;
     text-decoration: none;
 }
 
 .fab:active {
-    transform: scale(0.95) rotate(90deg);
+    transform: scale(0.95);
 }
 
 .fab-icon {
@@ -1013,14 +1004,12 @@ body::before {
 
 @keyframes fabBounce {
     0% {
-        transform: scale(0) rotate(0deg);
+        transform: scale(0.8) rotate(0deg);
         opacity: 0;
     }
-    50% {
-        transform: scale(1.2) rotate(180deg);
-    }
     100% {
-        transform: scale(1) rotate(90deg);
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
     }
 }
 
