@@ -145,7 +145,7 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.6);
-    z-index: 10001;
+    z-index: 99999;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
@@ -260,7 +260,7 @@
                         <div style="font-size: 2rem;">👥</div>
                         <div>
                             <div class="h3 fw-bold mb-0">{{ number_format($totalCustomers) }}</div>
-                            <div class="small opacity-90">Total Customers</div>
+                            <div class="small opacity-90">Total Consumers</div>
                         </div>
                     </div>
                 </div>
@@ -409,7 +409,7 @@
                     <div class="d-flex align-items-start gap-3">
                         <div class="text-primary" style="font-size: 1.5rem;">👤</div>
                         <div>
-                            <div class="text-muted small mb-1">Customer</div>
+                            <div class="text-muted small mb-1">Consumer</div>
                             <div class="fw-semibold" id="modalCustomerName">-</div>
                             <div class="text-muted small" id="modalCustomerId">-</div>
                         </div>
@@ -539,12 +539,24 @@ function showTransactionModal(transaction) {
     document.getElementById('modalDescription').textContent = transaction.description || 'No description available';
     document.getElementById('modalRankImpact').textContent = transaction.points + ' points';
 
+    // Hide navbar to prevent z-index issues
+    const navbar = document.querySelector('.navbar');
+    if (navbar) {
+        navbar.style.zIndex = '0';
+    }
+
     document.getElementById('transactionModal').classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
 function closeTransactionModal(event) {
     if (!event || event.target === document.getElementById('transactionModal') || event.target.closest('.btn')) {
+        // Restore navbar z-index
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            navbar.style.zIndex = '1000';
+        }
+
         document.getElementById('transactionModal').classList.remove('active');
         document.body.style.overflow = 'auto';
     }

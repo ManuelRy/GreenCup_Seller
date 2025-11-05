@@ -1,7 +1,9 @@
 
         function toggleMonthDropdown() {
             const dropdown = document.getElementById('monthDropdown');
-            dropdown.classList.toggle('show');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
         }
 
         function selectMonth(month) {
@@ -31,7 +33,10 @@
             }
 
             // Close the dropdown
-            document.getElementById('monthDropdown').classList.remove('show');
+            const dropdown = document.getElementById('monthDropdown');
+            if (dropdown) {
+                dropdown.classList.remove('show');
+            }
 
             // Update the data for the selected month (you can customize this)
             updateDataForMonth(month);
@@ -39,7 +44,11 @@
 
         function updateMonthTabs(selectedMonth) {
             const monthTabsCenter = document.querySelector('.month-tabs-center');
+            if (!monthTabsCenter) return;
+
             const monthTabs = monthTabsCenter.querySelectorAll('.month-tab');
+            if (monthTabs.length === 0) return;
+
             const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             const selectedIndex = months.indexOf(selectedMonth);
 
@@ -69,7 +78,9 @@
             // Update chart and data based on selected month
             const chartAmount = document.querySelector('.chart-amount');
             const flowChanges = document.querySelectorAll('.flow-change');
-            
+
+            if (!chartAmount || flowChanges.length === 0) return;
+
             // Sample data for different months (you can customize this)
             const monthData = {
                 'January': { total: '1,450 pts', inChange: '3,200 pts in Dec', outChange: '2,900 pts in Dec' },
@@ -97,8 +108,9 @@
         document.addEventListener('click', function(event) {
             const dropdown = document.getElementById('monthDropdown');
             const button = document.querySelector('.month-button');
-            
-            if (!dropdown.contains(event.target) && !button.contains(event.target)) {
+
+            // Check if elements exist before trying to use them
+            if (dropdown && button && !dropdown.contains(event.target) && !button.contains(event.target)) {
                 dropdown.classList.remove('show');
             }
         });
