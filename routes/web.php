@@ -160,6 +160,9 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
         Route::get('/receipts/export', [ReceiptController::class, 'export'])->name('receipts.export');
         Route::get('/receipts/{id}/qr', [ReceiptController::class, 'print'])->name('receipts.qr');
 
+        // Consumers route
+        Route::get('/consumers', [App\Http\Controllers\ConsumerController::class, 'index'])->name('consumers.index');
+
         // Test endpoint for debugging
         Route::post('/test-json', function(\Illuminate\Http\Request $request) {
             \Log::info('Test JSON endpoint hit', [

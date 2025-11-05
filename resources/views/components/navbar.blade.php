@@ -49,6 +49,10 @@
                         <i class="fas fa-receipt"></i>
                         <span>Receipts</span>
                     </a>
+                    <a href="{{ route('seller.consumers.index') }}" class="nav-item {{ request()->routeIs('seller.consumers.*') ? 'active' : '' }}">
+                        <i class="fas fa-users"></i>
+                        <span>Consumers</span>
+                    </a>
                     <a href="{{ route('report.index') }}" class="nav-item {{ request()->routeIs('report.*') ? 'active' : '' }}">
                         <i class="fas fa-flag"></i>
                         <span>Reports</span>
@@ -199,6 +203,11 @@
                     <a href="{{ route('seller.receipts.index') }}" class="mobile-nav-item {{ request()->routeIs('seller.receipts.*') ? 'active' : '' }}">
                         <i class="fas fa-receipt"></i>
                         <span>Receipts</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a href="{{ route('seller.consumers.index') }}" class="mobile-nav-item {{ request()->routeIs('seller.consumers.*') ? 'active' : '' }}">
+                        <i class="fas fa-users"></i>
+                        <span>Consumers</span>
                         <i class="fas fa-chevron-right"></i>
                     </a>
                     <a href="{{ route('report.index') }}" class="mobile-nav-item {{ request()->routeIs('report.*') ? 'active' : '' }}">

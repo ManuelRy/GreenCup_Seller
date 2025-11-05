@@ -674,11 +674,16 @@
     box-shadow: 0 4px 16px rgba(0,0,0,0.08);
     text-align: center;
     transition: transform 0.2s ease;
+    cursor: pointer;
 }
 
 .stat-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.stat-card:active {
+    transform: translateY(-1px);
 }
 
 .stat-header {
@@ -1318,23 +1323,23 @@
 
         <!-- Stats Grid -->
         <div class="stats-grid fade-in">
-            <div class="stat-card">
+            <a href="{{ route('seller.consumers.index') }}" class="stat-card" style="text-decoration: none; color: inherit; display: block;">
                 <div class="stat-header">
-                    <span class="stat-title">Total Customers</span>
+                    <span class="stat-title">Total Consumers</span>
                     <span class="stat-icon">👥</span>
                 </div>
                 <div class="stat-value">{{ number_format($totalCustomers) }}</div>
-                <div class="stat-subtitle">Unique customers served</div>
-            </div>
+                <div class="stat-subtitle">Unique consumers served</div>
+            </a>
 
-            <div class="stat-card">
+            <a href="{{ route('seller.receipts.index') }}" class="stat-card" style="text-decoration: none; color: inherit; display: block;">
                 <div class="stat-header">
                     <span class="stat-title">Total Transactions</span>
                     <span class="stat-icon">📋</span>
                 </div>
                 <div class="stat-value">{{ number_format($totalTransactions) }}</div>
                 <div class="stat-subtitle">All time transactions</div>
-            </div>
+            </a>
         </div>
 
         <!-- Quick Actions -->
