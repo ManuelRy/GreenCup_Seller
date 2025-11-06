@@ -49,8 +49,8 @@ class SellerAccountController extends Controller
                                         ->distinct('point_transactions.consumer_id')
                                         ->count('point_transactions.consumer_id') ?? 0;
 
-        // Get transaction history with pagination and better joins
-        $query = PointTransaction::where('point_transactions.seller_id', $seller->id)
+        // Get point transactions
+        $pointTransactions = PointTransaction::where('point_transactions.seller_id', $seller->id)
             ->leftJoin('consumers', 'point_transactions.consumer_id', '=', 'consumers.id')
             ->leftJoin('qr_codes', 'point_transactions.qr_code_id', '=', 'qr_codes.id')
             ->leftJoin('items', 'qr_codes.item_id', '=', 'items.id')
@@ -61,19 +61,71 @@ class SellerAccountController extends Controller
                 'consumers.email as consumer_email',
                 'items.name as item_name',
                 'items.points_per_unit',
-                'pending_transactions.items as receipt_items'
+                'pending_transactions.items as receipt_items',
+                DB::raw("'point_transaction' as activity_type"),
+                DB::raw('COALESCE(point_transactions.scanned_at, point_transactions.created_at) as activity_date'),
+                DB::raw('NULL as reward_name'),
+                DB::raw('NULL as points_required'),
+                DB::raw('NULL as status')
             ])
             ->orderBy('point_transactions.scanned_at', 'desc')
             ->orderBy('point_transactions.created_at', 'desc');
 
+        // Get reward redemption activities
+        $rewardRedemptions = RedeemHistory::join('consumers', 'redeem_histories.consumer_id', '=', 'consumers.id')
+            ->join('rewards', 'redeem_histories.reward_id', '=', 'rewards.id')
+            ->where('rewards.seller_id', $seller->id)
+            ->select([
+                'redeem_histories.id',
+                'redeem_histories.consumer_id',
+                'redeem_histories.quantity',
+                'redeem_histories.status',
+                'redeem_histories.created_at',
+                'redeem_histories.approved_at',
+                'redeem_histories.rejected_at',
+                'consumers.full_name as consumer_name',
+                'consumers.email as consumer_email',
+                'rewards.name as reward_name',
+                'rewards.points_required',
+                DB::raw("'reward_redemption' as activity_type"),
+                DB::raw('redeem_histories.created_at as activity_date')
+            ])
+            ->orderBy('redeem_histories.created_at', 'desc');
+
         // Apply filter if requested
         $filter = $request->get('filter', 'all');
-        if ($filter === 'earn' || $filter === 'spend') {
-            $query->where('point_transactions.type', $filter);
+
+        if ($filter === 'earn') {
+            $pointTransactions->where('point_transactions.type', 'earn');
+            // Exclude reward redemptions when filtering for earn
+            $allActivities = $pointTransactions->get();
+        } elseif ($filter === 'spend') {
+            $pointTransactions->where('point_transactions.type', 'spend');
+            // Exclude reward redemptions when filtering for spend
+            $allActivities = $pointTransactions->get();
+        } elseif ($filter === 'rewards') {
+            // Only show reward redemptions
+            $allActivities = $rewardRedemptions->get();
+        } else {
+            // Combine both point transactions and reward redemptions
+            $allActivities = $pointTransactions->get()->concat($rewardRedemptions->get());
         }
 
-        // Paginate results
-        $transactions = $query->paginate(20);
+        // Sort combined activities by date
+        $allActivities = $allActivities->sortByDesc('activity_date')->values();
+
+        // Manual pagination
+        $page = $request->get('page', 1);
+        $perPage = 20;
+        $offset = ($page - 1) * $perPage;
+
+        $transactions = new \Illuminate\Pagination\LengthAwarePaginator(
+            $allActivities->slice($offset, $perPage)->values(),
+            $allActivities->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         // Debug: Log some transaction info to help identify the issue
         if ($transactions->count() > 0) {

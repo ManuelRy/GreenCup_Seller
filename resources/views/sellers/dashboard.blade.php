@@ -1386,9 +1386,10 @@
 
             @if($totalTransactions > 0)
                 @php
-                    $recentTransactions = collect();
+                    $recentActivities = collect();
                     try {
-                        $recentTransactions = DB::table('point_transactions')
+                        // Get point transactions (earn/redeem)
+                        $pointTransactions = DB::table('point_transactions')
                             ->join('consumers', 'point_transactions.consumer_id', '=', 'consumers.id')
                             ->leftJoin('qr_codes', 'point_transactions.qr_code_id', '=', 'qr_codes.id')
                             ->leftJoin('items', 'qr_codes.item_id', '=', 'items.id')
@@ -1399,46 +1400,100 @@
                                 'point_transactions.type',
                                 'point_transactions.created_at',
                                 'consumers.full_name as consumer_name',
-                                'items.name as item_name'
+                                'items.name as item_name',
+                                DB::raw("'point_transaction' as activity_type")
                             ])
                             ->orderBy('point_transactions.created_at', 'desc')
-                            ->limit(5)
+                            ->limit(10)
                             ->get();
+
+                        // Get reward redemption activities
+                        $rewardRedemptions = DB::table('redeem_histories')
+                            ->join('consumers', 'redeem_histories.consumer_id', '=', 'consumers.id')
+                            ->join('rewards', 'redeem_histories.reward_id', '=', 'rewards.id')
+                            ->where('rewards.seller_id', $seller->id)
+                            ->select([
+                                'redeem_histories.id',
+                                'redeem_histories.quantity',
+                                'redeem_histories.status',
+                                'redeem_histories.created_at',
+                                'redeem_histories.approved_at',
+                                'consumers.full_name as consumer_name',
+                                'rewards.name as reward_name',
+                                'rewards.points_required',
+                                DB::raw("'reward_redemption' as activity_type")
+                            ])
+                            ->orderBy('redeem_histories.created_at', 'desc')
+                            ->limit(10)
+                            ->get();
+
+                        // Combine and sort all activities
+                        $recentActivities = $pointTransactions->concat($rewardRedemptions)
+                            ->sortByDesc('created_at')
+                            ->take(5);
                     } catch (\Exception $e) {
-                        $recentTransactions = collect();
+                        $recentActivities = collect();
                     }
                 @endphp
 
-                @if($recentTransactions->count() > 0)
+                @if($recentActivities->count() > 0)
                 <div class="activity-list">
-                    @foreach($recentTransactions as $transaction)
+                    @foreach($recentActivities as $activity)
                     <div class="activity-item slide-in">
                         <div class="activity-avatar">
-                            @if($transaction->type === 'earn')
-                                ✅
+                            @if($activity->activity_type === 'point_transaction')
+                                @if($activity->type === 'earn')
+                                    ✅
+                                @else
+                                    💳
+                                @endif
                             @else
-                                💳
+                                @if($activity->status === 'pending')
+                                    🎁
+                                @elseif($activity->status === 'approved')
+                                    ✨
+                                @elseif($activity->status === 'rejected')
+                                    ❌
+                                @else
+                                    🎁
+                                @endif
                             @endif
                         </div>
                         <div class="activity-details">
-                            <div class="activity-name">{{ $transaction->consumer_name ?? 'Customer' }}</div>
+                            <div class="activity-name">{{ $activity->consumer_name ?? 'Customer' }}</div>
                             <div class="activity-desc">
-                                @if($transaction->type === 'earn')
-                                    Earned points • {{ $transaction->item_name ?? 'Item' }}
+                                @if($activity->activity_type === 'point_transaction')
+                                    @if($activity->type === 'earn')
+                                        Earned points • {{ $activity->item_name ?? 'Item' }}
+                                    @else
+                                        Redeemed points • {{ $activity->item_name ?? 'Item' }}
+                                    @endif
                                 @else
-                                    Redeemed points • {{ $transaction->item_name ?? 'Item' }}
+                                    @if($activity->status === 'pending')
+                                        Requested reward • {{ $activity->reward_name }}
+                                    @elseif($activity->status === 'approved')
+                                        Reward approved by admin • {{ $activity->reward_name }}
+                                    @elseif($activity->status === 'rejected')
+                                        Reward rejected • {{ $activity->reward_name }}
+                                    @else
+                                        Reward activity • {{ $activity->reward_name }}
+                                    @endif
                                 @endif
                             </div>
                         </div>
                         <div class="activity-points">
-                            {{ $transaction->points }} pts
+                            @if($activity->activity_type === 'point_transaction')
+                                {{ $activity->points ?? 0 }} pts
+                            @else
+                                {{ ($activity->points_required ?? 0) * ($activity->quantity ?? 1) }} pts
+                            @endif
                         </div>
                     </div>
                     @endforeach
                 </div>
                 @else
                 <div class="empty-state">
-                    <div class="empty-text">No recent transactions to display</div>
+                    <div class="empty-text">No recent activities to display</div>
                 </div>
                 @endif
             @else

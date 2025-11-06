@@ -115,6 +115,18 @@
     background: linear-gradient(135deg, #3b82f6, #2563eb);
 }
 
+.transaction-icon.pending {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.transaction-icon.approved {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.transaction-icon.rejected {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
 .points-badge {
     font-size: 1rem;
     font-weight: 700;
@@ -131,6 +143,21 @@
 .points-badge.spend {
     background: #dbeafe;
     color: #1e40af;
+}
+
+.points-badge.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.points-badge.approved {
+    background: #ede9fe;
+    color: #5b21b6;
+}
+
+.points-badge.rejected {
+    background: #fee2e2;
+    color: #991b1b;
 }
 
 .empty-state {
@@ -305,13 +332,16 @@ body.modal-open .mobile-nav-menu {
     <div class="filter-card">
         <div class="filter-tabs">
             <a href="{{ route('seller.activity') }}" class="filter-tab {{ $filter === 'all' ? 'active' : '' }}">
-                All Transactions
+                All Activities
             </a>
             <a href="{{ route('seller.activity', ['filter' => 'earn']) }}" class="filter-tab {{ $filter === 'earn' ? 'active' : '' }}">
                 📤 Points Given
             </a>
             <a href="{{ route('seller.activity', ['filter' => 'spend']) }}" class="filter-tab {{ $filter === 'spend' ? 'active' : '' }}">
                 📥 Redemptions
+            </a>
+            <a href="{{ route('seller.activity', ['filter' => 'rewards']) }}" class="filter-tab {{ $filter === 'rewards' ? 'active' : '' }}">
+                🎁 Rewards
             </a>
         </div>
     </div>
@@ -323,13 +353,27 @@ body.modal-open .mobile-nav-menu {
             <div class="transaction-row" onclick='showTransactionModal(@json($transaction))'>
                 <div class="d-flex align-items-center gap-3">
                     <!-- Icon -->
-                    <div class="transaction-icon {{ $transaction->type }}">
-                        @if($transaction->type === 'earn')
-                            ✅
-                        @else
-                            💳
-                        @endif
-                    </div>
+                    @if($transaction->activity_type === 'point_transaction')
+                        <div class="transaction-icon {{ $transaction->type }}">
+                            @if($transaction->type === 'earn')
+                                ✅
+                            @else
+                                💳
+                            @endif
+                        </div>
+                    @else
+                        <div class="transaction-icon {{ $transaction->status }}">
+                            @if($transaction->status === 'pending')
+                                🎁
+                            @elseif($transaction->status === 'approved')
+                                ✨
+                            @elseif($transaction->status === 'rejected')
+                                ❌
+                            @else
+                                🎁
+                            @endif
+                        </div>
+                    @endif
 
                     <!-- Transaction Details -->
                     <div class="flex-grow-1">
@@ -338,19 +382,34 @@ body.modal-open .mobile-nav-menu {
                         </div>
                         <div class="d-flex flex-wrap gap-2 align-items-center text-muted small">
                             <span>
-                                @if($transaction->type === 'earn')
-                                    @if($transaction->receipt_code)
-                                        📄 Receipt Transaction
+                                @if($transaction->activity_type === 'point_transaction')
+                                    @if($transaction->type === 'earn')
+                                        @if($transaction->receipt_code)
+                                            📄 Receipt Transaction
+                                        @else
+                                            Points Given
+                                        @endif
                                     @else
-                                        Points Given
+                                        Redeemed Points
                                     @endif
                                 @else
-                                    Redeemed Points
+                                    @if($transaction->status === 'pending')
+                                        🎁 Requested reward
+                                    @elseif($transaction->status === 'approved')
+                                        ✨ Reward approved by admin
+                                    @elseif($transaction->status === 'rejected')
+                                        ❌ Reward rejected
+                                    @else
+                                        🎁 Reward activity
+                                    @endif
                                 @endif
                             </span>
-                            @if($transaction->item_name)
+                            @if($transaction->activity_type === 'point_transaction' && $transaction->item_name)
                                 <span class="text-muted">•</span>
                                 <span>{{ $transaction->item_name }}</span>
+                            @elseif($transaction->activity_type === 'reward_redemption')
+                                <span class="text-muted">•</span>
+                                <span>{{ $transaction->reward_name }}</span>
                             @endif
                             <span class="text-muted">•</span>
                             <span>{{ \Carbon\Carbon::parse($transaction->scanned_at ?? $transaction->created_at)->format('M d, Y g:i A') }}</span>
@@ -358,9 +417,15 @@ body.modal-open .mobile-nav-menu {
                     </div>
 
                     <!-- Points Badge -->
-                    <div class="points-badge {{ $transaction->type }}">
-                        {{ number_format($transaction->points) }} pts
-                    </div>
+                    @if($transaction->activity_type === 'point_transaction')
+                        <div class="points-badge {{ $transaction->type }}">
+                            {{ number_format($transaction->points ?? 0) }} pts
+                        </div>
+                    @else
+                        <div class="points-badge {{ $transaction->status }}">
+                            {{ number_format(($transaction->points_required ?? 0) * ($transaction->quantity ?? 1)) }} pts
+                        </div>
+                    @endif
                 </div>
             </div>
             @endforeach

@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class RewardController extends Controller
 {
@@ -191,6 +192,8 @@ class RewardController extends Controller
     public function approveRedemption($id)
     {
         try {
+            DB::beginTransaction();
+
             $rh = $this->rHRepo->get($id);
             if (!$rh || !$rh->reward) {
                 throw new Exception('Redemption could not be found!');
@@ -212,16 +215,33 @@ class RewardController extends Controller
             $quantity = $rh->quantity ?? 1;
             $totalPoints = $rh->reward->points_required * $quantity;
 
-            // add points to seller
+            // Add points to seller
             $this->sRepo->addPoints(Auth::id(), $totalPoints);
 
-            // update the status to approved
+            // Update the status to approved
             $this->rHRepo->approve($id);
+
+            // Log the approval
+            Log::info('Reward redemption approved by seller', [
+                'redemption_id' => $id,
+                'seller_id' => Auth::id(),
+                'consumer_id' => $rh->consumer_id,
+                'reward_id' => $rh->reward_id,
+                'quantity' => $quantity,
+                'points_earned' => $totalPoints
+            ]);
+
+            DB::commit();
 
             return redirect()->route('reward.redemptions')
                 ->with('success', "Redemption approved successfully! {$quantity} item(s) for {$totalPoints} points.");
         } catch (Exception $e) {
-            Log::error($e->getMessage());
+            DB::rollBack();
+            Log::error('Error approving redemption: ' . $e->getMessage(), [
+                'redemption_id' => $id,
+                'seller_id' => Auth::id(),
+                'error' => $e->getMessage()
+            ]);
             return redirect()->back()
                 ->with('error', 'Failed to approve redemption. Please try again.');
         }
@@ -230,31 +250,69 @@ class RewardController extends Controller
     /**
      * Reject a reward redemption
      */
-    public function rejectRedemption($id)
+    public function rejectRedemption(Request $request, $id)
     {
-        $rh = $this->rHRepo->get($id);
-        if (!$rh || !$rh->reward) {
+        try {
+            DB::beginTransaction();
+
+            $rh = $this->rHRepo->get($id);
+            if (!$rh || !$rh->reward) {
+                return redirect()->route('reward.redemptions')
+                    ->with('error', 'Redemption could not be found!');
+            }
+
+            // Check if already processed
+            if ($rh->status !== 'pending') {
+                return redirect()->route('reward.redemptions')
+                    ->with('error', 'This redemption has already been processed!');
+            }
+
+            $consumer_id = $rh->consumer_id;
+            $quantity = $rh->quantity ?? 1;
+            $totalPoints = $rh->reward->points_required * $quantity;
+            $reward_id = $rh->reward->id;
+            $reason = $request->input('reason', 'Redemption rejected by seller');
+
+            // Return the points to consumer (total based on quantity)
+            $this->cPRepo->refund($consumer_id, Auth::id(), $totalPoints);
+
+            // Restore the reward quantity in bulk (not in a loop)
+            $reward = $this->rRepo->get($reward_id, Auth::id());
+            if ($reward) {
+                $reward->update([
+                    'quantity_redeemed' => max(0, $reward->quantity_redeemed - $quantity)
+                ]);
+            }
+
+            // Mark the redemption as rejected with reason
+            $this->rHRepo->reject($id, $reason);
+
+            // Log the rejection
+            Log::info('Reward redemption rejected by seller', [
+                'redemption_id' => $id,
+                'seller_id' => Auth::id(),
+                'consumer_id' => $consumer_id,
+                'reward_id' => $reward_id,
+                'quantity' => $quantity,
+                'points_refunded' => $totalPoints,
+                'reason' => $reason
+            ]);
+
+            DB::commit();
+
             return redirect()->route('reward.redemptions')
-                ->with('error', 'Redemption could not be found!');
+                ->with('success', "Redemption rejected successfully! {$quantity} item(s) restored, {$totalPoints} points refunded.");
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error rejecting redemption: ' . $e->getMessage(), [
+                'redemption_id' => $id,
+                'seller_id' => Auth::id(),
+                'error' => $e->getMessage()
+            ]);
+
+            return redirect()->route('reward.redemptions')
+                ->with('error', 'Failed to reject redemption: ' . $e->getMessage());
         }
-
-        $consumer_id = $rh->consumer_id;
-        $quantity = $rh->quantity ?? 1;
-        $totalPoints = $rh->reward->points_required * $quantity;
-        $reward_id = $rh->reward->id;
-
-        // return the points to consumer (total based on quantity)
-        $this->cPRepo->refund($consumer_id, Auth::id(), $totalPoints);
-
-        // restore the reward quantity by decrementing quantity_redeemed
-        for ($i = 0; $i < $quantity; $i++) {
-            $this->rRepo->decrementQuantityRedeemed($reward_id);
-        }
-
-        // mark the redemption as rejected
-        $this->rHRepo->reject($id);
-
-        return redirect()->route('reward.redemptions')
-            ->with('success', "Redemption rejected successfully! {$quantity} item(s) restored, {$totalPoints} points refunded.");
     }
 }
