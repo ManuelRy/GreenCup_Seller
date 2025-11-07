@@ -2,367 +2,288 @@
 
 @section('content')
 <style>
-/* Activity Page Styles */
+/* Activity Page - Dashboard Style */
 .activity-page {
-    position: relative;
-    z-index: 1;
+    min-height: 100vh;
+    padding-bottom: 40px;
+}
+
+.activity-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 20px;
 }
 
 .activity-header-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
-    margin-bottom: 1.5rem;
-    position: relative;
-    z-index: 1;
-}
-
-.stat-box {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-    padding: 1.5rem;
-    transition: all 0.3s ease;
-}
-
-.stat-box:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(25px);
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
 }
 
 .filter-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    position: relative;
-    z-index: 1;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(25px);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
 
 .filter-tabs {
     display: flex;
-    gap: 0.5rem;
+    gap: 12px;
     flex-wrap: wrap;
 }
 
 .filter-tab {
-    padding: 0.6rem 1.5rem;
-    border-radius: 20px;
+    padding: 10px 20px;
+    border-radius: 10px;
     background: #f8fafc;
-    border: 2px solid transparent;
+    border: none;
     color: #64748b;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 14px;
 }
 
 .filter-tab:hover {
     background: #e2e8f0;
-    color: #475569;
     text-decoration: none;
 }
 
 .filter-tab.active {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white !important;
-    border-color: transparent;
+    background: linear-gradient(135deg, #00b09b, #00cdac);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 176, 155, 0.3);
 }
 
-.transactions-card {
+/* Activity Card - Matching Dashboard */
+.activity-card {
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    padding: 1.5rem;
-    position: relative;
-    z-index: 1;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
-.transaction-row {
-    background: white;
-    border: 1px solid #e2e8f0;
+.activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.activity-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
     border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 0.75rem;
-    transition: all 0.3s ease;
+    transition: background-color 0.2s ease;
     cursor: pointer;
 }
 
-.transaction-row:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-    border-color: #667eea;
+.activity-item:hover {
+    background: #f8f9fa;
 }
 
-.transaction-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+.activity-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 18px;
     flex-shrink: 0;
 }
 
-.transaction-icon.earn {
-    background: linear-gradient(135deg, #10b981, #059669);
+.activity-details {
+    flex: 1;
+    min-width: 0;
 }
 
-.transaction-icon.spend {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
+.activity-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2px;
 }
 
-.transaction-icon.pending {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
+.activity-desc {
+    font-size: 12px;
+    color: #666;
 }
 
-.transaction-icon.approved {
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-}
-
-.transaction-icon.rejected {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-}
-
-.points-badge {
-    font-size: 1rem;
+.activity-points {
+    font-size: 14px;
     font-weight: 700;
-    padding: 0.5rem 1rem;
-    border-radius: 10px;
+    color: #10b981;
     white-space: nowrap;
 }
 
-.points-badge.earn {
-    background: #d1fae5;
-    color: #065f46;
+/* Stats */
+.stat-box {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.3s ease;
 }
 
-.points-badge.spend {
-    background: #dbeafe;
-    color: #1e40af;
+.stat-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 176, 155, 0.15);
 }
 
-.points-badge.pending {
-    background: #fef3c7;
-    color: #92400e;
-}
-
-.points-badge.approved {
-    background: #ede9fe;
-    color: #5b21b6;
-}
-
-.points-badge.rejected {
-    background: #fee2e2;
-    color: #991b1b;
-}
-
+/* Empty State */
 .empty-state {
     text-align: center;
-    padding: 4rem 2rem;
+    padding: 64px 32px;
 }
 
-.empty-state-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
+.empty-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    opacity: 0.6;
 }
 
-/* Modal Styles */
-.modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 99999;
-    opacity: 0;
-    visibility: hidden;
+.btn-primary {
+    background: linear-gradient(135deg, #00b09b, #00cdac);
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
     transition: all 0.3s ease;
-    backdrop-filter: blur(4px);
-    overflow-y: auto;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 176, 155, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+/* Pagination */
+.pagination {
     display: flex;
-    align-items: center;
     justify-content: center;
-    padding: 20px;
+    gap: 8px;
+    margin-top: 24px;
 }
 
-/* Lock body position when modal opens */
-body.modal-open {
-    overflow: hidden;
+.pagination .page-link {
+    background: white;
+    border: 2px solid #e2e8f0;
+    color: #64748b;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
 }
 
-/* Ensure activity page content stays below modal */
-body.modal-open .activity-page,
-body.modal-open .activity-header-card,
-body.modal-open .filter-card,
-body.modal-open .transactions-card {
-    position: relative;
-    z-index: 1 !important;
+.pagination .page-link:hover {
+    background: #00b09b;
+    border-color: #00b09b;
+    color: white;
 }
 
-/* Force navbar and all its children to stay below modal */
-body.modal-open nav,
-body.modal-open .navbar,
-body.modal-open .navbar *,
-body.modal-open .account-dropdown,
-body.modal-open .mobile-nav-menu {
-    z-index: 999 !important;
-}
-
-.modal-backdrop.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-.modal-content {
-    transform: scale(0.9);
-    transition: transform 0.3s ease;
-}
-
-.modal-backdrop.active .modal-content {
-    transform: scale(1);
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #00b09b, #00cdac);
+    border-color: #00b09b;
+    color: white;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .activity-header-card {
-        padding: 1.5rem !important;
+    .activity-container {
+        padding: 24px 16px;
     }
 
-    .stat-box {
-        padding: 1rem;
-    }
-
-    .transaction-row {
-        padding: 0.875rem;
-    }
-
-    .transaction-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 1.25rem;
-    }
-
-    .points-badge {
-        font-size: 0.875rem;
-        padding: 0.375rem 0.75rem;
-    }
-
-    .filter-tab {
-        padding: 0.5rem 1rem;
-        font-size: 0.85rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .activity-header-card .d-flex {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 1rem;
-    }
-
-    .transaction-row .d-flex {
-        flex-wrap: wrap;
-    }
-
-    .points-badge {
-        margin-top: 0.5rem;
-        width: 100%;
-        text-align: center;
+    .activity-header-card,
+    .filter-card,
+    .activity-card {
+        padding: 20px;
     }
 }
 </style>
 
-<main class="activity-page container-fluid px-3 px-lg-5 py-4">
-    <!-- Header Card -->
-    <div class="activity-header-card p-4 p-lg-5">
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-            <div>
-                <h1 class="h2 fw-bold mb-2">⚡ Activity History</h1>
-                <p class="mb-0 opacity-90">Complete transaction history for {{ $seller->business_name }}</p>
+<main class="activity-page">
+    <div class="activity-container">
+        <!-- Header Card -->
+        <div class="activity-header-card">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                <div>
+                    <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 8px;">⚡ Recent Activity</h1>
+                    <p style="color: #64748b; margin-bottom: 0;">All transactions for {{ $seller->business_name }}</p>
+                </div>
+                <a href="{{ route('seller.account.export') }}" class="btn-primary" style="padding: 10px 20px; font-size: 14px;">
+                    <i class="fas fa-download me-2"></i>Export
+                </a>
             </div>
-            <a href="{{ route('seller.account.export') }}" class="btn btn-light">
-                <i class="fas fa-download me-2"></i>Export
-            </a>
-        </div>
 
-        <!-- Stats -->
-        <div class="row g-3">
-            <div class="col-md-4">
-                <div class="stat-box">
-                    <div class="d-flex align-items-center gap-3">
-                        <div style="font-size: 2rem;">📤</div>
-                        <div>
-                            <div class="h3 fw-bold mb-0">{{ number_format($pointsGiven) }}</div>
-                            <div class="small opacity-90">Points Given</div>
+            <!-- Stats -->
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="stat-box">
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="font-size: 2.5rem;">📤</div>
+                            <div>
+                                <div class="h3 fw-bold mb-0" style="color: #00b09b;">{{ number_format($pointsGiven) }}</div>
+                                <div class="small" style="color: #64748b; font-weight: 600;">Points Given</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-box">
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="font-size: 2.5rem;">📥</div>
+                            <div>
+                                <div class="h3 fw-bold mb-0" style="color: #00b09b;">{{ number_format($pointsFromRedemptions) }}</div>
+                                <div class="small" style="color: #64748b; font-weight: 600;">From Redemptions</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-box">
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="font-size: 2.5rem;">👥</div>
+                            <div>
+                                <div class="h3 fw-bold mb-0" style="color: #00b09b;">{{ number_format($totalCustomers) }}</div>
+                                <div class="small" style="color: #64748b; font-weight: 600;">Total Consumers</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="stat-box">
-                    <div class="d-flex align-items-center gap-3">
-                        <div style="font-size: 2rem;">📥</div>
-                        <div>
-                            <div class="h3 fw-bold mb-0">{{ number_format($pointsFromRedemptions) }}</div>
-                            <div class="small opacity-90">From Redemptions</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-box">
-                    <div class="d-flex align-items-center gap-3">
-                        <div style="font-size: 2rem;">👥</div>
-                        <div>
-                            <div class="h3 fw-bold mb-0">{{ number_format($totalCustomers) }}</div>
-                            <div class="small opacity-90">Total Consumers</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-    </div>
 
-    <!-- Filter Tabs -->
-    <div class="filter-card">
-        <div class="filter-tabs">
-            <a href="{{ route('seller.activity') }}" class="filter-tab {{ $filter === 'all' ? 'active' : '' }}">
-                All Activities
-            </a>
-            <a href="{{ route('seller.activity', ['filter' => 'earn']) }}" class="filter-tab {{ $filter === 'earn' ? 'active' : '' }}">
-                📤 Points Given
-            </a>
-            <a href="{{ route('seller.activity', ['filter' => 'spend']) }}" class="filter-tab {{ $filter === 'spend' ? 'active' : '' }}">
-                📥 Redemptions
-            </a>
-            <a href="{{ route('seller.activity', ['filter' => 'rewards']) }}" class="filter-tab {{ $filter === 'rewards' ? 'active' : '' }}">
-                🎁 Rewards
-            </a>
-        </div>
-    </div>
-
-    <!-- Transactions List -->
-    <div class="transactions-card">
-        @if($transactions->count() > 0)
-            @foreach($transactions as $transaction)
-            <div class="transaction-row" onclick='showTransactionModal(@json($transaction))'>
-                <div class="d-flex align-items-center gap-3">
-                    <!-- Icon -->
-                    @if($transaction->activity_type === 'point_transaction')
-                        <div class="transaction-icon {{ $transaction->type }}">
-                            @if($transaction->type === 'earn')
-                                ✅
-                            @else
-                                💳
-                            @endif
-                        </div>
-                    @else
-                        <div class="transaction-icon {{ $transaction->status }}">
+        <!-- Activity List Card -->
+        <div class="activity-card">
+            @if($transactions->count() > 0)
+                <div class="activity-list">
+                    @foreach($transactions as $transaction)
+                    <div class="activity-item" onclick='showTransactionModal(@json($transaction))'>
+                        <div class="activity-avatar">
                             @if($transaction->status === 'pending')
                                 🎁
                             @elseif($transaction->status === 'approved')
@@ -373,279 +294,154 @@ body.modal-open .mobile-nav-menu {
                                 🎁
                             @endif
                         </div>
-                    @endif
-
-                    <!-- Transaction Details -->
-                    <div class="flex-grow-1">
-                        <div class="fw-bold text-dark mb-1">
-                            {{ $transaction->consumer_name ?? 'Customer #' . $transaction->consumer_id }}
-                        </div>
-                        <div class="d-flex flex-wrap gap-2 align-items-center text-muted small">
-                            <span>
-                                @if($transaction->activity_type === 'point_transaction')
-                                    @if($transaction->type === 'earn')
-                                        @if($transaction->receipt_code)
-                                            📄 Receipt Transaction
-                                        @else
-                                            Points Given
-                                        @endif
-                                    @else
-                                        Redeemed Points
-                                    @endif
+                        <div class="activity-details">
+                            <div class="activity-name">{{ $transaction->consumer_name ?? 'Customer' }}</div>
+                            <div class="activity-desc">
+                                @if($transaction->status === 'pending')
+                                    Requested reward
+                                @elseif($transaction->status === 'approved')
+                                    Reward approved
+                                @elseif($transaction->status === 'rejected')
+                                    Reward rejected
                                 @else
-                                    @if($transaction->status === 'pending')
-                                        🎁 Requested reward
-                                    @elseif($transaction->status === 'approved')
-                                        ✨ Reward approved by admin
-                                    @elseif($transaction->status === 'rejected')
-                                        ❌ Reward rejected
-                                    @else
-                                        🎁 Reward activity
-                                    @endif
+                                    Reward activity
                                 @endif
-                            </span>
-                            @if($transaction->activity_type === 'point_transaction' && $transaction->item_name)
-                                <span class="text-muted">•</span>
-                                <span>{{ $transaction->item_name }}</span>
-                            @elseif($transaction->activity_type === 'reward_redemption')
-                                <span class="text-muted">•</span>
-                                <span>{{ $transaction->reward_name }}</span>
-                            @endif
-                            <span class="text-muted">•</span>
-                            <span>{{ \Carbon\Carbon::parse($transaction->scanned_at ?? $transaction->created_at)->format('M d, Y g:i A') }}</span>
+                                @if($transaction->reward_name)
+                                    • {{ $transaction->reward_name }}
+                                @endif
+                            </div>
                         </div>
-                    </div>
-
-                    <!-- Points Badge -->
-                    @if($transaction->activity_type === 'point_transaction')
-                        <div class="points-badge {{ $transaction->type }}">
-                            {{ number_format($transaction->points ?? 0) }} pts
-                        </div>
-                    @else
-                        <div class="points-badge {{ $transaction->status }}">
+                        <div class="activity-points">
                             {{ number_format(($transaction->points_required ?? 0) * ($transaction->quantity ?? 1)) }} pts
                         </div>
-                    @endif
+                    </div>
+                    @endforeach
                 </div>
-            </div>
-            @endforeach
 
-            <!-- Pagination -->
-            <div class="mt-4">
-                {{ $transactions->links() }}
-            </div>
-        @else
-            <div class="empty-state">
-                <div class="empty-state-icon">📭</div>
-                <h3 class="h5 fw-bold mb-2">No Transactions Found</h3>
-                <p class="text-muted mb-3">
-                    @if($filter !== 'all')
-                        No transactions match the selected filter.
-                    @else
-                        Start scanning QR codes to see your activity here!
-                    @endif
-                </p>
-                @if($filter !== 'all')
-                    <a href="{{ route('seller.activity') }}" class="btn btn-primary">View All Transactions</a>
-                @endif
-            </div>
-        @endif
+                <!-- Pagination -->
+                <div class="mt-4">
+                    {{ $transactions->links() }}
+                </div>
+            @else
+                <div class="empty-state">
+                    <div class="empty-icon">🚀</div>
+                    <h3 style="font-weight: 700; color: #333; margin-bottom: 12px;">
+                        Ready to Get Started?
+                    </h3>
+                    <p style="color: #666; margin-bottom: 24px;">
+                        Create your first receipt to start tracking your green impact!
+                    </p>
+                    <a href="{{ route('seller.receipts.create') }}" class="btn-primary">Create Receipt</a>
+                </div>
+            @endif
+        </div>
     </div>
 </main>
 
 <!-- Transaction Detail Modal -->
-<div id="transactionModal" class="modal-backdrop" onclick="closeTransactionModal(event)">
-    <div class="modal-content bg-white rounded-3 shadow-lg p-3" style="max-width: 550px; width: 100%;" onclick="event.stopPropagation();">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="h5 fw-bold mb-0">
-                    <i class="fas fa-receipt text-primary me-2"></i>Transaction Details
-                </h3>
-                <button class="btn btn-light rounded-circle p-0" onclick="closeTransactionModal(event)" style="width: 32px; height: 32px;">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
+<div id="transactionModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 99999; opacity: 0; visibility: hidden; transition: all 0.3s; backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 20px;" onclick="closeTransactionModal(event)">
+    <div style="background: white; border-radius: 20px; padding: 32px; max-width: 550px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);" onclick="event.stopPropagation();">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 style="font-size: 20px; font-weight: 700; margin: 0;">
+                <i class="fas fa-receipt" style="color: #00b09b; margin-right: 8px;"></i>Transaction Details
+            </h3>
+            <button onclick="closeTransactionModal(event)" style="background: #f8f9fa; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
 
-            <div class="row g-3">
-                <div class="col-6">
-                    <div class="text-muted small">Transaction ID</div>
-                    <div class="fw-semibold" id="modalTransactionId">#000000</div>
-                </div>
-                <div class="col-6">
-                    <div class="text-muted small">Type</div>
-                    <div class="fw-semibold" id="modalTransactionType">Points Given</div>
-                </div>
-                <div class="col-12">
-                    <div class="text-muted small">Total Points</div>
-                    <div class="fw-bold text-success" id="modalPoints">0 points</div>
-                </div>
-                <div class="col-12">
-                    <div class="text-muted small">Consumer</div>
-                    <div class="fw-semibold" id="modalCustomerName">-</div>
-                    <div class="text-muted small" id="modalCustomerId">-</div>
-                </div>
-                <div class="col-12" id="modalItemsSection">
-                    <div class="text-muted small" id="modalItemsLabel">Items</div>
-                    <div id="modalItemsList">-</div>
-                </div>
-                <div class="col-12" id="modalRewardSection" style="display: none;">
-                    <div class="text-muted small">Reward Redeemed</div>
-                    <div id="modalRewardInfo">-</div>
-                </div>
-                <div class="col-12">
-                    <div class="text-muted small">Date & Time</div>
-                    <div class="fw-semibold" id="modalDateTime">-</div>
-                </div>
+        <div class="row g-3">
+            <div class="col-6">
+                <div style="color: #666; font-size: 12px; margin-bottom: 4px;">Transaction ID</div>
+                <div style="font-weight: 600;" id="modalTransactionId">#000000</div>
             </div>
-
-            <div class="text-center mt-3">
-                <button class="btn btn-primary btn-sm px-4" onclick="closeTransactionModal(event)">Close</button>
+            <div class="col-6">
+                <div style="color: #666; font-size: 12px; margin-bottom: 4px;">Type</div>
+                <div style="font-weight: 600;" id="modalTransactionType">-</div>
+            </div>
+            <div class="col-12">
+                <div style="color: #666; font-size: 12px; margin-bottom: 4px;">Total Points</div>
+                <div style="font-weight: 700; color: #10b981; font-size: 18px;" id="modalPoints">0 pts</div>
+            </div>
+            <div class="col-12">
+                <div style="color: #666; font-size: 12px; margin-bottom: 4px;">Consumer</div>
+                <div style="font-weight: 600;" id="modalCustomerName">-</div>
+            </div>
+            <div class="col-12" id="modalItemsSection">
+                <div style="color: #666; font-size: 12px; margin-bottom: 8px;" id="modalItemsLabel">Items</div>
+                <div id="modalItemsList">-</div>
+            </div>
+            <div class="col-12" id="modalRewardSection" style="display: none;">
+                <div style="color: #666; font-size: 12px; margin-bottom: 8px;">Reward</div>
+                <div id="modalRewardInfo">-</div>
+            </div>
+            <div class="col-12">
+                <div style="color: #666; font-size: 12px; margin-bottom: 4px;">Date & Time</div>
+                <div style="font-weight: 600;" id="modalDateTime">-</div>
             </div>
         </div>
+
+        <div class="text-center mt-4">
+            <button onclick="closeTransactionModal(event)" class="btn-primary" style="padding: 10px 24px;">Close</button>
+        </div>
+    </div>
 </div>
 
 <script>
 function showTransactionModal(transaction) {
     document.getElementById('modalTransactionId').textContent = '#' + String(transaction.id).padStart(6, '0');
 
-    // Determine transaction type
-    const isRedemption = transaction.type === 'spend';
-    const isReceiptTransaction = transaction.type === 'earn' && transaction.receipt_code;
+    const isRewardRedemption = transaction.activity_type === 'reward_redemption';
+    const isPointTransaction = transaction.activity_type === 'point_transaction';
 
     let transactionType = '';
-    if (isRedemption) {
-        transactionType = '🎁 Redeemed Points (Reward)';
-    } else if (isReceiptTransaction) {
-        transactionType = '📄 Receipt Transaction (Items)';
-    } else {
-        transactionType = '📤 Points Given';
+    let totalPoints = 0;
+
+    if (isRewardRedemption) {
+        transactionType = '🎁 Reward Redemption';
+        totalPoints = (transaction.points_required || 0) * (transaction.quantity || 1);
+    } else if (isPointTransaction) {
+        totalPoints = transaction.points || 0;
+        transactionType = transaction.type === 'spend' ? '💳 Redeemed' : '✅ Earned';
     }
 
     document.getElementById('modalTransactionType').textContent = transactionType;
+    document.getElementById('modalPoints').textContent = totalPoints + ' pts';
+    document.getElementById('modalDateTime').textContent = new Date(transaction.created_at).toLocaleString();
+    document.getElementById('modalCustomerName').textContent = transaction.consumer_name || 'Customer';
 
-    // Calculate and display total points
-    const totalPoints = transaction.points || 0;
-    document.getElementById('modalPoints').textContent = totalPoints + ' points';
-
-    document.getElementById('modalDateTime').textContent = new Date(transaction.scanned_at || transaction.created_at).toLocaleString();
-
-    document.getElementById('modalCustomerName').textContent = transaction.consumer_name || 'Consumer #' + transaction.consumer_id;
-    document.getElementById('modalCustomerId').textContent = '#' + String(transaction.consumer_id).padStart(6, '0');
-
-    // Handle different transaction types
     const itemsSection = document.getElementById('modalItemsSection');
     const rewardSection = document.getElementById('modalRewardSection');
-    const itemsListEl = document.getElementById('modalItemsList');
-    const rewardInfoEl = document.getElementById('modalRewardInfo');
 
-    if (isRedemption) {
-        // This is a REWARD redemption (spend type)
+    if (isRewardRedemption) {
         itemsSection.style.display = 'none';
         rewardSection.style.display = 'block';
-
-        let rewardName = transaction.item_name || 'Reward Item';
-        let rewardDetails = '';
-
-        if (transaction.description) {
-            // Extract reward details from description
-            const match = transaction.description.match(/Redeemed:\s*([^f]+?)\s+from/i);
-            if (match && match[1]) {
-                rewardName = match[1].trim();
-            }
-        }
-
-        rewardInfoEl.innerHTML = `
-            <div class="p-3 bg-light rounded-3 border border-primary">
-                <div class="d-flex align-items-center gap-3">
-                    <div style="font-size: 2.5rem;">🎁</div>
-                    <div class="flex-grow-1">
-                        <div class="fw-bold text-dark">${rewardName}</div>
-                        <div class="text-muted small">Reward-based redemption</div>
-                        <div class="text-primary fw-semibold mt-1">${totalPoints} points redeemed</div>
-                    </div>
-                </div>
+        document.getElementById('modalRewardInfo').innerHTML = `
+            <div style="background: #f8f9fa; padding: 16px; border-radius: 12px;">
+                <div style="font-weight: 600;">${transaction.reward_name || 'Reward'}</div>
+                <div style="color: #666; font-size: 12px; margin-top: 4px;">Qty: ${transaction.quantity || 1}</div>
             </div>
         `;
     } else {
-        // This is an ITEM-based transaction (receipt transaction or direct QR scan)
         itemsSection.style.display = 'block';
         rewardSection.style.display = 'none';
-
-        // Update label based on transaction type
-        document.getElementById('modalItemsLabel').textContent = isReceiptTransaction ? 'Items Purchased' : 'Items';
-
-        // Try to parse receipt_items from pending_transactions
-        if (transaction.receipt_items) {
-            try {
-                const items = typeof transaction.receipt_items === 'string' ? JSON.parse(transaction.receipt_items) : transaction.receipt_items;
-                if (Array.isArray(items) && items.length > 0) {
-                    let itemsHtml = '<div class="list-unstyled mb-0 bg-light p-3 rounded-3">';
-                    items.forEach((item, index) => {
-                        const borderClass = index < items.length - 1 ? 'border-bottom' : '';
-                        itemsHtml += `
-                            <div class="d-flex justify-content-between align-items-center py-2 ${borderClass}">
-                                <div>
-                                    <div class="fw-semibold text-dark">${item.name}</div>
-                                    <div class="text-muted small">Qty: ${item.quantity}</div>
-                                </div>
-                                <span class="badge bg-success">${item.total_points} pts</span>
-                            </div>
-                        `;
-                    });
-                    itemsHtml += '</div>';
-                    itemsListEl.innerHTML = itemsHtml;
-                } else {
-                    displaySingleItem();
-                }
-            } catch (e) {
-                displaySingleItem();
-            }
-        } else {
-            displaySingleItem();
-        }
-    }
-
-    function displaySingleItem() {
-        let itemName = 'Direct Transaction';
-        let quantity = transaction.units_scanned || totalPoints || 1;
-
-        if (transaction.item_name) {
-            itemName = transaction.item_name;
-        } else if (transaction.extracted_items) {
-            itemName = transaction.extracted_items;
-        } else if (transaction.description && transaction.description.includes('Purchased:')) {
-            const match = transaction.description.match(/Purchased:\s*([^f]+?)\s+from/i);
-            itemName = match && match[1] ? match[1].trim() : 'Receipt Items';
-        } else if (transaction.receipt_code) {
-            itemName = 'Receipt #' + transaction.receipt_code;
-        } else if (transaction.qr_code_id) {
-            itemName = 'Item #' + transaction.qr_code_id;
-        }
-
-        itemsListEl.innerHTML = `
-            <div class="bg-light p-3 rounded-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="fw-semibold text-dark">${itemName}</div>
-                        <div class="text-muted small">Qty: ${quantity}</div>
-                    </div>
-                    <span class="badge bg-success">${totalPoints} pts</span>
-                </div>
+        document.getElementById('modalItemsList').innerHTML = `
+            <div style="background: #f8f9fa; padding: 16px; border-radius: 12px;">
+                <div style="font-weight: 600;">${transaction.item_name || 'Item'}</div>
             </div>
         `;
     }
 
-    // Add modal-open class to body (CSS will handle z-index and overflow)
-    document.body.classList.add('modal-open');
-
-    document.getElementById('transactionModal').classList.add('active');
+    const modal = document.getElementById('transactionModal');
+    modal.style.opacity = '1';
+    modal.style.visibility = 'visible';
 }
 
 function closeTransactionModal(event) {
-    if (!event || event.target === document.getElementById('transactionModal') || event.target.closest('.btn')) {
-        // Remove modal-open class from body
-        document.body.classList.remove('modal-open');
-
-        document.getElementById('transactionModal').classList.remove('active');
+    if (!event || event.target.id === 'transactionModal' || event.target.closest('button')) {
+        const modal = document.getElementById('transactionModal');
+        modal.style.opacity = '0';
+        modal.style.visibility = 'hidden';
     }
 }
 </script>

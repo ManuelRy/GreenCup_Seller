@@ -237,27 +237,64 @@ class SellerController extends Controller
     {
         $seller = Auth::guard('seller')->user();
 
-        // Get transaction history with pagination
-        $query = PointTransaction::where('point_transactions.seller_id', $seller->id)
-            ->leftJoin('consumers', 'point_transactions.consumer_id', '=', 'consumers.id')
-            ->leftJoin('qr_codes', 'point_transactions.qr_code_id', '=', 'qr_codes.id')
-            ->leftJoin('items', 'qr_codes.item_id', '=', 'items.id')
-            ->select([
-                'point_transactions.*',
-                'consumers.full_name as consumer_name',
-                'items.name as item_name',
-                'items.points_per_unit'
-            ])
-            ->orderBy('point_transactions.scanned_at', 'desc')
-            ->orderBy('point_transactions.created_at', 'desc');
+        try {
+            // Get ONLY reward redemption activities
+            $rewardRedemptions = DB::table('redeem_histories')
+                ->join('consumers', 'redeem_histories.consumer_id', '=', 'consumers.id')
+                ->join('rewards', 'redeem_histories.reward_id', '=', 'rewards.id')
+                ->where('rewards.seller_id', $seller->id)
+                ->select([
+                    'redeem_histories.id',
+                    'redeem_histories.consumer_id',
+                    'redeem_histories.quantity',
+                    'redeem_histories.status',
+                    'redeem_histories.created_at',
+                    'redeem_histories.approved_at',
+                    'consumers.full_name as consumer_name',
+                    'rewards.name as reward_name',
+                    'rewards.points_required',
+                    DB::raw("'reward_redemption' as activity_type")
+                ])
+                ->orderBy('redeem_histories.created_at', 'desc')
+                ->get();
 
-        // Apply filter if requested
-        $filter = $request->get('filter', 'all');
-        if ($filter === 'earn' || $filter === 'spend') {
-            $query->where('point_transactions.type', $filter);
+            Log::info('Reward redemptions fetched', [
+                'seller_id' => $seller->id,
+                'count' => $rewardRedemptions->count()
+            ]);
+
+            // Manual pagination
+            $perPage = 50;
+            $currentPage = $request->get('page', 1);
+            $offset = ($currentPage - 1) * $perPage;
+
+            $paginatedItems = $rewardRedemptions->slice($offset, $perPage)->values();
+
+            $transactions = new \Illuminate\Pagination\LengthAwarePaginator(
+                $paginatedItems,
+                $rewardRedemptions->count(),
+                $perPage,
+                $currentPage,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+
+            // Debug logging
+            Log::info('Activity page loaded', [
+                'seller_id' => $seller->id,
+                'total_activities' => $rewardRedemptions->count(),
+                'paginated_count' => $paginatedItems->count()
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error fetching activity data: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            $transactions = new \Illuminate\Pagination\LengthAwarePaginator(
+                collect(),
+                0,
+                50,
+                1
+            );
         }
-
-        $transactions = $query->paginate(50);
 
         // Get statistics
         $pointsGiven = PointTransaction::where('seller_id', $seller->id)
@@ -275,7 +312,6 @@ class SellerController extends Controller
         return view('sellers.activity', compact(
             'seller',
             'transactions',
-            'filter',
             'pointsGiven',
             'pointsFromRedemptions',
             'totalCustomers'
