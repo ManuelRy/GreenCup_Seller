@@ -40,7 +40,10 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background: #ffffff;
+            background: linear-gradient(-45deg, #00b09b, #00c9a1, #00d9a6, #00e8ab, #00b09b);
+            background-size: 400% 400%;
+            background-attachment: fixed;
+            animation: gradientShift 15s ease infinite;
             color: #333333;
             line-height: 1.6;
             min-height: 100vh;
@@ -51,9 +54,6 @@
         /* App Container */
         .app-container {
             min-height: 100vh;
-            background: linear-gradient(-45deg, #00b09b, #00c9a1, #00d9a6, #00e8ab, #00b09b);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
             display: flex;
             flex-direction: column;
             position: relative;

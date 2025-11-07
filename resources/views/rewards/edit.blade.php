@@ -614,16 +614,6 @@ body {
                         @enderror
                         <div class="helper-text">When the reward expires</div>
                     </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Status</label>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="is_active" name="is_active" class="checkbox-input"
-                                   value="1" {{ old('is_active', $reward->is_active) ? 'checked' : '' }}>
-                            <label for="is_active">Reward is active and available for redemption</label>
-                        </div>
-                        <div class="helper-text">Uncheck to temporarily disable this reward</div>
-                    </div>
                 </div>
 
                 <!-- Current Image -->
@@ -641,17 +631,28 @@ body {
                 <!-- Image Upload -->
                 <div class="form-group full-width">
                     <label for="image" class="form-label">Update Image</label>
-                    <div class="file-upload-container" onclick="document.getElementById('image').click()">
+                    <div class="file-upload-container" id="uploadContainer" onclick="document.getElementById('image').click()">
                         <div class="file-upload-icon">📷</div>
                         <div class="file-upload-text">Take photo or upload new image</div>
                         <div class="file-upload-hint">JPG, PNG, GIF up to 5MB (optional)</div>
                     </div>
                     <input type="file" id="image" name="image" class="file-input"
-                           accept="image/jpeg,image/png,image/jpg,image/gif">
+                           accept="image/jpeg,image/png,image/jpg,image/gif" capture="environment">
                     @error('image')
                         <div class="form-error">{{ $message }}</div>
                     @enderror
                     <div class="helper-text">Leave empty to keep current image</div>
+
+                    <!-- New Image Preview -->
+                    <div id="imagePreview" style="display: none; margin-top: 1rem; text-align: center;">
+                        <div style="position: relative; display: inline-block;">
+                            <img id="previewImg" src="" alt="Preview" style="max-width: 300px; max-height: 300px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                            <button type="button" onclick="removeNewImage()" style="position: absolute; top: -10px; right: -10px; width: 32px; height: 32px; border-radius: 50%; background: #ef4444; color: white; border: 2px solid white; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div id="fileName" style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;"></div>
+                    </div>
                 </div>
 
                 <!-- Form Actions -->
@@ -672,17 +673,53 @@ body {
 // File upload preview
 document.getElementById('image').addEventListener('change', function(e) {
     const file = e.target.files[0];
-    const container = document.querySelector('.file-upload-container');
+    const container = document.getElementById('uploadContainer');
+    const preview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    const fileName = document.getElementById('fileName');
 
     if (file) {
-        const fileName = file.name;
-        container.innerHTML = `
-            <div class="file-upload-icon">✅</div>
-            <div class="file-upload-text">New image selected: ${fileName}</div>
-            <div class="file-upload-hint">Click to change image</div>
-        `;
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file (JPG, PNG, GIF)');
+            this.value = '';
+            return;
+        }
+
+        // Validate file size (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Image size must be less than 5MB');
+            this.value = '';
+            return;
+        }
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.style.display = 'block';
+            container.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+
+        // Show file info
+        const fileSize = (file.size / 1024 / 1024).toFixed(2);
+        fileName.textContent = `New image: ${file.name} (${fileSize} MB)`;
     }
 });
+
+// Remove new image function
+function removeNewImage() {
+    const fileInput = document.getElementById('image');
+    const container = document.getElementById('uploadContainer');
+    const preview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+
+    fileInput.value = '';
+    previewImg.src = '';
+    preview.style.display = 'none';
+    container.style.display = 'flex';
+}
 
 // Date validation
 document.getElementById('valid_from').addEventListener('change', function() {

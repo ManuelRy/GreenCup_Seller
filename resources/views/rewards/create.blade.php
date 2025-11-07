@@ -532,7 +532,7 @@ body::before {
                 <!-- Image Upload -->
                 <div class="form-group full-width">
                     <label for="image" class="form-label">Reward Image</label>
-                    <div class="file-upload-container" onclick="document.getElementById('image').click()">
+                    <div class="file-upload-container" id="uploadContainer" onclick="document.getElementById('image').click()">
                         <div class="file-upload-icon">
                             <i class="fas fa-camera"></i>
                         </div>
@@ -540,10 +540,21 @@ body::before {
                         <div class="file-upload-hint">JPG, PNG, GIF up to 5MB</div>
                     </div>
                     <input type="file" id="image" name="image" class="file-input"
-                           accept="image/jpeg,image/png,image/jpg,image/gif">
+                           accept="image/jpeg,image/png,image/jpg,image/gif" capture="environment">
                     @error('image')
                         <div class="form-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                     @enderror
+
+                    <!-- Image Preview -->
+                    <div id="imagePreview" style="display: none; margin-top: 1rem; text-align: center;">
+                        <div style="position: relative; display: inline-block;">
+                            <img id="previewImg" src="" alt="Preview" style="max-width: 300px; max-height: 300px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                            <button type="button" onclick="removeImage()" style="position: absolute; top: -10px; right: -10px; width: 32px; height: 32px; border-radius: 50%; background: #ef4444; color: white; border: 2px solid white; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div id="fileName" style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;"></div>
+                    </div>
                 </div>
 
                 <!-- Form Actions -->
@@ -566,18 +577,53 @@ body::before {
 // File upload preview
 document.getElementById('image').addEventListener('change', function(e) {
     const file = e.target.files[0];
-    const container = document.querySelector('.file-upload-container');
+    const container = document.getElementById('uploadContainer');
+    const preview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    const fileName = document.getElementById('fileName');
 
     if (file) {
-        const fileName = file.name;
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file (JPG, PNG, GIF)');
+            this.value = '';
+            return;
+        }
+
+        // Validate file size (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Image size must be less than 5MB');
+            this.value = '';
+            return;
+        }
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.style.display = 'block';
+            container.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+
+        // Show file info
         const fileSize = (file.size / 1024 / 1024).toFixed(2);
-        container.querySelector('.file-upload-icon').innerHTML = '<i class="fas fa-check-circle"></i>';
-        container.querySelector('.file-upload-text').textContent = fileName;
-        container.querySelector('.file-upload-hint').textContent = `Size: ${fileSize} MB - Click to change`;
-        container.style.borderColor = '#667eea';
-        container.style.background = 'rgba(102, 126, 234, 0.1)';
+        fileName.textContent = `${file.name} (${fileSize} MB)`;
     }
 });
+
+// Remove image function
+function removeImage() {
+    const fileInput = document.getElementById('image');
+    const container = document.getElementById('uploadContainer');
+    const preview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+
+    fileInput.value = '';
+    previewImg.src = '';
+    preview.style.display = 'none';
+    container.style.display = 'flex';
+}
 
 // Date validation
 document.getElementById('valid_from').addEventListener('change', function() {
