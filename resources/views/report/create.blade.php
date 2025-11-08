@@ -454,6 +454,14 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // Fix for Android: Use wildcard to enable camera option
+      const fileInput = document.getElementById('image');
+      const isAndroid = /android/i.test(navigator.userAgent);
+      
+      if (isAndroid) {
+        fileInput.setAttribute('accept', 'image/*');
+      }
+
       // Character counters
       const titleInput = document.getElementById('title');
       const descInput = document.getElementById('description');

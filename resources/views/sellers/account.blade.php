@@ -389,6 +389,14 @@ function previewAndSubmitImage(input) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Fix for Android: Use wildcard to enable camera option
+    const profilePictureInput = document.getElementById('profilePictureInput');
+    const isAndroid = /android/i.test(navigator.userAgent);
+    
+    if (isAndroid && profilePictureInput) {
+        profilePictureInput.setAttribute('accept', 'image/*');
+    }
+
     const fadeElements = document.querySelectorAll('.fade-in');
     fadeElements.forEach((el, index) => {
         el.style.opacity = '0';

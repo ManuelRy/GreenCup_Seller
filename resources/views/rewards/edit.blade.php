@@ -670,6 +670,16 @@ body {
 </div>
 
 <script>
+// Fix for Android: Use wildcard to enable camera option
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('image');
+    const isAndroid = /android/i.test(navigator.userAgent);
+    
+    if (isAndroid) {
+        imageInput.setAttribute('accept', 'image/*');
+    }
+});
+
 // File upload preview
 document.getElementById('image').addEventListener('change', function(e) {
     const file = e.target.files[0];

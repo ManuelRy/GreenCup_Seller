@@ -2431,6 +2431,14 @@
         @endforeach
         ];
 
+        // Fix for Android: Use wildcard to enable camera option
+        const photoInput = document.getElementById('photoInput');
+        const isAndroid = /android/i.test(navigator.userAgent);
+        
+        if (isAndroid) {
+            photoInput.setAttribute('accept', 'image/*');
+        }
+
         // File input trigger
         function triggerFileInput() {
         document.getElementById('photoInput').click();

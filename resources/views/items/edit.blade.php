@@ -655,6 +655,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.getElementById('submitBtn');
     const hasCurrentImage = {{ $item->image_url ? 'true' : 'false' }};
 
+    // Fix for Android: Use wildcard to enable camera option
+    const isAndroid = /android/i.test(navigator.userAgent);
+    if (isAndroid) {
+        imageInput.setAttribute('accept', 'image/*');
+    }
+
     // File input change
     imageInput.addEventListener('change', function(e) {
         const file = e.target.files[0];

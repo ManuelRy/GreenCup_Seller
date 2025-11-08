@@ -574,6 +574,17 @@ body::before {
 </div>
 
 <script>
+// Fix for Android: Remove specific MIME types to show camera option
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('image');
+    const isAndroid = /android/i.test(navigator.userAgent);
+    
+    if (isAndroid) {
+        // For Android, use wildcard to enable camera option
+        imageInput.setAttribute('accept', 'image/*');
+    }
+});
+
 // File upload preview
 document.getElementById('image').addEventListener('change', function(e) {
     const file = e.target.files[0];
