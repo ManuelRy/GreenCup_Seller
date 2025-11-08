@@ -155,7 +155,6 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.5;
     color: var(--text-primary);
-    background: linear-gradient(135deg, var(--background) 0%, #e0f2fe 100%);
     margin: 0;
     padding: 0;
     position: relative;

@@ -262,8 +262,9 @@
   </div>
 
   <div class="card-body-custom">
-    <form action="{{ route('login.store') }}" method="POST" id="loginForm">
+    <form action="{{ route('login.store') }}" method="POST" id="loginForm" autocomplete="off">
       @csrf
+      <input type="hidden" id="formSubmitted" value="no">
 
       <div class="mb-3">
         <label for="email" class="form-label">Business Email</label>
@@ -357,8 +358,52 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // Get form submitted flag
+  const formSubmitted = document.getElementById('formSubmitted');
+
+  // Reset button state on page load (fixes back button issue)
+  function resetLoginButton() {
+    const button = document.getElementById('loginButton');
+    const icon = document.getElementById('loginIcon');
+    const text = document.getElementById('loginText');
+
+    if (button) button.disabled = false;
+    if (icon) icon.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>';
+    if (text) text.textContent = 'Sign In';
+    if (formSubmitted) formSubmitted.value = 'no';
+  }
+
+  // Reset on ALL page loads (including back button navigation)
+  window.addEventListener('pageshow', function(event) {
+    // Check if user came back after login (back button pressed)
+    if (event.persisted && formSubmitted && formSubmitted.value === 'yes') {
+      // User pressed back button after successful login - submit logout form
+      const logoutForm = document.createElement('form');
+      logoutForm.method = 'POST';
+      logoutForm.action = '{{ route("logout") }}';
+
+      const csrfToken = document.createElement('input');
+      csrfToken.type = 'hidden';
+      csrfToken.name = '_token';
+      csrfToken.value = '{{ csrf_token() }}';
+
+      logoutForm.appendChild(csrfToken);
+      document.body.appendChild(logoutForm);
+      logoutForm.submit();
+      return;
+    }
+
+    // Otherwise just reset button state
+    resetLoginButton();
+  });
+
   // Form submission
   form.addEventListener('submit', function(e) {
+    // Mark form as submitted
+    if (formSubmitted) {
+      formSubmitted.value = 'yes';
+    }
+
     const button = document.getElementById('loginButton');
     const icon = document.getElementById('loginIcon');
     const text = document.getElementById('loginText');
@@ -366,12 +411,6 @@ document.addEventListener('DOMContentLoaded', function() {
     button.disabled = true;
     icon.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>';
     text.textContent = 'Signing In...';
-
-    setTimeout(() => {
-      button.disabled = false;
-      icon.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>';
-      text.textContent = 'Sign In';
-    }, 10000);
   });
 });
 </script>

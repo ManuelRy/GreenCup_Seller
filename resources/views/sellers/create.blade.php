@@ -815,6 +815,27 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // Reset button state on page load (fixes back button issue)
+  function resetRegisterButton() {
+    const button = document.getElementById('submitButton');
+    const icon = document.getElementById('submitIcon');
+    const text = document.getElementById('submitText');
+
+    if (button) button.disabled = false;
+    if (icon) icon.innerHTML = '<i class="fas fa-store me-2"></i>';
+    if (text) text.textContent = 'Register Business';
+  }
+
+  // Reset on ALL page loads (including back button navigation)
+  window.addEventListener('pageshow', function(event) {
+    resetRegisterButton();
+  });
+
+  // Also reset on DOMContentLoaded as backup
+  document.addEventListener('DOMContentLoaded', function() {
+    resetRegisterButton();
+  });
+
   form.addEventListener('submit', function(e) {
     const button = document.getElementById('submitButton');
     const icon = document.getElementById('submitIcon');
@@ -844,11 +865,7 @@ document.addEventListener('DOMContentLoaded', function() {
     icon.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>';
     text.textContent = 'Creating Account...';
 
-    setTimeout(() => {
-      button.disabled = false;
-      icon.innerHTML = '<i class="fas fa-store me-2"></i>';
-      text.textContent = 'Register Business';
-    }, 15000);
+    // Fallback timeout removed - button will reset on page navigation via pageshow event
   });
 
   updateProgress();
