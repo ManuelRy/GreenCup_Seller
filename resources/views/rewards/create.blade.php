@@ -540,7 +540,7 @@ body::before {
                         <div class="file-upload-hint">JPG, PNG, GIF up to 5MB</div>
                     </div>
                     <input type="file" id="image" name="image" class="file-input"
-                           accept="image/*">
+                           accept="image/*" capture="environment">
                     @error('image')
                         <div class="form-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                     @enderror
