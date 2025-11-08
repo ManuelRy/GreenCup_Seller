@@ -100,7 +100,7 @@
                             <div class="small fw-semibold">Change Photo</div>
                         </div>
                     </div>
-                    <input type="file" id="profilePictureInput" name="image" class="profile-file-input" accept="image/*" capture="environment" onchange="previewAndSubmitImage(this)" form="profilePhotoForm">
+                    <input type="file" id="profilePictureInput" name="image" class="profile-file-input" accept="image/jpeg,image/png,image/jpg,image/gif" onchange="previewAndSubmitImage(this)" form="profilePhotoForm">
                 </div>
             </div>
 

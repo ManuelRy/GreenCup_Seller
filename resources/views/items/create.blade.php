@@ -390,8 +390,7 @@
                     id="image"
                     name="image"
                     class="file-input @error('image') error @enderror"
-                    accept="image/*"
-                    capture="environment"
+                    accept="image/jpeg,image/png,image/jpg,image/gif"
                 >
                 <div class="image-upload-area" id="uploadArea" onclick="document.getElementById('image').click()">
                     <div class="upload-icon"><i class="fas fa-camera"></i></div>

@@ -2185,7 +2185,7 @@
                 <div class="upload-text">Add photos to your post</div>
                 <div class="upload-subtext">Click to select photos or drag and drop (Max 5MB each)</div>
                 </div>
-                <input type="file" id="photoInput" class="file-input" multiple accept="image/*" capture="environment">
+                <input type="file" id="photoInput" class="file-input" multiple accept="image/jpeg,image/png,image/jpg,image/gif">
 
                 <!-- Photo Preview Grid -->
                 <div id="photoGrid" class="photo-preview-grid">
