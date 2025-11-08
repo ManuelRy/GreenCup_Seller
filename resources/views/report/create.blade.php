@@ -196,7 +196,7 @@
                         <i class="fas fa-camera me-2"></i>Attach Screenshot or Photo (optional)
                       </label>
                       <div class="upload-area border-2 border-dashed rounded-3 p-4 text-center position-relative">
-                        <input class="d-none" type="file" id="image" name="image" accept="image/*" capture>
+                        <input class="d-none" type="file" id="image" name="image" accept="image/*">
                         <div id="uploadContent">
                           <div class="mb-3">
                             <i class="fas fa-camera fa-3x text-primary opacity-75"></i>

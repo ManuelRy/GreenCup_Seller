@@ -637,7 +637,7 @@ body {
                         <div class="file-upload-hint">JPG, PNG, GIF up to 5MB (optional)</div>
                     </div>
                     <input type="file" id="image" name="image" class="file-input"
-                           accept="image/*" capture>
+                           accept="image/*">
                     @error('image')
                         <div class="form-error">{{ $message }}</div>
                     @enderror
