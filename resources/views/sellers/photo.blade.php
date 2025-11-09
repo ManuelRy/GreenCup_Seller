@@ -24,35 +24,24 @@
         -webkit-text-size-adjust: 100%;
         }
 
-        body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-        background: #ffffff;
-        color: #333333;
-        line-height: 1.6;
-        min-height: 100vh;
-        overflow-x: hidden;
-        -webkit-font-smoothing: antialiased;
-        }
-
-        /* Container with Teal Theme Background */
+        /* Container */
         .dashboard-container {
         min-height: 100vh;
-        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%);
         padding-bottom: 60px;
         position: relative;
-        z-index: auto;
+        z-index: 1;
         }
 
         /* Header - Simplified */
         .dashboard-header {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(236, 253, 245, 0.95) 100%);
-        backdrop-filter: blur(20px);
+        background: #ffffff;
+        backdrop-filter: none;
         padding: 20px;
         position: sticky;
         top: 0;
         z-index: 900;
-        box-shadow: 0 4px 20px rgba(0, 176, 155, 0.15);
-        border-bottom: 2px solid rgba(0, 176, 155, 0.2);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         .header-content {
@@ -76,9 +65,9 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: rgba(0, 176, 155, 0.1);
-        border: none;
-        color: #059669;
+        background: #d1fae5;
+        border: 1px solid #10b981;
+        color: #047857;
         font-size: 20px;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -89,7 +78,7 @@
         }
 
         .header-back-btn:hover {
-        background: rgba(0, 176, 155, 0.2);
+        background: #a7f3d0;
         color: #047857;
         text-decoration: none;
         transform: scale(1.1);
@@ -103,7 +92,7 @@
         font-size: 24px;
         font-weight: 700;
         margin: 0;
-        color: #047857;
+        color: #065f46;
         letter-spacing: -0.3px;
         }
 
@@ -210,9 +199,9 @@
         }
 
         .gallery-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 176, 155, 0.15);
+            background: #ffffff !important;
+            backdrop-filter: none !important;
+            border: 1px solid rgba(16, 185, 129, 0.2) !important;
         }
 
         /* Make photo thumbnails fill more card space */
@@ -221,7 +210,7 @@
             border-radius: 20px;
         }
 
-        .user-avatar {
+        .upload-card .user-avatar {
             width: 48px;
             height: 48px;
             font-size: 18px;
@@ -522,21 +511,22 @@
 
         /* Upload Card - Teal Theme */
         .upload-card {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(20px);
-        border-radius: 24px;
-        padding: 32px;
-        margin-bottom: 0;
-        border: 2px solid rgba(0, 176, 155, 0.2);
+        background: #ffffff !important;
+        backdrop-filter: none !important;
+        border-radius: 24px !important;
+        padding: 32px !important;
+        margin-bottom: 0 !important;
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
         height: fit-content;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 8px 32px rgba(0, 176, 155, 0.15);
+        transition: all 0.3s ease !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
         }
 
         .upload-card:hover {
-        border-color: rgba(0, 176, 155, 0.4);
-        transform: translateY(-2px);
-        box-shadow: 0 12px 40px rgba(0, 176, 155, 0.25);
+        background: #ffffff !important;
+        border-color: rgba(16, 185, 129, 0.4) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
         }
 
         .upload-header {
@@ -546,7 +536,7 @@
         margin-bottom: 20px;
         }
 
-        .user-avatar {
+        .upload-card .user-avatar {
         width: 56px;
         height: 56px;
         border-radius: 16px;
@@ -570,7 +560,7 @@
 
         .user-info p {
         font-size: 13px;
-        color: #059669;
+        color: #047857;
         font-weight: 500;
         }
 
@@ -579,7 +569,7 @@
         border: none;
         padding: 16px 0;
         font-size: 16px;
-        color: #064e3b;
+        color: #065f46;
         resize: none;
         min-height: 90px;
         font-family: inherit;
@@ -592,7 +582,7 @@
         }
 
         .caption-input::placeholder {
-        color: #6ee7b7;
+        color: #10b981;
         }
 
         /* Upload Area */
@@ -602,39 +592,39 @@
         }
 
         .upload-area {
-        border: 3px dashed rgba(0, 176, 155, 0.3);
+        border: 3px dashed #a7f3d0;
         border-radius: 20px;
         padding: 48px 24px;
         text-align: center;
-        background: linear-gradient(135deg, rgba(240, 253, 250, 0.5) 0%, rgba(204, 251, 241, 0.5) 100%);
+        background: #f0fdf4;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         margin-bottom: 24px;
         }
 
         .upload-area:hover {
-        border-color: #00b09b;
-        background: linear-gradient(135deg, rgba(204, 251, 241, 0.8) 0%, rgba(167, 243, 208, 0.8) 100%);
+        border-color: #6ee7b7;
+        background: #d1fae5;
         transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 176, 155, 0.2);
+        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
         }
 
         .upload-area.dragover {
-        border-color: #00b09b;
-        background: linear-gradient(135deg, #ccfbf1 0%, #99f6e4 100%);
-        box-shadow: 0 12px 32px rgba(0, 176, 155, 0.2);
+        border-color: #34d399;
+        background: #a7f3d0;
+        box-shadow: 0 12px 32px rgba(16, 185, 129, 0.25);
         }
 
         .upload-icon {
         font-size: 56px;
         margin-bottom: 20px;
-        opacity: 0.85;
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        opacity: 0.9;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
         }
 
         .upload-text {
         font-size: 19px;
-        color: #0d9488;
+        color: #065f46;
         margin-bottom: 10px;
         font-weight: 700;
         letter-spacing: -0.3px;
@@ -642,7 +632,7 @@
 
         .upload-subtext {
         font-size: 14px;
-        color: #64748b;
+        color: #047857;
         font-weight: 500;
         }
 
@@ -686,7 +676,7 @@
 
         .photo-item {
         position: relative;
-        background: #f0f0f0;
+        background: transparent;
         border-radius: 12px;
         overflow: hidden;
         aspect-ratio: 1;
@@ -760,13 +750,13 @@
 
         /* Location Display */
         .location-display {
-        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-        border: 1px solid #93c5fd;
+        background: transparent;
+        border: 1px solid rgba(0, 176, 155, 0.3);
         border-radius: 16px;
         padding: 20px;
         margin-bottom: 24px;
         position: relative;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        box-shadow: none;
         }
 
         .location-info {
@@ -807,13 +797,13 @@
         overflow: hidden;
         cursor: pointer;
         position: relative;
-        border: 2px solid #60a5fa;
+        border: 2px solid rgba(0, 176, 155, 0.3);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        background: #dbeafe;
+        background: transparent;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+        box-shadow: none;
         }
 
         .location-map:hover {
@@ -844,8 +834,8 @@
         width: 28px;
         height: 28px;
         border-radius: 8px;
-        background: #fee2e2;
-        border: 1px solid #fecaca;
+        background: transparent;
+        border: 1px solid rgba(220, 38, 38, 0.5);
         color: #dc2626;
         font-size: 14px;
         cursor: pointer;
@@ -853,14 +843,14 @@
         align-items: center;
         justify-content: center;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 2px 4px rgba(220, 38, 38, 0.15);
+        box-shadow: none;
         }
 
         .remove-location-btn:hover {
-        background: #fecaca;
-        border-color: #fca5a5;
+        background: transparent;
+        border-color: #dc2626;
         transform: scale(1.1) rotate(90deg);
-        box-shadow: 0 4px 8px rgba(220, 38, 38, 0.25);
+        box-shadow: none;
         }
 
         /* Action Buttons */
@@ -877,41 +867,41 @@
         justify-content: center;
         gap: 8px;
         padding: 14px 16px;
-        border: 2px solid rgba(0, 176, 155, 0.2);
-        background: rgba(255, 255, 255, 0.8);
-        color: #059669;
+        border: 2px solid #d1fae5;
+        background: #f0fdf4;
+        color: #047857;
         font-size: 14px;
         font-weight: 600;
         border-radius: 12px;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 2px 8px rgba(0, 176, 155, 0.1);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
         }
 
         .action-btn:hover {
-        background: rgba(240, 253, 250, 0.95);
-        color: #047857;
-        border-color: rgba(0, 176, 155, 0.4);
+        background: #d1fae5;
+        color: #065f46;
+        border-color: #a7f3d0;
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 176, 155, 0.2);
+        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.2);
         }
 
         .action-btn.active {
-        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-        color: #065f46;
+        background: #d1fae5;
+        color: #064e3b;
         border: 2px solid #6ee7b7;
-        box-shadow: 0 4px 16px rgba(0, 176, 155, 0.25);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.25);
         }
 
         /* Options Panel */
         .options-panel {
-        background: linear-gradient(135deg, rgba(240, 253, 250, 0.8) 0%, rgba(209, 250, 229, 0.8) 100%);
+        background: #f0fdf4;
         padding: 20px;
         border-radius: 14px;
         margin-bottom: 24px;
         display: none;
-        border: 2px solid rgba(0, 176, 155, 0.2);
-        box-shadow: 0 2px 8px rgba(0, 176, 155, 0.1);
+        border: 1px solid #d1fae5;
+        box-shadow: 0 4px 16px rgba(16, 185, 129, 0.1);
         }
 
         .options-panel.active {
@@ -1003,19 +993,20 @@
         }
 
         .photo-post-thumbnail {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 253, 244, 0.95) 100%);
-        border: none;
+        background: #ffffff;
+        border: 1px solid rgba(16, 185, 129, 0.2);
         border-radius: 20px;
         overflow: hidden;
         cursor: pointer;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
-        box-shadow: 0 6px 20px rgba(0, 176, 155, 0.12), 0 2px 6px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
         }
 
         .photo-post-thumbnail:hover {
         transform: translateY(-6px) scale(1.01);
-        box-shadow: 0 12px 32px rgba(0, 176, 155, 0.25), 0 6px 12px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 12px 32px rgba(16, 185, 129, 0.2);
+        border-color: rgba(16, 185, 129, 0.4);
         }
 
         .photo-post-thumbnail::before {
@@ -1025,7 +1016,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, transparent 0%, rgba(0, 176, 155, 0.03) 100%);
+        background: transparent;
         opacity: 0;
         transition: opacity 0.3s ease;
         pointer-events: none;
@@ -1049,11 +1040,11 @@
         overflow: hidden;
         position: relative;
         flex-shrink: 0;
-        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        background: transparent;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 12px rgba(0, 176, 155, 0.2);
+        box-shadow: none;
         }
 
         .post-thumbnail-image img {
@@ -1189,7 +1180,7 @@
         gap: 8px;
         padding: 12px 16px;
         border-top: 1px solid rgba(0, 176, 155, 0.1);
-        background: linear-gradient(135deg, rgba(240, 253, 244, 0.6) 0%, rgba(209, 250, 229, 0.4) 100%);
+        background: transparent;
         opacity: 0;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -1201,10 +1192,10 @@
         .thumbnail-action-btn {
         flex: 1;
         padding: 10px 16px;
-        border: 1.5px solid rgba(0, 176, 155, 0.2);
+        border: 1.5px solid #d1fae5;
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.9);
-        color: #059669;
+        background: #f0fdf4;
+        color: #047857;
         font-size: 12px;
         font-weight: 700;
         cursor: pointer;
@@ -1213,13 +1204,21 @@
         align-items: center;
         justify-content: center;
         gap: 6px;
-        box-shadow: 0 2px 6px rgba(0, 176, 155, 0.08);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08);
         text-transform: uppercase;
         letter-spacing: 0.3px;
         }
 
         .thumbnail-action-btn:hover {
-        background: #ffffff;
+        background: #d1fae5;
+        border-color: #a7f3d0;
+        color: #065f46;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.15);
+        }
+
+        .thumbnail-action-btn:hover {
+        background: rgba(255, 255, 255, 0.95);
         color: #047857;
         border-color: rgba(0, 176, 155, 0.4);
         transform: translateY(-2px);
@@ -1263,14 +1262,15 @@
         }
 
         .post-detail-content {
-        background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
         border-radius: 24px;
         max-width: 800px;
         width: 100%;
         max-height: 90vh;
         overflow-y: auto;
-        box-shadow: 0 24px 60px rgba(0, 176, 155, 0.3), 0 8px 16px rgba(0, 0, 0, 0.15);
-        border: 2px solid rgba(0, 176, 155, 0.3);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.5);
         transform: scale(0.92) translateY(20px);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
@@ -1399,7 +1399,7 @@
         border-radius: 12px;
         overflow: hidden;
         cursor: pointer;
-        background: #f0f0f0;
+        background: transparent;
         }
 
         .post-detail-image-item.large {
@@ -1492,20 +1492,21 @@
 
         /* Gallery Section - Teal Theme */
         .gallery-card {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(20px);
-        border-radius: 24px;
-        padding: 32px;
+        background: #ffffff !important;
+        backdrop-filter: none !important;
+        border-radius: 24px !important;
+        padding: 32px !important;
         height: fit-content;
-        border: 2px solid rgba(0, 176, 155, 0.2);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 8px 32px rgba(0, 176, 155, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
         }
 
         .gallery-card:hover {
-        border-color: rgba(0, 176, 155, 0.4);
-        transform: translateY(-2px);
-        box-shadow: 0 12px 40px rgba(0, 176, 155, 0.25);
+        background: #ffffff !important;
+        border-color: rgba(16, 185, 129, 0.4) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
         }
 
         .gallery-header {
@@ -1518,7 +1519,7 @@
         .gallery-title {
         font-size: 20px;
         font-weight: 700;
-        color: #047857;
+        color: #065f46;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -1526,12 +1527,13 @@
         }
 
         .gallery-count {
-        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-        color: #065f46;
+        background: #d1fae5;
+        color: #064e3b;
         padding: 4px 12px;
         border-radius: 20px;
         font-size: 13px;
         font-weight: 600;
+        border: 1px solid #a7f3d0;
         }
 
         .photo-posts-container {
@@ -1541,15 +1543,16 @@
         }
 
         .photo-post {
-        border: 1px solid #f0f0f0;
+        border: 1px solid rgba(0, 176, 155, 0.2);
         border-radius: 16px;
         overflow: hidden;
-        background: white;
+        background: transparent;
+        backdrop-filter: none;
         transition: box-shadow 0.3s ease;
         }
 
         .photo-post:hover {
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        box-shadow: none;
         }
 
         .photo-post-grid {
@@ -1587,7 +1590,7 @@
         position: relative;
         overflow: hidden;
         cursor: pointer;
-        background: #f0f0f0;
+        background: transparent;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1684,8 +1687,8 @@
 
         .photo-post-info {
         padding: 16px 20px;
-        background: #f9f9f9;
-        border-top: 1px solid #f0f0f0;
+        background: transparent;
+        border-top: 1px solid rgba(0, 176, 155, 0.2);
         }
 
         .post-meta {
@@ -1768,7 +1771,8 @@
         }
 
         .modal-content {
-        background: white;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
         padding: 32px;
         border-radius: 20px;
         max-width: 500px;
@@ -1837,10 +1841,10 @@
 
         .btn-secondary {
         flex: 1;
-        background: #f8f9fa;
+        background: transparent;
         color: #666;
         padding: 14px 24px;
-        border: 2px solid #f0f0f0;
+        border: 2px solid rgba(0, 176, 155, 0.3);
         border-radius: 12px;
         font-weight: 600;
         cursor: pointer;
@@ -1848,8 +1852,9 @@
         }
 
         .btn-secondary:hover {
-        background: #e9ecef;
+        background: transparent;
         color: #333;
+        border-color: rgba(0, 176, 155, 0.5);
         }
 
         /* Lightbox */
@@ -2434,7 +2439,7 @@
         // Fix for Android: Use wildcard to enable camera option
         const photoInput = document.getElementById('photoInput');
         const isAndroid = /android/i.test(navigator.userAgent);
-        
+
         if (isAndroid) {
             photoInput.setAttribute('accept', 'image/*');
         }

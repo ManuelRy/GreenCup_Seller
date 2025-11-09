@@ -457,7 +457,7 @@
       // Fix for Android: Use wildcard to enable camera option
       const fileInput = document.getElementById('image');
       const isAndroid = /android/i.test(navigator.userAgent);
-      
+
       if (isAndroid) {
         fileInput.setAttribute('accept', 'image/*');
       }

@@ -20,11 +20,10 @@
 
 /* Header Card */
 .header-card {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
+    background: #ffffff;
     border-radius: 24px;
     border: none;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     margin-bottom: 2rem;
     overflow: hidden;
 }
@@ -48,13 +47,12 @@
 }
 
 .stat-card {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
+    background: #ffffff;
     border-radius: 20px;
     border: none;
     padding: 2rem;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     position: relative;
     overflow: hidden;
 }
@@ -68,12 +66,12 @@
     height: 100%;
     background: linear-gradient(135deg, transparent 0%, rgba(102, 126, 234, 0.05) 100%);
     opacity: 0;
-    transition: opacity 0.4s;
+    transition: opacity 0.2s;
 }
 
 .stat-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
 }
 
 .stat-card:hover::before {
@@ -122,13 +120,12 @@
 }
 
 .reward-card {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
+    background: #ffffff;
     border-radius: 24px;
     border: none;
     overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     position: relative;
 }
 
@@ -146,13 +143,13 @@
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     opacity: 0;
-    transition: opacity 0.4s;
+    transition: opacity 0.2s;
     pointer-events: none;
 }
 
 .reward-card:hover {
-    transform: translateY(-12px);
-    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
 }
 
 .reward-card:hover::after {
@@ -174,48 +171,35 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: none;
 }
 
 .reward-card:hover .reward-image-container img {
-    transform: scale(1.1);
+    transform: none;
 }
 
 .reward-image-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
-    opacity: 0;
-    transition: opacity 0.4s;
-}
-
-.reward-card:hover .reward-image-overlay {
-    opacity: 1;
+    display: none;
 }
 
 .points-badge {
     position: absolute;
     top: 16px;
     right: 16px;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(10px);
+    background: #ffffff;
     padding: 12px 20px;
     border-radius: 16px;
     font-weight: 800;
     font-size: 1rem;
     color: #667eea;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.9);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    border: 2px solid #667eea;
+    transition: transform 0.2s ease;
     z-index: 2;
 }
 
 .reward-card:hover .points-badge {
-    transform: scale(1.1) rotate(-5deg);
-    box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+    transform: scale(1.03);
 }
 
 .reward-body {
@@ -259,7 +243,7 @@
     align-items: center;
     gap: 0.5rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s;
+    transition: transform 0.2s ease;
 }
 
 .status-badge i {
@@ -288,7 +272,7 @@
     border: none;
     font-weight: 600;
     font-size: 0.9375rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
@@ -299,26 +283,12 @@
 }
 
 .btn-modern::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.btn-modern:hover::before {
-    width: 300px;
-    height: 300px;
+    display: none;
 }
 
 .btn-modern:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
 }
 
 .btn-primary-modern {
@@ -332,7 +302,7 @@
 }
 
 .btn-modern-outline {
-    background: rgba(255, 255, 255, 0.98);
+    background: #ffffff;
     color: #667eea;
     border: 2px solid #667eea;
 }
@@ -418,20 +388,10 @@
     }
 }
 
-/* Animations */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
+/* Animations - Disabled for performance */
 .animate-fade-in {
-    animation: fadeInUp 0.6s ease-out;
+    animation: none;
+    opacity: 1;
 }
 </style>
 @endpush
@@ -632,18 +592,45 @@
 
 @push('scripts')
 <script>
-// Live countdown timer for rewards
-function updateCountdowns() {
-    document.querySelectorAll('.reward-card').forEach((card, index) => {
+// Live countdown timer for rewards - Optimized version
+let rewardCards = [];
+let animationFrameId = null;
+let lastUpdateTime = 0;
+
+// Cache reward card data on page load
+function initializeCountdowns() {
+    rewardCards = [];
+    document.querySelectorAll('.reward-card').forEach((card) => {
         const timeDisplay = card.querySelector('.time-remaining-live');
         if (!timeDisplay) return;
 
         const startTime = new Date(timeDisplay.dataset.start).getTime();
         const expiryTime = new Date(timeDisplay.dataset.expiry).getTime();
-        const now = new Date().getTime();
         const container = timeDisplay.closest('.reward-time-container');
         const statusLabel = container.querySelector('.fas').parentElement;
 
+        rewardCards.push({
+            timeDisplay,
+            container,
+            statusLabel,
+            startTime,
+            expiryTime
+        });
+    });
+}
+
+// Update countdowns with throttling
+function updateCountdowns(currentTime) {
+    // Throttle updates to once per second
+    if (currentTime - lastUpdateTime < 1000) {
+        animationFrameId = requestAnimationFrame(updateCountdowns);
+        return;
+    }
+    lastUpdateTime = currentTime;
+
+    const now = Date.now();
+
+    rewardCards.forEach(({ timeDisplay, container, statusLabel, startTime, expiryTime }) => {
         // Check if reward hasn't started yet
         if (now < startTime) {
             const distanceToStart = startTime - now;
@@ -664,7 +651,7 @@ function updateCountdowns() {
             }
 
             timeDisplay.textContent = timeString;
-            container.style.borderLeftColor = '#3b82f6'; // Blue for coming soon
+            container.style.borderLeftColor = '#3b82f6';
             statusLabel.innerHTML = '<i class="fas fa-hourglass-start me-1"></i>COMING SOON';
             return;
         }
@@ -672,7 +659,6 @@ function updateCountdowns() {
         // Check if reward has expired
         const distanceToExpiry = expiryTime - now;
         if (distanceToExpiry < 0) {
-            // Calculate how long ago it expired
             const expiredAgo = Math.abs(distanceToExpiry);
             const days = Math.floor(expiredAgo / (1000 * 60 * 60 * 24));
             const hours = Math.floor((expiredAgo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -687,7 +673,7 @@ function updateCountdowns() {
             }
 
             timeDisplay.innerHTML = `<span style="color: #ef4444;">${expiredText}</span>`;
-            container.style.borderLeftColor = '#ef4444'; // Red for expired
+            container.style.borderLeftColor = '#ef4444';
             statusLabel.innerHTML = '<i class="fas fa-times-circle me-1"></i>EXPIRED';
             return;
         }
@@ -714,20 +700,34 @@ function updateCountdowns() {
         // Update border color based on urgency
         const totalHours = distanceToExpiry / (1000 * 60 * 60);
         if (totalHours <= 24) {
-            container.style.borderLeftColor = '#ef4444'; // Red - urgent!
+            container.style.borderLeftColor = '#ef4444';
             statusLabel.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>TIME REMAINING';
         } else if (totalHours <= 48) {
-            container.style.borderLeftColor = '#f59e0b'; // Amber - expiring soon
+            container.style.borderLeftColor = '#f59e0b';
             statusLabel.innerHTML = '<i class="fas fa-clock me-1"></i>TIME REMAINING';
         } else {
-            container.style.borderLeftColor = '#10b981'; // Green - plenty of time
+            container.style.borderLeftColor = '#10b981';
             statusLabel.innerHTML = '<i class="fas fa-clock me-1"></i>TIME REMAINING';
         }
     });
+
+    // Continue the animation loop
+    animationFrameId = requestAnimationFrame(updateCountdowns);
 }
 
-// Update every second
-setInterval(updateCountdowns, 1000);
-updateCountdowns(); // Initial call
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCountdowns();
+    if (rewardCards.length > 0) {
+        animationFrameId = requestAnimationFrame(updateCountdowns);
+    }
+});
+
+// Clean up on page unload
+window.addEventListener('beforeunload', function() {
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+    }
+});
 </script>
 @endpush

@@ -679,7 +679,7 @@
     .user-avatar-large {
         width: 52px;
         height: 52px;
-        border-radius: 16px;
+        border-radius: 50%;
         background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
         display: flex;
         align-items: center;
@@ -871,7 +871,7 @@
     .user-avatar-mobile {
         width: 48px;
         height: 48px;
-        border-radius: 12px;
+        border-radius: 50%;
         background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
         display: flex;
         align-items: center;
