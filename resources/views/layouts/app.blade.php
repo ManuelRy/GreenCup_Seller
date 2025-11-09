@@ -235,6 +235,9 @@
         {{-- @include('components.footer') --}}
     </div>
 
+    <!-- Content that needs to be outside app-container to avoid transform issues -->
+    @yield('after-content')
+
     <!-- Scripts -->
     <script src="{{ asset('dashboard.js') }}"></script>
 

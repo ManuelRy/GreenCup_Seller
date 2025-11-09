@@ -184,11 +184,6 @@
             </div>
         @endif
     </div>
-
-    <!-- Floating Action Button (FAB) for Mobile -->
-    <a href="{{ route('seller.receipts.create') }}" class="fab" title="Create Receipt">
-        <span class="fab-icon">+</span>
-    </a>
 </div>
 
 <!-- Success Toast -->
@@ -965,21 +960,21 @@ body::before {
 
 /* Floating Action Button (FAB) */
 .fab {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
+    position: fixed !important;
+    bottom: 2rem !important;
+    right: 2rem !important;
     width: 60px;
     height: 60px;
     background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-dark) 100%);
     color: white;
     border-radius: 50%;
-    display: flex; /* Always visible */
+    display: flex !important; /* Always visible */
     align-items: center;
     justify-content: center;
     text-decoration: none;
     box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: all 0.2s ease;
-    z-index: 100;
+    z-index: 99999 !important;
     cursor: pointer;
     animation: fabBounce 0.3s ease-out;
 }
@@ -1210,4 +1205,11 @@ window.addEventListener('beforeunload', function() {
     }
 });
 </script>
+@endsection
+
+@section('after-content')
+<!-- Floating Action Button (FAB) - Placed outside main content to avoid position:relative constraints -->
+<a href="{{ route('seller.receipts.create') }}" class="fab" title="Create New Receipt" style="position: fixed !important; bottom: 2rem !important; right: 2rem !important; z-index: 99999 !important; display: flex !important;">
+    <span class="fab-icon">+</span>
+</a>
 @endsection

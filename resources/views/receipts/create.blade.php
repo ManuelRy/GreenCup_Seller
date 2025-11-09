@@ -209,33 +209,13 @@ function getItemIcon($itemName) {
     box-sizing: border-box;
 }
 
+/* Remove body background override - inherit from main layout */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    margin: 0;
-    background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
     color: #111827;
-    position: relative;
-    min-height: 100vh;
 }
 
-body::before {
-    content: '';
-    position: fixed;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    animation: floatPattern 60s linear infinite;
-    pointer-events: none; /* Allow clicks to pass through */
-    z-index: 0;
-}
-
-@keyframes floatPattern {
-    from { transform: translate(0, 0) rotate(0deg); }
-    to { transform: translate(40px, 40px) rotate(360deg); }
-}
+/* Remove custom background pattern - use system background */
 
 /* Header */
 .create-header {
