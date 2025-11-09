@@ -135,7 +135,6 @@ body {
     border: 2px solid #f0f0f0;
     border-radius: 12px;
     padding: 24px;
-    transition: all 0.2s ease;
     cursor: pointer;
     min-height: 140px;
     display: flex;
@@ -143,14 +142,12 @@ body {
 }
 
 .stat-card:active {
-    transform: scale(0.98);
     border-color: #e0e0e0;
 }
 
 @media (hover: hover) {
     .stat-card:hover {
         border-color: #333333;
-        transform: translateY(-2px);
     }
 }
 
@@ -225,10 +222,6 @@ body {
         width: 240px;
         height: 240px;
     }
-}
-
-.donut-chart circle {
-    transition: stroke-dasharray 1s ease-out;
 }
 
 .donut-center {
@@ -311,7 +304,6 @@ body {
     text-align: center;
     text-decoration: none;
     color: #333;
-    transition: all 0.2s ease;
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -322,14 +314,12 @@ body {
 }
 
 .action-btn:active {
-    transform: scale(0.98);
     background: #f8f8f8;
 }
 
 @media (hover: hover) {
     .action-btn:hover {
         border-color: #333;
-        transform: translateY(-2px);
     }
 }
 
@@ -467,20 +457,9 @@ body {
     }
 }
 
-/* Animations */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
+/* Animations - DISABLED for scrolling performance */
 .fade-in {
-    animation: fadeIn 0.3s ease-out;
+    opacity: 1;
 }
 
 /* Scrollbar Styling */

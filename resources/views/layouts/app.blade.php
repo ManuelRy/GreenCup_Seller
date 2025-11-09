@@ -43,12 +43,13 @@
             background: linear-gradient(-45deg, #00b09b, #00c9a1, #00d9a6, #00e8ab, #00b09b);
             background-size: 400% 400%;
             background-attachment: fixed;
-            animation: gradientShift 15s ease infinite;
+            background-position: 50% 50%;
             color: #333333;
             line-height: 1.6;
             min-height: 100vh;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            will-change: auto;
         }
 
         /* App Container */
@@ -57,12 +58,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            transform: translateZ(0);
         }
 
         .app-container::before {
@@ -77,9 +73,11 @@
                 radial-gradient(circle at 75% 75%, rgba(255,255,255,0.05) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
+            will-change: auto;
+            transform: translateZ(0);
         }
 
-        /* Floating Animation Elements */
+        /* Static Background Elements - Animation disabled for performance */
         .app-container::after {
             content: '';
             position: fixed;
@@ -91,108 +89,20 @@
                 radial-gradient(circle at 20% 80%, rgba(255,255,255,0.08) 0%, transparent 40%),
                 radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
                 radial-gradient(circle at 40% 40%, rgba(255,255,255,0.04) 0%, transparent 30%);
-            animation: floatElements 20s ease-in-out infinite;
             pointer-events: none;
             z-index: 0;
+            will-change: auto;
+            transform: translateZ(0);
         }
 
-        @keyframes floatElements {
-            0%, 100% {
-                transform: translateY(0px) rotate(0deg);
-                opacity: 1;
-            }
-            25% {
-                transform: translateY(-20px) rotate(5deg);
-                opacity: 0.8;
-            }
-            50% {
-                transform: translateY(-10px) rotate(-3deg);
-                opacity: 0.9;
-            }
-            75% {
-                transform: translateY(-30px) rotate(8deg);
-                opacity: 0.7;
-            }
-        }
-
-        /* Particle Animation */
+        /* Particle Animation - DISABLED for scrolling performance */
         .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
+            display: none;
         }
 
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            animation: particleFloat 15s linear infinite;
-        }
-
-        .particle:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 12s; }
-        .particle:nth-child(2) { left: 20%; animation-delay: 2s; animation-duration: 15s; }
-        .particle:nth-child(3) { left: 30%; animation-delay: 4s; animation-duration: 18s; }
-        .particle:nth-child(4) { left: 40%; animation-delay: 6s; animation-duration: 14s; }
-        .particle:nth-child(5) { left: 50%; animation-delay: 8s; animation-duration: 16s; }
-        .particle:nth-child(6) { left: 60%; animation-delay: 10s; animation-duration: 13s; }
-        .particle:nth-child(7) { left: 70%; animation-delay: 1s; animation-duration: 17s; }
-        .particle:nth-child(8) { left: 80%; animation-delay: 3s; animation-duration: 19s; }
-        .particle:nth-child(9) { left: 90%; animation-delay: 5s; animation-duration: 11s; }
-
-        @keyframes particleFloat {
-            0% {
-                transform: translateY(100vh) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-                transform: translateY(90vh) scale(1);
-            }
-            90% {
-                opacity: 1;
-                transform: translateY(10vh) scale(1);
-            }
-            100% {
-                transform: translateY(-10vh) scale(0);
-                opacity: 0;
-            }
-        }
-
-        /* Wave Animation */
+        /* Wave Animation - DISABLED for scrolling performance */
         .wave-animation {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(to top,
-                rgba(0, 176, 155, 0.1) 0%,
-                rgba(0, 201, 161, 0.05) 50%,
-                transparent 100%);
-            animation: waveMotion 8s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        @keyframes waveMotion {
-            0%, 100% {
-                transform: translateX(0px) scaleY(1);
-            }
-            25% {
-                transform: translateX(-10px) scaleY(1.1);
-            }
-            50% {
-                transform: translateX(10px) scaleY(0.9);
-            }
-            75% {
-                transform: translateX(-5px) scaleY(1.05);
-            }
+            display: none;
         }
 
         /* Main Content Area */
@@ -202,6 +112,8 @@
             padding-top: 0;
             position: relative;
             z-index: 1;
+            transform: translateZ(0);
+            will-change: auto;
         }
 
         .main-content > * {
@@ -217,38 +129,15 @@
             font-weight: 600;
             display: flex;
             align-items: center;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255,255,255,0.2);
-            animation: slideInDown 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            opacity: 1;
+            transform: translateZ(0);
         }
 
         .alert::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.6s ease;
-        }
-
-        .alert:hover::before {
-            left: 100%;
-        }
-
-        @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            display: none;
         }
 
         .alert-success {

@@ -5,7 +5,25 @@
 
 @push('styles')
 <style>
-/* Aggressive performance optimization for smooth scrolling */
+/* Optimized scrolling performance */
+html {
+    scroll-behavior: auto;
+}
+
+body {
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* GPU acceleration for better scrolling */
+.page-wrapper,
+.reward-card,
+.stat-card {
+    transform: translateZ(0);
+    will-change: auto;
+    backface-visibility: hidden;
+}
+
 .page-wrapper *,
 .reward-card *,
 .stat-card * {
@@ -31,8 +49,6 @@ nav.navbar {
 .page-wrapper {
     min-height: 100vh;
     padding: 2rem 0;
-    overflow: visible;
-    contain: layout style;
 }
 
 /* Header Card */
@@ -60,7 +76,6 @@ nav.navbar {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
-    contain: layout style;
 }
 
 .stat-card {
@@ -115,8 +130,6 @@ nav.navbar {
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.5rem;
     margin-top: 2rem;
-    contain: layout style;
-    content-visibility: auto;
 }
 
 .reward-card {
@@ -126,7 +139,6 @@ nav.navbar {
     overflow: hidden;
     position: relative;
     contain: layout style paint;
-    content-visibility: auto;
 }
 
 .reward-card::after {
@@ -152,10 +164,6 @@ nav.navbar {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: none;
-    will-change: auto;
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
 }
 
 .reward-card:hover .reward-image-container img {
@@ -379,7 +387,7 @@ nav.navbar {
     <div class="container-fluid px-4">
 
         <!-- Header Card -->
-        <div class="header-card position-relative animate-fade-in">
+        <div class="header-card position-relative">
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                     <div>
@@ -404,7 +412,7 @@ nav.navbar {
         </div>
 
         <!-- Statistics Cards -->
-        <div class="stats-grid animate-fade-in">
+        <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">
                     <i class="fas fa-gift"></i>
@@ -448,7 +456,7 @@ nav.navbar {
         @if($rewards->count() > 0)
         <div class="rewards-grid">
             @foreach($rewards as $reward)
-            <div class="reward-card animate-fade-in" style="animation-delay: {{ $loop->index * 0.1 }}s;">
+            <div class="reward-card">
                 <div class="reward-image-container">
                     @if($reward->image_path)
                         <img src="{{ $reward->image_path }}" alt="{{ $reward->name }}">
@@ -551,7 +559,7 @@ nav.navbar {
             @endforeach
         </div>
         @else
-        <div class="empty-state animate-fade-in">
+        <div class="empty-state">
             <div class="empty-state-icon">
                 <i class="fas fa-gift"></i>
             </div>
