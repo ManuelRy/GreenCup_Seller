@@ -5,17 +5,19 @@
 
 @push('styles')
 <style>
-/* Performance optimization - disable all animations */
-* {
-    -webkit-transform: translateZ(0);
-    -moz-transform: translateZ(0);
-    -ms-transform: translateZ(0);
-    -o-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    perspective: 1000;
+/* Aggressive performance optimization for smooth scrolling */
+.page-wrapper *,
+.reward-card *,
+.stat-card * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure navbar stays fixed */
+nav.navbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 9999 !important;
 }
 
 /* Modern Professional Design */
@@ -29,17 +31,15 @@
 .page-wrapper {
     min-height: 100vh;
     padding: 2rem 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
+    contain: layout style;
 }
 
 /* Header Card */
 .header-card {
     background: #ffffff;
-    border-radius: 24px;
-    border: none;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
     margin-bottom: 2rem;
     overflow: hidden;
 }
@@ -51,7 +51,7 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: var(--primary-gradient);
+    background: #667eea;
 }
 
 /* Stats Cards */
@@ -60,44 +60,30 @@
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
+    contain: layout style;
 }
 
 .stat-card {
     background: #ffffff;
-    border-radius: 20px;
-    border: none;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
     padding: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
     position: relative;
-    overflow: hidden;
+    contain: layout style paint;
 }
 
 .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, transparent 0%, rgba(102, 126, 234, 0.05) 100%);
-    opacity: 0;
-    transition: opacity 0.2s;
+    display: none;
 }
 
 .stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
-}
-
-.stat-card:hover::before {
-    opacity: 1;
+    border-color: #667eea;
 }
 
 .stat-icon {
     width: 64px;
     height: 64px;
-    border-radius: 16px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -105,7 +91,6 @@
     margin-bottom: 1rem;
     background: #667eea;
     color: white;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
 .stat-value {
@@ -130,48 +115,31 @@
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.5rem;
     margin-top: 2rem;
+    contain: layout style;
+    content-visibility: auto;
 }
 
 .reward-card {
     background: #ffffff;
     border-radius: 24px;
-    border: none;
+    border: 2px solid #e2e8f0;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
     position: relative;
+    contain: layout style paint;
+    content-visibility: auto;
 }
 
 .reward-card::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 24px;
-    padding: 2px;
-    background: var(--primary-gradient);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.2s;
-    pointer-events: none;
+    display: none;
 }
 
 .reward-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
-}
-
-.reward-card:hover::after {
-    opacity: 1;
+    border-color: #667eea;
 }
 
 .reward-image-container {
     height: 220px;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: #f5f7fa;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -185,6 +153,9 @@
     height: 100%;
     object-fit: cover;
     transition: none;
+    will-change: auto;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
 }
 
 .reward-card:hover .reward-image-container img {
@@ -205,7 +176,6 @@
     font-weight: 800;
     font-size: 1rem;
     color: #667eea;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     border: 2px solid #667eea;
     z-index: 2;
 }
@@ -254,7 +224,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid;
 }
 
 .status-badge i {
@@ -262,25 +232,28 @@
 }
 
 .status-active {
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    background: #d1fae5;
     color: #065f46;
+    border-color: #a7f3d0;
 }
 
 .status-inactive {
-    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    background: #fee2e2;
     color: #991b1b;
+    border-color: #fecaca;
 }
 
 .status-expired {
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    background: #fef3c7;
     color: #92400e;
+    border-color: #fde68a;
 }
 
 /* Action Buttons */
 .btn-modern {
     padding: 0.875rem 1.75rem;
     border-radius: 14px;
-    border: none;
+    border: 2px solid;
     font-weight: 600;
     font-size: 0.9375rem;
     text-decoration: none;
@@ -288,7 +261,6 @@
     align-items: center;
     gap: 0.625rem;
     position: relative;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .btn-modern::before {
@@ -296,17 +268,19 @@
 }
 
 .btn-modern:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    opacity: 0.9;
 }
 
 .btn-primary-modern {
-    background: var(--primary-gradient);
+    background: #667eea;
     color: white;
+    border-color: #667eea;
 }
 
 .btn-success-modern {
-    background: var(--success-gradient);
+    background: #10b981;
     color: white;
+    border-color: #10b981;
 }
 
 .btn-modern-outline {
@@ -323,20 +297,16 @@
 
 /* Empty State */
 .empty-state {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
+    background: #ffffff;
     border-radius: 24px;
     padding: 4rem 2rem;
     text-align: center;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border: 2px solid #e2e8f0;
 }
 
 .empty-state-icon {
     font-size: 6rem;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #667eea;
     margin-bottom: 1.5rem;
 }
 
@@ -444,30 +414,30 @@
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon" style="background: var(--success-gradient);">
+                <div class="stat-icon" style="background: #10b981;">
                     <i class="fas fa-check-circle"></i>
                 </div>
-                <div class="stat-value" style="background: var(--success-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                <div class="stat-value" style="color: #10b981;">
                     {{ $rewards->where('is_active', true)->count() }}
                 </div>
                 <div class="stat-label">Active Rewards</div>
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon" style="background: var(--warning-gradient);">
+                <div class="stat-icon" style="background: #f59e0b;">
                     <i class="fas fa-star"></i>
                 </div>
-                <div class="stat-value" style="background: var(--warning-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                <div class="stat-value" style="color: #f59e0b;">
                     {{ $rewards->sum('quantity_redeemed') }}
                 </div>
                 <div class="stat-label">Total Redeemed</div>
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                <div class="stat-icon" style="background: #ec4899;">
                     <i class="fas fa-box"></i>
                 </div>
-                <div class="stat-value" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                <div class="stat-value" style="color: #ec4899;">
                     {{ $rewards->sum(function($reward) { return $reward->available_quantity; }) }}
                 </div>
                 <div class="stat-label">Available Stock</div>
@@ -600,142 +570,9 @@
 
 @push('scripts')
 <script>
-// Live countdown timer for rewards - Optimized version
-let rewardCards = [];
-let animationFrameId = null;
-let lastUpdateTime = 0;
-
-// Cache reward card data on page load
-function initializeCountdowns() {
-    rewardCards = [];
-    document.querySelectorAll('.reward-card').forEach((card) => {
-        const timeDisplay = card.querySelector('.time-remaining-live');
-        if (!timeDisplay) return;
-
-        const startTime = new Date(timeDisplay.dataset.start).getTime();
-        const expiryTime = new Date(timeDisplay.dataset.expiry).getTime();
-        const container = timeDisplay.closest('.reward-time-container');
-        const statusLabel = container.querySelector('.fas').parentElement;
-
-        rewardCards.push({
-            timeDisplay,
-            container,
-            statusLabel,
-            startTime,
-            expiryTime
-        });
-    });
-}
-
-// Update countdowns with throttling
-function updateCountdowns(currentTime) {
-    // Throttle updates to once per second
-    if (currentTime - lastUpdateTime < 1000) {
-        animationFrameId = requestAnimationFrame(updateCountdowns);
-        return;
-    }
-    lastUpdateTime = currentTime;
-
-    const now = Date.now();
-
-    rewardCards.forEach(({ timeDisplay, container, statusLabel, startTime, expiryTime }) => {
-        // Check if reward hasn't started yet
-        if (now < startTime) {
-            const distanceToStart = startTime - now;
-            const days = Math.floor(distanceToStart / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distanceToStart % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distanceToStart % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distanceToStart % (1000 * 60)) / 1000);
-
-            let timeString = 'Starts in ';
-            if (days > 0) {
-                timeString += `${days}d ${hours}h ${minutes}m ${seconds}s`;
-            } else if (hours > 0) {
-                timeString += `${hours}h ${minutes}m ${seconds}s`;
-            } else if (minutes > 0) {
-                timeString += `${minutes}m ${seconds}s`;
-            } else {
-                timeString += `${seconds}s`;
-            }
-
-            timeDisplay.textContent = timeString;
-            container.style.borderLeftColor = '#3b82f6';
-            statusLabel.innerHTML = '<i class="fas fa-hourglass-start me-1"></i>COMING SOON';
-            return;
-        }
-
-        // Check if reward has expired
-        const distanceToExpiry = expiryTime - now;
-        if (distanceToExpiry < 0) {
-            const expiredAgo = Math.abs(distanceToExpiry);
-            const days = Math.floor(expiredAgo / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((expiredAgo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-
-            let expiredText = 'Expired ';
-            if (days > 0) {
-                expiredText += `${days} day${days > 1 ? 's' : ''} ago`;
-            } else if (hours > 0) {
-                expiredText += `${hours} hour${hours > 1 ? 's' : ''} ago`;
-            } else {
-                expiredText += 'recently';
-            }
-
-            timeDisplay.innerHTML = `<span style="color: #ef4444;">${expiredText}</span>`;
-            container.style.borderLeftColor = '#ef4444';
-            statusLabel.innerHTML = '<i class="fas fa-times-circle me-1"></i>EXPIRED';
-            return;
-        }
-
-        // Reward is active - show time remaining
-        const days = Math.floor(distanceToExpiry / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distanceToExpiry % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distanceToExpiry % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distanceToExpiry % (1000 * 60)) / 1000);
-
-        let timeString = '';
-        if (days > 0) {
-            timeString = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-        } else if (hours > 0) {
-            timeString = `${hours}h ${minutes}m ${seconds}s`;
-        } else if (minutes > 0) {
-            timeString = `${minutes}m ${seconds}s`;
-        } else {
-            timeString = `${seconds}s`;
-        }
-
-        timeDisplay.textContent = timeString;
-
-        // Update border color based on urgency
-        const totalHours = distanceToExpiry / (1000 * 60 * 60);
-        if (totalHours <= 24) {
-            container.style.borderLeftColor = '#ef4444';
-            statusLabel.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>TIME REMAINING';
-        } else if (totalHours <= 48) {
-            container.style.borderLeftColor = '#f59e0b';
-            statusLabel.innerHTML = '<i class="fas fa-clock me-1"></i>TIME REMAINING';
-        } else {
-            container.style.borderLeftColor = '#10b981';
-            statusLabel.innerHTML = '<i class="fas fa-clock me-1"></i>TIME REMAINING';
-        }
-    });
-
-    // Continue the animation loop
-    animationFrameId = requestAnimationFrame(updateCountdowns);
-}
-
-// Initialize on page load
+// Countdown disabled for performance - static display only
 document.addEventListener('DOMContentLoaded', function() {
-    initializeCountdowns();
-    if (rewardCards.length > 0) {
-        animationFrameId = requestAnimationFrame(updateCountdowns);
-    }
-});
-
-// Clean up on page unload
-window.addEventListener('beforeunload', function() {
-    if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-    }
+    console.log('Reward page loaded - live countdown disabled for better performance');
 });
 </script>
 @endpush
