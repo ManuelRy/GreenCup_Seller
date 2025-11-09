@@ -5,6 +5,19 @@
 
 @push('styles')
 <style>
+/* Performance optimization - disable all animations */
+* {
+    -webkit-transform: translateZ(0);
+    -moz-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    -o-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
+}
+
 /* Modern Professional Design */
 :root {
     --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -16,6 +29,9 @@
 .page-wrapper {
     min-height: 100vh;
     padding: 2rem 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Header Card */
@@ -87,18 +103,15 @@
     justify-content: center;
     font-size: 28px;
     margin-bottom: 1rem;
-    background: var(--primary-gradient);
+    background: #667eea;
     color: white;
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
 .stat-value {
     font-size: 2.5rem;
     font-weight: 800;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #667eea;
     line-height: 1.2;
     margin-bottom: 0.5rem;
 }
@@ -194,12 +207,11 @@
     color: #667eea;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     border: 2px solid #667eea;
-    transition: transform 0.2s ease;
     z-index: 2;
 }
 
 .reward-card:hover .points-badge {
-    transform: scale(1.03);
+    /* No hover effect */
 }
 
 .reward-body {
@@ -243,7 +255,6 @@
     align-items: center;
     gap: 0.5rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
 }
 
 .status-badge i {
@@ -272,14 +283,12 @@
     border: none;
     font-weight: 600;
     font-size: 0.9375rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 0.625rem;
     position: relative;
-    overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .btn-modern::before {
@@ -287,8 +296,7 @@
 }
 
 .btn-modern:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .btn-primary-modern {
