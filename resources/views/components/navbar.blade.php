@@ -842,11 +842,14 @@
         width: 320px;
         max-width: 90vw;
         height: 100vh;
+        height: 100dvh; /* Use dynamic viewport height for mobile browsers */
         background: white;
         box-shadow: -10px 0 30px rgba(0,0,0,0.2);
         transform: translateX(100%);
         transition: transform 0.3s ease;
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        padding-bottom: 40px; /* Extra padding at bottom to ensure logout is accessible */
     }
 
     .mobile-menu-overlay.show .mobile-menu-content {
@@ -964,7 +967,9 @@
 
     .mobile-logout-section {
         padding: 20px;
+        padding-bottom: 30px; /* Extra bottom padding for safe area on mobile */
         border-top: 1px solid #e2e8f0;
+        margin-bottom: 20px; /* Ensure space at the very bottom */
     }
 
     .mobile-logout-btn {
