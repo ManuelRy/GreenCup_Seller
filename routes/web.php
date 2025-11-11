@@ -8,6 +8,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RewardController;
+use App\Http\Controllers\DiscountRewardController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\FileProxyController;
 /*
@@ -94,6 +95,10 @@ Route::middleware(['auth:seller', 'seller.active'])->group(function () {
     Route::get('/redemptions', [RewardController::class, 'redemptions'])->name('reward.redemptions');
     Route::post('/redemptions/{id}/approve', [RewardController::class, 'approveRedemption'])->name('reward.redemptions.approve');
     Route::post('/redemptions/{id}/reject', [RewardController::class, 'rejectRedemption'])->name('reward.redemptions.reject');
+
+    // Discount Reward Routes
+    Route::resource('discount-rewards', DiscountRewardController::class)->names('discount-reward')->except(['show']);
+    Route::post('/discount-rewards/{id}/toggle-active', [DiscountRewardController::class, 'toggleActive'])->name('discount-reward.toggle-active');
 
     // Location Management Routes
     Route::prefix('location')->name('location.')->group(function () {

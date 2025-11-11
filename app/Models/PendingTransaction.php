@@ -17,6 +17,7 @@ class PendingTransaction extends Model
         'expires_at',
         'claimed_at',
         'claimed_by_consumer_id',
+        'discount_reward_id',
     ];
 
     protected $casts = [
@@ -64,5 +65,9 @@ class PendingTransaction extends Model
 
     public function seller() {
         return $this->belongsTo(Seller::class);
+    }
+
+    public function discountReward() {
+        return $this->belongsTo(DiscountReward::class, 'discount_reward_id');
     }
 }

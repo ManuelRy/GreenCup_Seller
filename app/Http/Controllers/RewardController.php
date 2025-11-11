@@ -22,14 +22,16 @@ class RewardController extends Controller
     private SellerRepository $sRepo;
     private FileRepository $fRepo;
     private ConsumerPointRepository $cPRepo;
+    private \App\Repository\DiscountRewardRepository $dRRepo;
 
-    public function __construct(RewardRepository $rRepo, RedeemHistoryRepository $rHRepo, SellerRepository $sRepo, FileRepository $fRepo,    ConsumerPointRepository $cPRepo)
+    public function __construct(RewardRepository $rRepo, RedeemHistoryRepository $rHRepo, SellerRepository $sRepo, FileRepository $fRepo, ConsumerPointRepository $cPRepo, \App\Repository\DiscountRewardRepository $dRRepo)
     {
         $this->rRepo = $rRepo;
         $this->rHRepo = $rHRepo;
         $this->sRepo = $sRepo;
         $this->fRepo = $fRepo;
         $this->cPRepo = $cPRepo;
+        $this->dRRepo = $dRRepo;
     }
     /**
      * Display a listing of the resource.
@@ -37,7 +39,8 @@ class RewardController extends Controller
     public function index()
     {
         $rewards = $this->rRepo->list(Auth::id());
-        return view('rewards.index', compact('rewards'));
+        $discountRewards = $this->dRRepo->list(Auth::id());
+        return view('rewards.index', compact('rewards', 'discountRewards'));
     }
 
     /**

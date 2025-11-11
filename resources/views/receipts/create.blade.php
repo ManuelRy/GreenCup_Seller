@@ -119,6 +119,29 @@ function getItemIcon($itemName) {
                     </div>
                 </div>
 
+                <!-- Discount Selection -->
+                @if($discountRewards->count() > 0)
+                <div class="discount-section">
+                    <label for="discount_reward_id">Apply Discount (Optional):</label>
+                    <select id="discount_reward_id" name="discount_reward_id">
+                        <option value="">No Discount</option>
+                        @foreach($discountRewards as $discount)
+                            <option value="{{ $discount->id }}"
+                                    data-percentage="{{ $discount->discount_percentage }}"
+                                    data-points="{{ $discount->points_cost }}">
+                                {{ $discount->name }} - {{ $discount->discount_percentage }}% off ({{ $discount->points_cost }} pts)
+                            </option>
+                        @endforeach
+                    </select>
+                    <div id="discount-info" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background: #fff7ed; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                        <div style="font-size: 0.875rem; color: #92400e; font-weight: 600; margin-bottom: 0.25rem;">
+                            <i class="fas fa-percent" style="color: #f59e0b;"></i> Discount Applied
+                        </div>
+                        <div id="discount-details" style="font-size: 0.8125rem; color: #78350f;"></div>
+                    </div>
+                </div>
+                @endif
+
                 <!-- Expiration Settings -->
                 <div class="expiration-section">
                     <label for="expires_minutes">Receipt expires in:</label>
@@ -149,12 +172,12 @@ function getItemIcon($itemName) {
 </div>
 
 <!-- Success Modal -->
-<div id="success-modal" class="modal" style="display: none;">
-    <div class="modal-backdrop" onclick="closeModal()"></div>
-    <div class="modal-content">
+<div id="success-modal" class="modal" style="display: none;" onclick="closeModal()">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content" onclick="event.stopPropagation();">
         <div class="modal-header">
             <h2>✅ Receipt Generated!</h2>
-            <button type="button" onclick="event.stopPropagation(); closeModal();" class="close-modal">×</button>
+            <button type="button" onclick="closeModal();" class="close-modal">×</button>
         </div>
 
         <div class="modal-body">
@@ -182,15 +205,15 @@ function getItemIcon($itemName) {
         </div>
 
         <div class="modal-actions">
-            <button type="button" onclick="event.stopPropagation(); showQRCode();" class="btn-qr">
+            <button type="button" onclick="showQRCode();" class="btn-qr">
                 <span class="btn-icon">📱</span>
                 Show QR Code
             </button>
-            <button type="button" onclick="event.stopPropagation(); createAnother();" class="btn-another">
+            <button type="button" onclick="createAnother();" class="btn-another">
                 <span class="btn-icon">➕</span>
                 Create Another
             </button>
-            <button type="button" onclick="event.stopPropagation(); goToReceipts();" class="btn-done">
+            <button type="button" onclick="goToReceipts();" class="btn-done">
                 <span class="btn-icon">📋</span>
                 View All Receipts
             </button>
@@ -689,6 +712,36 @@ body {
     color: #10b981;
 }
 
+.discount-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f3f4f6;
+}
+
+.discount-section label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+}
+
+.discount-section select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f8fafc;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.discount-section select:focus {
+    outline: none;
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
 .expiration-section {
     margin-top: 1.5rem;
     padding-top: 1.5rem;
@@ -800,21 +853,34 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 9999;
+    z-index: 999999;
     display: flex;
     align-items: center;
     justify-content: center;
     pointer-events: auto;
+    animation: fadeIn 0.3s ease;
+    overflow-y: auto;
+    padding: 2rem 0;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 .modal-backdrop {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    cursor: pointer;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 999998;
 }
 
 .modal-content {
@@ -823,11 +889,22 @@ body {
     border-radius: 20px;
     width: 90%;
     max-width: 500px;
-    max-height: 90vh;
-    overflow: hidden;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    z-index: 10000;
+    margin: auto;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    z-index: 999999;
     pointer-events: auto;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .modal-header {
@@ -1247,12 +1324,15 @@ async function generateReceipt() {
             throw new Error('CSRF token not found. Please refresh the page.');
         }
 
+        const discountRewardId = document.getElementById('discount_reward_id')?.value || null;
+
         const requestData = {
             items: selectedItemsArray.map(item => ({
                 item_id: item.id,
                 quantity: item.quantity
             })),
-            expires_minutes: parseInt(expiresMinutes)
+            expires_minutes: parseInt(expiresMinutes),
+            discount_reward_id: discountRewardId ? parseInt(discountRewardId) : null
         };
 
         const routeUrl = '{{ route("seller.receipts.store") }}';
@@ -1340,17 +1420,14 @@ function showSuccessModal(receipt) {
     // Ensure the modal is clickable
     modal.style.pointerEvents = 'auto';
 
-    // Prevent body scroll when modal is open
-    document.body.style.overflow = 'hidden';
+    // Scroll to top of modal
+    modal.scrollTop = 0;
 }
 
 // Close modal
 function closeModal() {
     const modal = document.getElementById('success-modal');
     modal.style.display = 'none';
-
-    // Restore body scroll when modal is closed
-    document.body.style.overflow = 'auto';
 }
 
 // Show QR code
@@ -1406,10 +1483,40 @@ function showToast(message, type = 'success') {
     }, 4000);
 }
 
+// Handle discount selection change
+function handleDiscountChange() {
+    const discountSelect = document.getElementById('discount_reward_id');
+    const discountInfo = document.getElementById('discount-info');
+    const discountDetails = document.getElementById('discount-details');
+
+    if (!discountSelect || !discountInfo || !discountDetails) return;
+
+    const selectedOption = discountSelect.options[discountSelect.selectedIndex];
+
+    if (discountSelect.value) {
+        const percentage = selectedOption.getAttribute('data-percentage');
+        const points = selectedOption.getAttribute('data-points');
+
+        discountDetails.innerHTML = `
+            Customer will receive <strong>${percentage}% discount</strong> on this purchase.<br>
+            <strong>${points} points</strong> will be deducted from their account when they scan this receipt.
+        `;
+        discountInfo.style.display = 'block';
+    } else {
+        discountInfo.style.display = 'none';
+    }
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Create Receipt page loaded');
     updateButtons();
+
+    // Add discount change listener
+    const discountSelect = document.getElementById('discount_reward_id');
+    if (discountSelect) {
+        discountSelect.addEventListener('change', handleDiscountChange);
+    }
 
     // Add event listener to modal content to prevent closing when clicking inside
     const modalContent = document.querySelector('.modal-content');

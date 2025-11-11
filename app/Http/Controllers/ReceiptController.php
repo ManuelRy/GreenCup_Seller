@@ -16,11 +16,13 @@ class ReceiptController extends Controller
 {
     private ItemRepository $iRepo;
     private PendingTransactionRepository $pTRepo;
+    private \App\Repository\DiscountRewardRepository $dRRepo;
 
-    public function __construct(ItemRepository $iRepo, PendingTransactionRepository $pTRepo)
+    public function __construct(ItemRepository $iRepo, PendingTransactionRepository $pTRepo, \App\Repository\DiscountRewardRepository $dRRepo)
     {
         $this->iRepo = $iRepo;
         $this->pTRepo = $pTRepo;
+        $this->dRRepo = $dRRepo;
     }
     /**
      * Display a listing of the resource.
@@ -80,7 +82,8 @@ class ReceiptController extends Controller
     {
         $seller = Auth::user();
         $items = $this->iRepo->list(Auth::id());
-        return view('receipts.create', compact('items', 'seller'));
+        $discountRewards = $this->dRRepo->listActive(Auth::id());
+        return view('receipts.create', compact('items', 'seller', 'discountRewards'));
     }
 
     /**
@@ -103,7 +106,8 @@ class ReceiptController extends Controller
                 'items' => 'required|array|min:1',
                 'items.*.item_id' => 'required|integer|exists:items,id',
                 'items.*.quantity' => 'required|integer|min:1',
-                'expires_minutes' => 'nullable|integer|min:1|max:10080' // Max 1 week (7 days * 24 hours * 60 minutes)
+                'expires_minutes' => 'nullable|integer|min:1|max:10080', // Max 1 week (7 days * 24 hours * 60 minutes)
+                'discount_reward_id' => 'nullable|integer|exists:discount_rewards,id'
             ]);
 
             $seller_id  = Auth::id();
@@ -143,6 +147,7 @@ class ReceiptController extends Controller
                 'total_points' => $points,
                 'total_quantity' => $qantity,
                 'expires_at' => Carbon::now()->addMinutes($expiresAt),
+                'discount_reward_id' => $request->discount_reward_id ?? null,
             ]);
 
             Log::info('Receipt created successfully', ['receipt_id' => $receipt->id]);

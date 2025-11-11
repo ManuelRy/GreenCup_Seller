@@ -15,7 +15,7 @@ class PendingTransactionRepository
 
   public function get($id, $seller_id): ?Model
   {
-    return  PendingTransaction::where('seller_id', $seller_id)->where('id', $id)->with(['consumer'])->first();
+    return  PendingTransaction::where('seller_id', $seller_id)->where('id', $id)->with(['consumer', 'discountReward'])->first();
   }
 
   public function create($data)

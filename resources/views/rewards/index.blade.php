@@ -411,6 +411,110 @@ nav.navbar {
             </div>
         </div>
 
+        <!-- Discount Rewards Section -->
+        <div class="header-card position-relative">
+            <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h2 class="h3 fw-bold mb-2" style="color: #1e293b;">
+                            <i class="fas fa-percent me-2" style="color: #f59e0b;"></i>
+                            Discount Rewards
+                        </h2>
+                        <p class="text-muted mb-0">Set up instant discounts for customers at checkout</p>
+                    </div>
+                    <a href="{{ route('discount-reward.create') }}" class="btn-modern" style="background: #f59e0b; color: white; border-color: #f59e0b;">
+                        <i class="fas fa-plus"></i>
+                        <span>Add Discount</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        @if($discountRewards->count() > 0)
+        <div class="rewards-grid mb-4">
+            @foreach($discountRewards as $discount)
+            <div class="reward-card">
+                <div class="reward-image-container" style="background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);">
+                    <i class="fas fa-percent" style="font-size: 80px; color: #f59e0b;"></i>
+                    <div class="points-badge" style="border-color: #f59e0b; color: #f59e0b;">
+                        <i class="fas fa-coins"></i>
+                        {{ number_format($discount->points_cost) }} pts
+                    </div>
+                </div>
+
+                <div class="reward-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h3 class="reward-title mb-0">{{ $discount->name }}</h3>
+                        @if($discount->is_active)
+                            <span class="status-badge status-active">
+                                <i class="fas fa-check"></i>
+                                Active
+                            </span>
+                        @else
+                            <span class="status-badge status-inactive">
+                                <i class="fas fa-times"></i>
+                                Inactive
+                            </span>
+                        @endif
+                    </div>
+
+                    <div style="background: #fff7ed; padding: 1rem; border-radius: 12px; margin-bottom: 1rem; border-left: 4px solid #f59e0b;">
+                        <div style="font-size: 2rem; font-weight: 800; color: #f59e0b; text-align: center;">
+                            {{ $discount->discount_percentage }}% OFF
+                        </div>
+                        <div style="font-size: 0.875rem; color: #92400e; text-align: center; margin-top: 0.5rem;">
+                            Consumer pays {{ $discount->points_cost }} points at checkout
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-3">
+                        <a href="{{ route('discount-reward.edit', $discount) }}" class="btn-modern btn-modern-outline flex-fill">
+                            <i class="fas fa-edit"></i>
+                            <span>Edit</span>
+                        </a>
+                        <button type="button"
+                                onclick="toggleDiscountStatus({{ $discount->id }})"
+                                class="btn-modern flex-fill"
+                                style="background: {{ $discount->is_active ? '#fef3c7' : '#d1fae5' }};
+                                       color: {{ $discount->is_active ? '#92400e' : '#065f46' }};
+                                       border-color: {{ $discount->is_active ? '#fde68a' : '#a7f3d0' }};">
+                            <i class="fas fa-power-off"></i>
+                            <span>{{ $discount->is_active ? 'Deactivate' : 'Activate' }}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        @else
+        <div class="empty-state mb-4">
+            <div class="empty-state-icon">
+                <i class="fas fa-percent"></i>
+            </div>
+            <h2 class="empty-state-title">No Discount Rewards Yet</h2>
+            <p class="empty-state-text">Create instant discounts that customers can use at checkout</p>
+            <a href="{{ route('discount-reward.create') }}" class="btn-modern" style="background: #f59e0b; color: white; border-color: #f59e0b;">
+                <i class="fas fa-plus"></i>
+                <span>Create Your First Discount</span>
+            </a>
+        </div>
+        @endif
+
+        <!-- General Rewards Header -->
+        <div class="header-card position-relative mt-4">
+            <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h2 class="h3 fw-bold mb-2" style="color: #1e293b;">
+                            <i class="fas fa-gift me-2" style="color: #667eea;"></i>
+                            General Rewards
+                        </h2>
+                        <p class="text-muted mb-0">Traditional rewards that customers redeem after earning points</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Statistics Cards -->
         <div class="stats-grid">
             <div class="stat-card">
@@ -582,5 +686,38 @@ nav.navbar {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Reward page loaded - live countdown disabled for better performance');
 });
+
+// Toggle discount reward status
+async function toggleDiscountStatus(id) {
+    try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
+        if (!csrfToken) {
+            alert('CSRF token not found. Please refresh the page.');
+            return;
+        }
+
+        const response = await fetch(`/discount-rewards/${id}/toggle-active`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken.content,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Reload page to show updated status
+            window.location.reload();
+        } else {
+            alert(data.message || 'Failed to update status');
+        }
+    } catch (error) {
+        console.error('Toggle status error:', error);
+        alert('Failed to update status. Please try again.');
+    }
+}
 </script>
 @endpush

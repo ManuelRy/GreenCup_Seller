@@ -53,6 +53,27 @@
         </div>
     </div>
 
+    <!-- Discount Info (if applied) -->
+    @if($receipt->discountReward)
+        <div class="discount-info-card">
+            <div class="discount-icon">
+                <i class="fas fa-percent"></i>
+            </div>
+            <div class="discount-content">
+                <h2 class="section-title">Discount Applied</h2>
+                <div class="discount-details">
+                    <div class="discount-name">{{ $receipt->discountReward->name }}</div>
+                    <div class="discount-value">{{ $receipt->discountReward->discount_percentage }}% OFF</div>
+                    <div class="discount-cost">Points Cost: {{ $receipt->discountReward->points_cost }} pts</div>
+                    <div class="discount-note">
+                        <i class="fas fa-info-circle"></i>
+                        This discount is applied when customer scans the receipt. Points will be deducted automatically.
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Items List -->
     <div class="items-container">
         <h2 class="section-title">Items</h2>
@@ -242,6 +263,75 @@
 .summary-label {
     font-size: 0.9rem;
     color: #6b7280;
+}
+
+/* Discount Info Card */
+.discount-info-card {
+    background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+    border: 2px solid #f59e0b;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.discount-icon {
+    width: 60px;
+    height: 60px;
+    background: #f59e0b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.discount-content {
+    flex: 1;
+}
+
+.discount-details {
+    margin-top: 1rem;
+}
+
+.discount-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #92400e;
+    margin-bottom: 0.5rem;
+}
+
+.discount-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #f59e0b;
+    margin-bottom: 0.5rem;
+}
+
+.discount-cost {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #78350f;
+    margin-bottom: 1rem;
+}
+
+.discount-note {
+    font-size: 0.875rem;
+    color: #92400e;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 0.75rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.discount-note i {
+    color: #f59e0b;
 }
 
 /* Items Container */

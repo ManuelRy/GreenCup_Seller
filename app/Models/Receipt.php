@@ -16,7 +16,8 @@ class Receipt extends Model
         'status',
         'expires_at',
         'claimed_at',
-        'claimed_by_consumer_id'
+        'claimed_by_consumer_id',
+        'discount_reward_id'
     ];
 
     protected $casts = [
@@ -67,5 +68,13 @@ class Receipt extends Model
     public function consumer()
     {
         return $this->belongsTo(\App\Models\Consumer::class, 'claimed_by_consumer_id');
+    }
+
+    /**
+     * Get discount reward relationship
+     */
+    public function discountReward()
+    {
+        return $this->belongsTo(\App\Models\DiscountReward::class, 'discount_reward_id');
     }
 }
