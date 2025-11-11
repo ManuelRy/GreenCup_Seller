@@ -73,7 +73,7 @@ class ReportController extends Controller
                 ]);
 
                 $response = $this->fRepo->upload('report_evidences', $file);
-                
+
                 Log::info('File upload response', [
                     'status' => $response->status(),
                     'successful' => $response->successful(),

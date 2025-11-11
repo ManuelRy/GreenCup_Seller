@@ -1,20 +1,20 @@
 @extends('master')
 
 @section('content')
-  <div class="container-fluid min-vh-100 py-3">
+  <div class="container-fluid min-vh-100 py-3 py-md-5">
     <div class="row justify-content-center">
-      <div class="col-12 col-xl-8">
+      <div class="col-12 col-lg-10 col-xl-9 col-xxl-8">
 
         <!-- Page Header -->
         <div class="row mb-4">
           <div class="col-12">
             <div class="card border-0 shadow-sm bg-gradient-primary text-white rounded-4">
-              <div class="card-body py-4 text-center">
+              <div class="card-body py-4 py-md-5 text-center">
                 <div class="mb-3">
-                  <i class="fas fa-exclamation-triangle fa-3x opacity-90"></i>
+                  <i class="fas fa-exclamation-triangle fa-3x fa-md-4x opacity-90"></i>
                 </div>
-                <h2 class="fw-bold mb-2">Report an Issue</h2>
-                <p class="fw-light opacity-90 mb-0">Help us improve your <span class="h5 font-weight-bold">Green Cups</span> experience</p>
+                <h2 class="fw-bold mb-2 h1-md">Report an Issue</h2>
+                <p class="fw-light opacity-90 mb-0 fs-6 fs-md-5">Help us improve your <span class="h5 font-weight-bold">Green Cups</span> experience</p>
               </div>
             </div>
           </div>
@@ -24,13 +24,13 @@
         <div class="row">
           <div class="col-12">
             <div class="card border-0 shadow-sm rounded-3">
-              <div class="card-header bg-white border-0 pb-0">
+              <div class="card-header bg-white border-0 pb-0 pt-4 px-4 px-md-5">
                 <h5 class="fw-semibold text-dark mb-0">
                   <i class="fas fa-edit text-primary me-2"></i>
                   Submit Report
                 </h5>
               </div>
-              <div class="card-body">
+              <div class="card-body p-4 p-md-5">
                 <!-- Display Validation Errors -->
                 @if($errors->any())
                   <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -411,6 +411,42 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
 
+    /* Desktop optimizations */
+    @media (min-width: 992px) {
+      .report-type-btn {
+        height: 110px;
+      }
+
+      .report-type-btn .fs-2 {
+        font-size: 2rem !important;
+      }
+
+      .fa-md-4x {
+        font-size: 4rem !important;
+      }
+
+      .h1-md {
+        font-size: 2.5rem !important;
+      }
+
+      .fs-md-5 {
+        font-size: 1.25rem !important;
+      }
+
+      .upload-area {
+        min-height: 220px;
+      }
+
+      .form-control,
+      .form-control-lg {
+        font-size: 1rem;
+      }
+
+      textarea.form-control {
+        font-size: 1rem;
+      }
+    }
+
     /* Mobile optimizations */
     @media (max-width: 768px) {
       .container-fluid {
@@ -658,7 +694,7 @@
         if (fileInput.files.length > 0) {
           const file = fileInput.files[0];
           const maxSize = 5 * 1024 * 1024; // 5MB
-          
+
           if (file.size > maxSize) {
             e.preventDefault();
             const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);

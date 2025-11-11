@@ -234,6 +234,9 @@
           <img id="modalImage" src="" alt="Evidence">
         </div>
         <div class="custom-modal-footer">
+          <small class="text-muted me-auto">
+            <i class="fas fa-info-circle me-1"></i>Click image to zoom
+          </small>
           <a id="downloadImageBtn" href="" download class="custom-btn custom-btn-primary">
             <i class="fas fa-download me-2"></i>Download
           </a>
@@ -488,38 +491,48 @@
 
     .custom-modal-body {
       padding: 2rem;
-      background: #f8f9fa;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
       text-align: center;
       position: relative;
-      min-height: 200px;
-      max-height: 60vh;
-      overflow: auto;
+      min-height: 300px;
+      max-height: 70vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .custom-modal-body img {
       max-width: 100%;
-      max-height: 60vh;
+      max-height: 70vh;
       width: auto;
       height: auto;
-      border-radius: 8px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
       opacity: 0;
-      transition: opacity 0.3s ease, transform 0.3s ease;
+      transition: opacity 0.4s ease, transform 0.3s ease;
+      cursor: zoom-in;
+      background: white;
+      padding: 0.5rem;
     }
 
     .custom-modal-body img.loaded {
       opacity: 1;
     }
 
-    .custom-modal-body img:hover {
-      transform: scale(1.02);
+    .custom-modal-body img.zoomed {
+      cursor: zoom-out;
+      transform: scale(1.5);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
     }
 
     .custom-modal-footer {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 1rem 1.5rem;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      padding: 1.25rem 1.5rem;
       border-top: 2px solid #e8ecf4;
       background: #fff;
     }
@@ -578,20 +591,40 @@
         padding: 1rem;
       }
 
+      .custom-modal-title {
+        font-size: 1rem;
+      }
+
       .custom-modal-body {
         padding: 1rem;
-        max-height: 50vh;
+        min-height: 250px;
+        max-height: 60vh;
+      }
+
+      .custom-modal-body img {
+        max-height: 60vh;
+        border-radius: 8px;
+        padding: 0.25rem;
       }
 
       .custom-modal-footer {
-        padding: 0.75rem 1rem;
-        flex-direction: column;
+        padding: 1rem;
+        flex-wrap: wrap;
         gap: 0.5rem;
       }
 
+      .custom-modal-footer small {
+        flex-basis: 100%;
+        text-align: center;
+        margin-bottom: 0.5rem;
+      }
+
       .custom-btn {
-        width: 100%;
+        flex: 1;
+        min-width: 120px;
         justify-content: center;
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
       }
     }
   </style>
@@ -640,6 +673,11 @@
         if (loadingSpinner && loadingSpinner.parentNode) {
           loadingSpinner.remove();
         }
+
+        // Add zoom toggle on click
+        modalImage.onclick = function() {
+          this.classList.toggle('zoomed');
+        };
       };
       img.onerror = function() {
         // Remove loading spinner
@@ -656,7 +694,15 @@
     // Function to close image modal
     function closeImageModal() {
       const modal = document.getElementById('imageModal');
+      const modalImage = document.getElementById('modalImage');
+
       modal.classList.remove('show');
+
+      // Remove zoom if applied
+      if (modalImage) {
+        modalImage.classList.remove('zoomed');
+        modalImage.onclick = null;
+      }
 
       // Restore body scroll
       document.body.style.overflow = '';
