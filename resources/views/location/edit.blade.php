@@ -49,7 +49,7 @@
                     </h1>
                     <p class="text-muted mb-0">Set your business location for customers to find you easily</p>
                 </div>
-                <a href="{{ route('location.show') }}" 
+                <a href="{{ route('location.show') }}"
                    class="btn btn-outline-secondary d-inline-flex align-items-center mt-3 mt-md-0">
                     <i class="bi bi-arrow-left me-2"></i>
                     Back to Location
@@ -121,8 +121,8 @@
                             <label for="address" class="form-label fw-bold text-dark">
                                 <i class="bi bi-building me-2"></i>Business Address *
                             </label>
-                            <textarea id="address" name="address" 
-                                    class="form-control @error('address') is-invalid @enderror" 
+                            <textarea id="address" name="address"
+                                    class="form-control @error('address') is-invalid @enderror"
                                     rows="3" required
                                     placeholder="Enter your complete business address">{{ old('address', $seller->address) }}</textarea>
                             @error('address')
@@ -140,8 +140,8 @@
                             <div class="row g-3">
                                 <div class="col-6">
                                     <div class="form-floating">
-                                        <input type="number" id="latitude" name="latitude" 
-                                               class="form-control @error('latitude') is-invalid @enderror" 
+                                        <input type="number" id="latitude" name="latitude"
+                                               class="form-control @error('latitude') is-invalid @enderror"
                                                step="any" required placeholder="Latitude"
                                                value="{{ old('latitude', $seller->latitude) }}">
                                         <label for="latitude">Latitude</label>
@@ -152,8 +152,8 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="form-floating">
-                                        <input type="number" id="longitude" name="longitude" 
-                                               class="form-control @error('longitude') is-invalid @enderror" 
+                                        <input type="number" id="longitude" name="longitude"
+                                               class="form-control @error('longitude') is-invalid @enderror"
                                                step="any" required placeholder="Longitude"
                                                value="{{ old('longitude', $seller->longitude) }}">
                                         <label for="longitude">Longitude</label>
@@ -271,7 +271,7 @@ function addMarker(lat, lng) {
     // Create custom marker
     const customIcon = L.divIcon({
         className: 'custom-marker',
-        html: `<div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow" 
+        html: `<div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow"
                style="width: 40px; height: 40px;">
                <i class="bi bi-shop fs-6"></i>
                </div>`,
@@ -317,12 +317,12 @@ function setLocation(lat, lng) {
 // Show status message with auto-hide
 function showStatus(message, type = 'info') {
     const statusEl = document.getElementById('statusMessage');
-    const alertClass = type === 'success' ? 'alert-success' : 
-                      type === 'warning' ? 'alert-warning' : 
+    const alertClass = type === 'success' ? 'alert-success' :
+                      type === 'warning' ? 'alert-warning' :
                       type === 'error' ? 'alert-danger' : 'alert-info';
-    
-    const icon = type === 'success' ? 'bi-check-circle-fill' : 
-                 type === 'warning' ? 'bi-exclamation-triangle-fill' : 
+
+    const icon = type === 'success' ? 'bi-check-circle-fill' :
+                 type === 'warning' ? 'bi-exclamation-triangle-fill' :
                  type === 'error' ? 'bi-x-circle-fill' : 'bi-info-circle-fill';
 
     statusEl.innerHTML = `
@@ -344,7 +344,7 @@ function showStatus(message, type = 'info') {
 function getCurrentLocation() {
     const btn = document.getElementById('getCurrentLocation');
     const originalText = btn.innerHTML;
-    
+
     btn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Getting location...';
     btn.disabled = true;
 
@@ -355,13 +355,22 @@ function getCurrentLocation() {
     }
 
     navigator.geolocation.getCurrentPosition(
-        function(position) {
+        async function(position) {
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
 
             setLocation(lat, lng);
-            reverseGeocode(lat, lng);
-            showStatus('Current location detected successfully!', 'success');
+
+            // Update button text while getting address
+            btn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Getting address...';
+
+            try {
+                await reverseGeocode(lat, lng);
+                showStatus('Current location and address detected successfully!', 'success');
+            } catch (error) {
+                showStatus('Location detected! Address lookup failed.', 'warning');
+            }
+
             resetButton(btn, originalText);
         },
         function(error) {
@@ -395,7 +404,7 @@ function getCurrentLocation() {
 function getApproximateLocation() {
     const btn = document.getElementById('getApproximateLocation');
     const originalText = btn.innerHTML;
-    
+
     btn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Getting location...';
     btn.disabled = true;
 
@@ -425,34 +434,28 @@ function resetButton(btn, originalText) {
 }
 
 // Reverse geocoding to get address from coordinates
-function reverseGeocode(lat, lng) {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]');
-    if (!csrfToken) {
-        console.error('CSRF token not found');
-        return;
-    }
+async function reverseGeocode(lat, lng) {
+    try {
+        // Use Nominatim API directly like in the register page
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
+            headers: { 'User-Agent': 'GreenCup Business Location' }
+        });
 
-    fetch('{{ route("location.reverse-geocode") }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken.content
-        },
-        body: JSON.stringify({
-            latitude: lat,
-            longitude: lng
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById('address').value = data.address;
-            showStatus('Address updated automatically based on coordinates!', 'info');
+        if (response.ok) {
+            const data = await response.json();
+            if (data && data.display_name) {
+                document.getElementById('address').value = data.display_name;
+                showStatus('Address updated automatically based on coordinates!', 'info');
+            } else {
+                console.warn('No address found for these coordinates');
+            }
+        } else {
+            console.warn('Reverse geocoding request failed');
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Reverse geocoding error:', error);
-    });
+        // Silently fail - coordinates are already set
+    }
 }
 
 // Search for addresses
@@ -525,7 +528,10 @@ function showSearchResults(results) {
 
 // Hide search results dropdown
 function hideSearchResults() {
-    document.getElementById('searchResults').classList.add('d-none');
+    const searchResults = document.getElementById('searchResults');
+    if (searchResults) {
+        searchResults.classList.add('d-none');
+    }
 }
 
 // Initialize everything when DOM is loaded
@@ -533,58 +539,114 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize map
     initializeMap();
 
-    // Bind event listeners
-    document.getElementById('getCurrentLocation').addEventListener('click', getCurrentLocation);
-    document.getElementById('getApproximateLocation').addEventListener('click', getApproximateLocation);
+    // Bind event listeners - Check if elements exist before adding listeners
+    const getCurrentLocationBtn = document.getElementById('getCurrentLocation');
+    if (getCurrentLocationBtn) {
+        getCurrentLocationBtn.addEventListener('click', getCurrentLocation);
+    }
 
-    // Address search with debouncing
-    let searchTimeout;
-    document.getElementById('addressSearch').addEventListener('input', function(e) {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            searchAddress(e.target.value);
-        }, 500);
-    });
+    const getApproximateLocationBtn = document.getElementById('getApproximateLocation');
+    if (getApproximateLocationBtn) {
+        getApproximateLocationBtn.addEventListener('click', getApproximateLocation);
+    }
 
-    // Hide search results when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('#addressSearch') && !e.target.closest('#searchResults')) {
-            hideSearchResults();
-        }
-    });
+    const addressSearchInput = document.getElementById('addressSearch');
+    if (addressSearchInput) {
+        // Address search with debouncing
+        let searchTimeout;
+        addressSearchInput.addEventListener('input', function(e) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchAddress(e.target.value);
+            }, 500);
+        });
+
+        // Hide search results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#addressSearch') && !e.target.closest('#searchResults')) {
+                const searchResults = document.getElementById('searchResults');
+                if (searchResults) {
+                    hideSearchResults();
+                }
+            }
+        });
+    }
 
     // Coordinate input changes
-    document.getElementById('latitude').addEventListener('change', function() {
-        const lat = parseFloat(this.value);
-        const lng = parseFloat(document.getElementById('longitude').value);
-        if (!isNaN(lat) && !isNaN(lng)) {
-            addMarker(lat, lng);
-            map.setView([lat, lng], 15);
-            reverseGeocode(lat, lng);
-        }
-    });
+    const latInput = document.getElementById('latitude');
+    const lngInput = document.getElementById('longitude');
 
-    document.getElementById('longitude').addEventListener('change', function() {
-        const lat = parseFloat(document.getElementById('latitude').value);
-        const lng = parseFloat(this.value);
-        if (!isNaN(lat) && !isNaN(lng)) {
-            addMarker(lat, lng);
-            map.setView([lat, lng], 15);
-            reverseGeocode(lat, lng);
-        }
-    });
+    if (latInput) {
+        latInput.addEventListener('change', function() {
+            const lat = parseFloat(this.value);
+            const lng = parseFloat(lngInput.value);
+            if (!isNaN(lat) && !isNaN(lng)) {
+                addMarker(lat, lng);
+                map.setView([lat, lng], 15);
+                reverseGeocode(lat, lng);
+            }
+        });
+    }
+
+    if (lngInput) {
+        lngInput.addEventListener('change', function() {
+            const lat = parseFloat(latInput.value);
+            const lng = parseFloat(this.value);
+            if (!isNaN(lat) && !isNaN(lng)) {
+                addMarker(lat, lng);
+                map.setView([lat, lng], 15);
+                reverseGeocode(lat, lng);
+            }
+        });
+    }
 
     // Form validation
     const form = document.getElementById('locationForm');
-    form.addEventListener('submit', function(e) {
-        if (!form.checkValidity()) {
-            e.preventDefault();
-            e.stopPropagation();
-            showStatus('Please fill in all required fields correctly.', 'error');
-        }
-        form.classList.add('was-validated');
-    });
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (!form.checkValidity()) {
+                e.preventDefault();
+                e.stopPropagation();
+                showStatus('Please fill in all required fields correctly.', 'error');
+            }
+            form.classList.add('was-validated');
+        });
+    }
+
+    // Auto-fill location if no location is set
+    if (!currentLatitude || !currentLongitude) {
+        autoFillLocation();
+    }
 });
+
+// Auto-fill location using browser geolocation on page load
+function autoFillLocation() {
+    if (!navigator.geolocation) {
+        console.log('Geolocation is not supported by this browser.');
+        return;
+    }
+
+    // Silently try to get the user's location
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            setLocation(lat, lng);
+            reverseGeocode(lat, lng);
+            showStatus('Location auto-filled based on your current position!', 'success');
+        },
+        function(error) {
+            // Fail silently - user can manually set location
+            console.log('Auto-fill location failed:', error.message);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 60000
+        }
+    );
+}
 </script>
 
 <style>
@@ -610,7 +672,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .sticky-top {
         position: static !important;
     }
-    
+
     #map {
         height: 350px !important;
     }

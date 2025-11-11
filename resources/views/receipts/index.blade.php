@@ -202,6 +202,14 @@
     </div>
 </div>
 
+<!-- Warning Toast -->
+<div id="warning-toast" class="toast warning-toast" style="display: none;">
+    <div class="toast-content">
+        <span class="toast-icon">⚠️</span>
+        <span class="toast-message" id="warning-message">Warning</span>
+    </div>
+</div>
+
 <style>
 /* Modern Color Palette */
 :root {
@@ -752,6 +760,8 @@ body::before {
     font-size: 1rem;
     position: relative;
     z-index: 2;
+    opacity: 1;
+    transform: scale(1);
 }
 
 .view-btn {
@@ -941,6 +951,11 @@ body::before {
     border-left: 4px solid var(--error);
 }
 
+.toast.warning-toast {
+    background: #fffbeb;
+    border-left: 4px solid var(--warning);
+}
+
 .toast-content {
     display: flex;
     align-items: center;
@@ -1104,8 +1119,13 @@ body::before {
 <script>
 // Auto-refresh functionality
 let refreshInterval;
+let checkExpiryInterval;
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Check for expired receipts every 5 seconds
+    checkExpiredReceipts();
+    checkExpiryInterval = setInterval(checkExpiredReceipts, 5000);
+
     // Auto-refresh every 30 seconds if there are pending receipts
     const pendingCount = {{ $stats['pending'] }};
     if (pendingCount > 0) {
@@ -1117,6 +1137,73 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 30000);
     }
 });
+
+// Check and update expired receipts in real-time
+function checkExpiredReceipts() {
+    const receiptCards = document.querySelectorAll('.receipt-card.pending');
+    const now = new Date();
+
+    receiptCards.forEach(card => {
+        // Find the expiry date in the card
+        const detailRows = card.querySelectorAll('.detail-row');
+        let expiryDate = null;
+
+        detailRows.forEach(row => {
+            const label = row.querySelector('.detail-label');
+            if (label && label.textContent.includes('Expires:')) {
+                const value = row.querySelector('.detail-value');
+                if (value) {
+                    // Parse the expiry date (format: "M d, Y g:i A" in Asia/Phnom_Penh timezone)
+                    const expiryText = value.textContent.trim();
+                    expiryDate = new Date(expiryText);
+                }
+            }
+        });
+
+        // If receipt has expired, update the UI
+        if (expiryDate && expiryDate < now) {
+            updateReceiptToExpired(card);
+        }
+    });
+}
+
+// Update receipt card to expired state
+function updateReceiptToExpired(receiptCard) {
+    // Update card classes
+    receiptCard.classList.remove('pending');
+    receiptCard.classList.add('expired');
+
+    // Update status badge
+    const statusBadge = receiptCard.querySelector('.status-badge');
+    if (statusBadge) {
+        statusBadge.className = 'status-badge status-expired';
+        statusBadge.innerHTML = '⌛ Expired';
+    }
+
+    // Remove action buttons (QR and Cancel buttons)
+    const qrBtn = receiptCard.querySelector('.qr-btn');
+    const cancelBtn = receiptCard.querySelector('.cancel-btn');
+    if (qrBtn) {
+        qrBtn.style.opacity = '0';
+        qrBtn.style.transform = 'scale(0)';
+        setTimeout(() => qrBtn.remove(), 300);
+    }
+    if (cancelBtn) {
+        cancelBtn.style.opacity = '0';
+        cancelBtn.style.transform = 'scale(0)';
+        setTimeout(() => cancelBtn.remove(), 300);
+    }
+
+    // Add a subtle animation to show the change
+    receiptCard.style.transition = 'all 0.5s ease';
+    receiptCard.style.opacity = '0.7';
+    setTimeout(() => {
+        receiptCard.style.opacity = '1';
+    }, 500);
+
+    // Show a subtle toast notification
+    showToast('A receipt has expired automatically', 'warning');
+}
 
 // Track user activity
 let lastUserActivity = Date.now();
@@ -1174,8 +1261,15 @@ async function cancelReceipt(receiptId) {
 
 // Toast notification function
 function showToast(message, type = 'success') {
-    const toast = document.getElementById(type === 'success' ? 'success-toast' : 'error-toast');
-    const messageEl = document.getElementById(type === 'success' ? 'success-message' : 'error-message');
+    const toastId = type === 'success' ? 'success-toast' :
+                    type === 'warning' ? 'warning-toast' : 'error-toast';
+    const messageId = type === 'success' ? 'success-message' :
+                      type === 'warning' ? 'warning-message' : 'error-message';
+
+    const toast = document.getElementById(toastId);
+    const messageEl = document.getElementById(messageId);
+
+    if (!toast || !messageEl) return;
 
     messageEl.textContent = message;
     toast.style.display = 'block';
@@ -1202,6 +1296,9 @@ function showToast(message, type = 'success') {
 window.addEventListener('beforeunload', function() {
     if (refreshInterval) {
         clearInterval(refreshInterval);
+    }
+    if (checkExpiryInterval) {
+        clearInterval(checkExpiryInterval);
     }
 });
 </script>

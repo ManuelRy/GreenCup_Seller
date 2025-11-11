@@ -519,6 +519,14 @@
     letter-spacing: 0.5px;
 }
 
+.receipt-stat-expired .receipt-stat-value {
+    color: #6b7280;
+}
+
+.receipt-stat-expired .receipt-stat-label {
+    color: #6b7280;
+}
+
 .receipt-actions {
     display: flex;
     gap: 12px;
@@ -976,7 +984,7 @@
         gap: 20px;
     }
     .receipt-stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
         gap: 16px;
     }
 }
@@ -1003,7 +1011,7 @@
         gap: 16px;
     }
     .receipt-stats-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(3, 1fr);
         gap: 12px;
     }
     .chart-legend {
@@ -1243,18 +1251,48 @@
             <div class="receipt-stats-grid">
                 @php
                     try {
+                        $sellerId = Auth::guard('seller')->user()->id;
+                        $now = now();
+
+                        // Truly pending receipts (not expired by time)
                         $pendingReceipts = DB::table('pending_transactions')
-                            ->where('seller_id', Auth::guard('seller')->user()->id)
+                            ->where('seller_id', $sellerId)
                             ->where('status', 'pending')
+                            ->where(function($query) use ($now) {
+                                $query->whereNull('expires_at')
+                                      ->orWhere('expires_at', '>', $now);
+                            })
                             ->count();
+
+                        // Claimed today
                         $claimedToday = DB::table('pending_transactions')
-                            ->where('seller_id', Auth::guard('seller')->user()->id)
+                            ->where('seller_id', $sellerId)
                             ->where('status', 'claimed')
                             ->whereDate('claimed_at', today())
+                            ->count();
+
+                        // Expired today (either marked as expired OR pending but past expiration time)
+                        $expiredToday = DB::table('pending_transactions')
+                            ->where('seller_id', $sellerId)
+                            ->where(function($query) use ($now) {
+                                // Already marked as expired and updated today
+                                $query->where(function($q) {
+                                    $q->where('status', 'expired')
+                                      ->whereDate('updated_at', today());
+                                })
+                                // OR still pending but expired by time today
+                                ->orWhere(function($q) use ($now) {
+                                    $q->where('status', 'pending')
+                                      ->whereNotNull('expires_at')
+                                      ->where('expires_at', '<=', $now)
+                                      ->whereDate('expires_at', today());
+                                });
+                            })
                             ->count();
                     } catch (\Exception $e) {
                         $pendingReceipts = 0;
                         $claimedToday = 0;
+                        $expiredToday = 0;
                     }
                 @endphp
                 <div class="receipt-stat">
@@ -1264,6 +1302,10 @@
                 <div class="receipt-stat">
                     <div class="receipt-stat-value">{{ $claimedToday }}</div>
                     <div class="receipt-stat-label">Claimed Today</div>
+                </div>
+                <div class="receipt-stat receipt-stat-expired">
+                    <div class="receipt-stat-value">{{ $expiredToday }}</div>
+                    <div class="receipt-stat-label">Expired Today</div>
                 </div>
             </div>
 
@@ -1472,7 +1514,7 @@
                                     @if($activity->status === 'pending')
                                         Requested reward • {{ $activity->reward_name }}
                                     @elseif($activity->status === 'approved')
-                                        Reward approved by admin • {{ $activity->reward_name }}
+                                        Reward approved • {{ $activity->reward_name }}
                                     @elseif($activity->status === 'rejected')
                                         Reward rejected • {{ $activity->reward_name }}
                                     @else
