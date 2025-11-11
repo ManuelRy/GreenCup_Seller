@@ -216,11 +216,6 @@ textarea.form-control {
   resize: vertical;
 }
 
-.custom-hours-input {
-  margin-top: 0.75rem;
-  display: none;
-}
-
 .btn-secondary-custom {
   background: white;
   border: 2px solid #e5e7eb;
@@ -526,46 +521,6 @@ textarea.form-control {
           </div>
 
           <div class="mb-3">
-            <label for="working_hours" class="form-label">
-              Working Hours <span class="text-muted">(optional)</span>
-            </label>
-            <div class="input-wrapper">
-              <i class="fas fa-clock input-icon"></i>
-              <select id="working_hours" name="working_hours" class="form-select @error('working_hours') is-invalid @enderror">
-                <option value="">-- Select Working Hours --</option>
-                <optgroup label="Standard Business Hours">
-                  <option value="Mon-Fri 9AM-5PM" {{ old('working_hours') == 'Mon-Fri 9AM-5PM' ? 'selected' : '' }}>Mon-Fri 9AM-5PM</option>
-                  <option value="Mon-Fri 8AM-6PM" {{ old('working_hours') == 'Mon-Fri 8AM-6PM' ? 'selected' : '' }}>Mon-Fri 8AM-6PM</option>
-                </optgroup>
-                <optgroup label="Including Saturday">
-                  <option value="Mon-Sat 9AM-5PM" {{ old('working_hours') == 'Mon-Sat 9AM-5PM' ? 'selected' : '' }}>Mon-Sat 9AM-5PM</option>
-                  <option value="Mon-Sat 8AM-6PM" {{ old('working_hours') == 'Mon-Sat 8AM-6PM' ? 'selected' : '' }}>Mon-Sat 8AM-6PM</option>
-                </optgroup>
-                <optgroup label="7 Days a Week">
-                  <option value="Mon-Sun 9AM-5PM" {{ old('working_hours') == 'Mon-Sun 9AM-5PM' ? 'selected' : '' }}>Mon-Sun 9AM-5PM</option>
-                  <option value="24/7" {{ old('working_hours') == '24/7' ? 'selected' : '' }}>24/7 (Always Open)</option>
-                </optgroup>
-                <optgroup label="Custom">
-                  <option value="custom" {{ old('working_hours') == 'custom' ? 'selected' : '' }}>Custom Hours</option>
-                </optgroup>
-              </select>
-            </div>
-
-            <div id="customHoursInput" class="custom-hours-input">
-              <input type="text" id="custom_working_hours" name="custom_working_hours"
-                value="{{ old('custom_working_hours') }}" class="form-control"
-                placeholder="e.g., Mon-Wed 9AM-1PM, Thu-Fri 2PM-6PM" />
-            </div>
-
-            @error('working_hours')
-              <div class="invalid-feedback">
-                <i class="fas fa-exclamation-circle"></i>
-                <span>{{ $message }}</span>
-              </div>
-            @enderror
-          </div>
-
-          <div class="mb-3">
             <label for="address" class="form-label">
               Business Address
             </label>
@@ -777,26 +732,6 @@ document.addEventListener('DOMContentLoaded', function() {
       strengthText.textContent = labels[strength - 1] || labels[0];
       strengthText.style.color = colors[strength - 1] || colors[0];
     }
-  }
-
-  document.getElementById('working_hours').addEventListener('change', function() {
-    const customInput = document.getElementById('customHoursInput');
-    const customField = document.getElementById('custom_working_hours');
-
-    if (this.value === 'custom') {
-      customInput.style.display = 'block';
-      customField.required = true;
-    } else {
-      customInput.style.display = 'none';
-      customField.required = false;
-      customField.value = '';
-    }
-    updateProgress();
-  });
-
-  if (document.getElementById('working_hours').value === 'custom') {
-    document.getElementById('customHoursInput').style.display = 'block';
-    document.getElementById('custom_working_hours').required = true;
   }
 
   document.querySelectorAll('input, textarea, select').forEach(field => {
