@@ -1200,9 +1200,6 @@ function updateReceiptToExpired(receiptCard) {
     setTimeout(() => {
         receiptCard.style.opacity = '1';
     }, 500);
-
-    // Show a subtle toast notification
-    showToast('A receipt has expired automatically', 'warning');
 }
 
 // Track user activity

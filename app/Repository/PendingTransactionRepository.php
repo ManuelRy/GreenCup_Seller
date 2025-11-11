@@ -29,14 +29,22 @@ class PendingTransactionRepository
 
   public function stats($seller_id)
   {
+    $now = now();
+
     return PendingTransaction::selectRaw("
         COUNT(*) as total,
-        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+        SUM(CASE
+            WHEN status = 'pending' AND (expires_at IS NULL OR expires_at > ?)
+            THEN 1 ELSE 0
+        END) as pending,
         SUM(CASE WHEN status = 'claimed' THEN 1 ELSE 0 END) as claimed,
-        SUM(CASE WHEN status = 'expired' THEN 1 ELSE 0 END) as expired,
+        SUM(CASE
+            WHEN status = 'expired' OR (status = 'pending' AND expires_at IS NOT NULL AND expires_at <= ?)
+            THEN 1 ELSE 0
+        END) as expired,
         SUM(total_points) as total_points_issued,
         SUM(CASE WHEN status = 'claimed' THEN total_points ELSE 0 END) as total_points_claimed
-    ")
+    ", [$now, $now])
       ->where('seller_id', $seller_id)
       ->first()
       ->toArray();

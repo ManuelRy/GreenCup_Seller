@@ -32,11 +32,34 @@ class ReceiptController extends Controller
         $dateFrom = $request->get('date_from', '');
         $dateTo = $request->get('date_to', '');
         $seller_id = Auth::id();
-        // TODO: Implement listing features here
 
         $query = $this->pTRepo->listQuery($seller_id);
-        if ($status !== 'all')
-            $query->where('status', $status);
+
+        // Apply status filter with real-time expiration check
+        if ($status !== 'all') {
+            if ($status === 'pending') {
+                // Only show truly pending receipts (not expired by time)
+                $query->where('status', 'pending')
+                    ->where(function($q) {
+                        $q->whereNull('expires_at')
+                          ->orWhere('expires_at', '>', now());
+                    });
+            } elseif ($status === 'expired') {
+                // Show both marked as expired OR pending but past expiration time
+                $query->where(function($q) {
+                    $q->where('status', 'expired')
+                      ->orWhere(function($subQ) {
+                          $subQ->where('status', 'pending')
+                               ->whereNotNull('expires_at')
+                               ->where('expires_at', '<=', now());
+                      });
+                });
+            } else {
+                // For 'claimed' or any other status, use regular filter
+                $query->where('status', $status);
+            }
+        }
+
         if ($search)
             $query->where('receipt_code', 'LIKE', '%' . $search . '%');
         if ($dateFrom)
@@ -46,7 +69,7 @@ class ReceiptController extends Controller
 
         $receipts = $query->paginate(20);
         $stats = $this->pTRepo->stats($seller_id);
-        // dd($receipts    );
+
         return view('receipts.index', compact('receipts', 'stats', 'status', 'search', 'dateFrom', 'dateTo'));
     }
 
