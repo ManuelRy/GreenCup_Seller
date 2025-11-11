@@ -579,9 +579,9 @@
                     <div class="upload-icon"><i class="fas fa-camera"></i></div>
                     <div class="upload-text">
                         @if($item->image_url)
-                            Take photo or replace with new image
+                            replace with new image
                         @else
-                            Take photo or upload image
+                            upload image
                         @endif
                     </div>
                     <div class="upload-subtext">JPEG, PNG, JPG, GIF (Max: 5MB)</div>

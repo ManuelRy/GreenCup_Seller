@@ -394,7 +394,7 @@
                 >
                 <div class="image-upload-area" id="uploadArea" onclick="document.getElementById('image').click()">
                     <div class="upload-icon"><i class="fas fa-camera"></i></div>
-                    <div class="upload-text">Take photo or upload image</div>
+                    <div class="upload-text">Upload image</div>
                     <div class="upload-subtext">JPEG, PNG, JPG, GIF (Max: 5MB)</div>
                 </div>
                 @error('image')

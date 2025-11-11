@@ -536,8 +536,7 @@ body::before {
                         <div class="file-upload-icon">
                             <i class="fas fa-camera"></i>
                         </div>
-                        <div class="file-upload-text">Take photo or upload image</div>
-                        <div class="file-upload-hint">JPG, PNG, GIF up to 5MB</div>
+                        <div class="file-upload-text">Upload image</div>
                     </div>
                     <input type="file" id="image" name="image" class="file-input"
                            accept="image/jpeg,image/png,image/jpg,image/gif">
@@ -578,7 +577,7 @@ body::before {
 document.addEventListener('DOMContentLoaded', function() {
     const imageInput = document.getElementById('image');
     const isAndroid = /android/i.test(navigator.userAgent);
-    
+
     if (isAndroid) {
         // For Android, use wildcard to enable camera option
         imageInput.setAttribute('accept', 'image/*');

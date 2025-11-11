@@ -633,8 +633,8 @@ body {
                     <label for="image" class="form-label">Update Image</label>
                     <div class="file-upload-container" id="uploadContainer" onclick="document.getElementById('image').click()">
                         <div class="file-upload-icon">📷</div>
-                        <div class="file-upload-text">Take photo or upload new image</div>
-                        <div class="file-upload-hint">JPG, PNG, GIF up to 5MB (optional)</div>
+                        <div class="file-upload-text">Upload new image</div>
+                        
                     </div>
                     <input type="file" id="image" name="image" class="file-input"
                            accept="image/jpeg,image/png,image/jpg,image/gif">
@@ -674,7 +674,7 @@ body {
 document.addEventListener('DOMContentLoaded', function() {
     const imageInput = document.getElementById('image');
     const isAndroid = /android/i.test(navigator.userAgent);
-    
+
     if (isAndroid) {
         imageInput.setAttribute('accept', 'image/*');
     }
