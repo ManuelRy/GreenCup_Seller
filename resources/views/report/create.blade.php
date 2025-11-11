@@ -454,14 +454,6 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Fix for Android: Use wildcard to enable camera option
-      const fileInput = document.getElementById('image');
-      const isAndroid = /android/i.test(navigator.userAgent);
-
-      if (isAndroid) {
-        fileInput.setAttribute('accept', 'image/*');
-      }
-
       // Character counters
       const titleInput = document.getElementById('title');
       const descInput = document.getElementById('description');
@@ -495,6 +487,12 @@
       const fileName = document.getElementById('fileName');
       const chooseFileBtn = document.getElementById('chooseFileBtn');
       let isProcessing = false; // Guard to prevent double processing
+
+      // Fix for Android: Use wildcard to enable camera option
+      const isAndroid = /android/i.test(navigator.userAgent);
+      if (isAndroid) {
+        fileInput.setAttribute('accept', 'image/*');
+      }
 
       // Choose file button click
       chooseFileBtn.addEventListener('click', (e) => {
@@ -655,6 +653,30 @@
       const submitBtn = form.querySelector('button[type="submit"]');
 
       form.addEventListener('submit', function(e) {
+        // Validate file size one more time before submission
+        const fileInput = document.getElementById('image');
+        if (fileInput.files.length > 0) {
+          const file = fileInput.files[0];
+          const maxSize = 5 * 1024 * 1024; // 5MB
+          
+          if (file.size > maxSize) {
+            e.preventDefault();
+            const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+            showAlert(`Image is too large (${fileSizeMB}MB). Please choose an image smaller than 5MB.`, 'danger');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Submit Report';
+            return false;
+          }
+
+          // Log file details for debugging
+          console.log('Submitting report with image:', {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            sizeMB: (file.size / (1024 * 1024)).toFixed(2) + 'MB'
+          });
+        }
+
         // Add loading state
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
