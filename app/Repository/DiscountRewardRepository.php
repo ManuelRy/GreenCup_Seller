@@ -90,6 +90,7 @@ class DiscountRewardRepository
             return null;
         }
 
+        
         $discountReward->is_active = !$discountReward->is_active;
         $discountReward->save();
 
