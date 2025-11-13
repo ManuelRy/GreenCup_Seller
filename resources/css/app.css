@@ -10,3 +10,26 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* Override Bootstrap form-control-lg to prevent flickering */
+input.form-control-lg[type="text"],
+input.form-control-lg[type="number"],
+.form-control.form-control-lg,
+.input-group-lg .form-control {
+    height: 56px !important;
+    max-height: 56px !important;
+    min-height: 56px !important;
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+    padding: 0.875rem 1rem !important;
+    box-sizing: border-box !important;
+}
+
+.input-group-lg {
+    height: 56px !important;
+}
+
+.input-group-lg .input-group-text {
+    height: 56px !important;
+    font-size: 1rem !important;
+}
