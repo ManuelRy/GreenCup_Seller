@@ -1,0 +1,2389 @@
+{
+  "info": {
+    "name": "GreenCup Seller - Web Routes Collection",
+    "description": "Complete Postman collection for GreenCup Seller Panel based on actual Laravel web routes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": ["{{base_url}}"],
+              "path": ["login"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success - Login Form",
+              "originalRequest": {
+                "method": "GET",
+                "url": "{{base_url}}/login"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "html",
+              "body": "<!DOCTYPE html><html><head><title>GreenCup Seller Login</title></head><body><form method=\"POST\"><input name=\"email\" /><input name=\"password\" type=\"password\" /></form></body></html>"
+            }
+          ]
+        },
+        {
+          "name": "Login Submit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "seller@greencup.com",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "Seller@123",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": ["{{base_url}}"],
+              "path": ["login"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success - Redirect to Dashboard",
+              "status": "Found",
+              "code": 302,
+              "header": [
+                {
+                  "key": "Location",
+                  "value": "/dashboard"
+                }
+              ],
+              "body": ""
+            },
+            {
+              "name": "Failed - Invalid Credentials",
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "body": "{\"message\": \"The provided credentials do not match our records.\", \"errors\": {\"email\": [\"These credentials do not match our records.\"]}}"
+            }
+          ]
+        },
+        {
+          "name": "Registration Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/register",
+              "host": ["{{base_url}}"],
+              "path": ["register"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success - Registration Form",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "html",
+              "body": "<!DOCTYPE html><html><head><title>GreenCup Seller Registration</title></head><body><form method=\"POST\"><input name=\"business_name\" /><input name=\"email\" /><input name=\"password\" type=\"password\" /></form></body></html>"
+            }
+          ]
+        },
+        {
+          "name": "Register Seller",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "business_name",
+                  "value": "New EcoShop",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "newshop@greencup.com",
+                  "type": "text"
+                },
+                {
+                  "key": "phone_number",
+                  "value": "+639171234567",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "NewShop@123",
+                  "type": "text"
+                },
+                {
+                  "key": "password_confirmation",
+                  "value": "NewShop@123",
+                  "type": "text"
+                },
+                {
+                  "key": "address",
+                  "value": "123 Manila Street, Philippines",
+                  "type": "text"
+                },
+                {
+                  "key": "latitude",
+                  "value": "14.5995",
+                  "type": "text"
+                },
+                {
+                  "key": "longitude",
+                  "value": "120.9842",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/register",
+              "host": ["{{base_url}}"],
+              "path": ["register"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success - Registration Complete",
+              "status": "Found",
+              "code": 302,
+              "header": [
+                {
+                  "key": "Location",
+                  "value": "/pending"
+                }
+              ],
+              "body": "{\"message\": \"Registration successful. Awaiting admin approval.\"}"
+            }
+          ]
+        },
+        {
+          "name": "Check Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"seller_id\": 1}"
+            },
+            "url": {
+              "raw": "{{base_url}}/check-status",
+              "host": ["{{base_url}}"],
+              "path": ["check-status"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success - Status Check",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"status\": \"approved\", \"is_active\": true, \"message\": \"Your account is active\"}"
+            },
+            {
+              "name": "Pending Status",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"status\": \"pending\", \"is_active\": false, \"message\": \"Your account is pending approval\"}"
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/logout",
+              "host": ["{{base_url}}"],
+              "path": ["logout"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success - Redirect to Login",
+              "status": "Found",
+              "code": 302,
+              "header": [
+                {
+                  "key": "Location",
+                  "value": "/login"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Status Pages",
+      "item": [
+        {
+          "name": "Pending Status Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pending",
+              "host": ["{{base_url}}"],
+              "path": ["pending"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "<!DOCTYPE html><html><head><title>Account Pending</title></head><body><h1>Your account is pending approval</h1></body></html>"
+            }
+          ]
+        },
+        {
+          "name": "Suspended Status Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/suspended",
+              "host": ["{{base_url}}"],
+              "path": ["suspended"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "<!DOCTYPE html><html><head><title>Account Suspended</title></head><body><h1>Your account has been suspended</h1></body></html>"
+            }
+          ]
+        },
+        {
+          "name": "Rejected Status Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/rejected",
+              "host": ["{{base_url}}"],
+              "path": ["rejected"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "<!DOCTYPE html><html><head><title>Account Rejected</title></head><body><h1>Your account application was rejected</h1></body></html>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Dashboard Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["dashboard"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"seller\": {\"id\": 1, \"business_name\": \"EcoShop Downtown\", \"total_points\": 468, \"rank\": \"Gold\"}, \"stats\": {\"total_transactions\": 234, \"cups_saved\": 468, \"points_earned\": 936, \"active_rewards\": 5}, \"recent_transactions\": [{\"id\": 1, \"consumer\": \"johndoe123\", \"points\": 2, \"cups\": 1, \"created_at\": \"2024-11-13T08:30:00Z\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "Dashboard Data API",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard-data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "dashboard-data"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"total_transactions\": 234, \"cups_saved\": 468, \"points_earned\": 936, \"total_consumers\": 156, \"weekly_transactions\": [{\"day\": \"Mon\", \"count\": 34}, {\"day\": \"Tue\", \"count\": 28}], \"top_items\": [{\"name\": \"Coffee\", \"count\": 89}, {\"name\": \"Tea\", \"count\": 45}], \"recent_consumers\": [{\"username\": \"johndoe123\", \"last_visit\": \"2024-11-13T08:30:00Z\", \"total_transactions\": 12}]}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Items Management",
+      "item": [
+        {
+          "name": "List All Items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items",
+              "host": ["{{base_url}}"],
+              "path": ["items"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"data\": [{\"id\": 1, \"name\": \"Coffee\", \"category\": \"beverage\", \"points\": 2, \"is_active\": true, \"created_at\": \"2024-10-01T10:00:00Z\"}, {\"id\": 2, \"name\": \"Latte\", \"category\": \"beverage\", \"points\": 3, \"is_active\": true, \"created_at\": \"2024-10-02T11:00:00Z\"}], \"total\": 15}"
+            }
+          ]
+        },
+        {
+          "name": "Create Item Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items/create",
+              "host": ["{{base_url}}"],
+              "path": ["items", "create"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "<!DOCTYPE html><html><head><title>Create Item</title></head><body><form method=\"POST\"><input name=\"name\" /><input name=\"category\" /><input name=\"points\" /></form></body></html>"
+            }
+          ]
+        },
+        {
+          "name": "Store Item",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "Green Tea",
+                  "type": "text"
+                },
+                {
+                  "key": "category",
+                  "value": "beverage",
+                  "type": "text"
+                },
+                {
+                  "key": "points",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Organic green tea",
+                  "type": "text"
+                },
+                {
+                  "key": "is_active",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/items",
+              "host": ["{{base_url}}"],
+              "path": ["items"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success - Created",
+              "status": "Found",
+              "code": 302,
+              "header": [
+                {
+                  "key": "Location",
+                  "value": "/items"
+                }
+              ],
+              "body": "{\"message\": \"Item created successfully\", \"item_id\": 16}"
+            }
+          ]
+        },
+        {
+          "name": "Edit Item Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items/1/edit",
+              "host": ["{{base_url}}"],
+              "path": ["items", "1", "edit"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"id\": 1, \"name\": \"Coffee\", \"category\": \"beverage\", \"points\": 2, \"description\": \"Regular coffee\", \"is_active\": true}"
+            }
+          ]
+        },
+        {
+          "name": "Update Item",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "Premium Coffee",
+                  "type": "text"
+                },
+                {
+                  "key": "category",
+                  "value": "beverage",
+                  "type": "text"
+                },
+                {
+                  "key": "points",
+                  "value": "3",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Premium blend coffee",
+                  "type": "text"
+                },
+                {
+                  "key": "is_active",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/items/1",
+              "host": ["{{base_url}}"],
+              "path": ["items", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Found",
+              "code": 302,
+              "body": "{\"message\": \"Item updated successfully\"}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Item",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "DELETE",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/items/1",
+              "host": ["{{base_url}}"],
+              "path": ["items", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Found",
+              "code": 302,
+              "body": "{\"message\": \"Item deleted successfully\"}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "List Reports",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reports",
+              "host": ["{{base_url}}"],
+              "path": ["reports"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"data\": [{\"id\": 1, \"reported_type\": \"consumer\", \"reported_entity\": {\"id\": 10, \"username\": \"baduser\"}, \"reason\": \"Inappropriate behavior\", \"description\": \"User was aggressive\", \"status\": \"pending\", \"created_at\": \"2024-11-12T10:00:00Z\"}], \"total\": 3}"
+            }
+          ]
+        },
+        {
+          "name": "Create Report Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reports/create",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "create"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "<!DOCTYPE html><html><head><title>Create Report</title></head><body><form method=\"POST\"><input name=\"reported_id\" /><select name=\"reason\"></select></form></body></html>"
+            }
+          ]
+        },
+        {
+          "name": "Store Report",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "reported_type",
+                  "value": "consumer",
+                  "type": "text"
+                },
+                {
+                  "key": "reported_id",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "reason",
+                  "value": "Inappropriate behavior",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Consumer was rude to staff",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/reports",
+              "host": ["{{base_url}}"],
+              "path": ["reports"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Found",
+              "code": 302,
+              "body": "{\"message\": \"Report submitted successfully\", \"report_id\": 4}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rewards Management",
+      "item": [
+        {
+          "name": "List Rewards",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/rewards",
+              "host": ["{{base_url}}"],
+              "path": ["rewards"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"data\": [{\"id\": 1, \"name\": \"Free Coffee\", \"description\": \"Redeem a free coffee\", \"points_required\": 50, \"is_active\": true, \"created_at\": \"2024-10-01T10:00:00Z\"}, {\"id\": 2, \"name\": \"10% Discount\", \"description\": \"Get 10% off your purchase\", \"points_required\": 30, \"is_active\": true, \"created_at\": \"2024-10-05T11:00:00Z\"}], \"total\": 5}"
+            }
+          ]
+        },
+        {
+          "name": "Create Reward Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/rewards/create",
+              "host": ["{{base_url}}"],
+              "path": ["rewards", "create"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "<!DOCTYPE html><html><head><title>Create Reward</title></head><body><form method=\"POST\"><input name=\"name\" /><input name=\"points_required\" /></form></body></html>"
+            }
+          ]
+        },
+        {
+          "name": "Store Reward",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "Free Pastry",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Get a free pastry with any purchase",
+                  "type": "text"
+                },
+                {
+                  "key": "points_required",
+                  "value": "40",
+                  "type": "text"
+                },
+                {
+                  "key": "is_active",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/rewards",
+              "host": ["{{base_url}}"],
+              "path": ["rewards"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Found",
+              "code": 302,
+              "body": "{\"message\": \"Reward created successfully\", \"reward_id\": 6}"
+            }
+          ]
+        },
+        {
+          "name": "Edit Reward Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/rewards/1/edit",
+              "host": ["{{base_url}}"],
+              "path": ["rewards", "1", "edit"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"id\": 1, \"name\": \"Free Coffee\", \"description\": \"Redeem a free coffee\", \"points_required\": 50, \"is_active\": true}"
+            }
+          ]
+        },
+        {
+          "name": "Update Reward",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "Free Premium Coffee",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Redeem a free premium coffee",
+                  "type": "text"
+                },
+                {
+                  "key": "points_required",
+                  "value": "60",
+                  "type": "text"
+                },
+                {
+                  "key": "is_active",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/rewards/1",
+              "host": ["{{base_url}}"],
+              "path": ["rewards", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Found",
+              "code": 302,
+              "body": "{\"message\": \"Reward updated successfully\"}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Reward Redemptions",
+      "item": [
+        {
+          "name": "List Redemptions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/redemptions",
+              "host": ["{{base_url}}"],
+              "path": ["redemptions"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"data\": [{\"id\": 1, \"consumer\": {\"id\": 5, \"username\": \"johndoe123\"}, \"reward\": {\"id\": 1, \"name\": \"Free Coffee\"}, \"points_spent\": 50, \"status\": \"pending\", \"created_at\": \"2024-11-13T09:00:00Z\"}, {\"id\": 2, \"consumer\": {\"id\": 8, \"username\": \"janedoe456\"}, \"reward\": {\"id\": 2, \"name\": \"10% Discount\"}, \"points_spent\": 30, \"status\": \"approved\", \"approved_at\": \"2024-11-12T14:00:00Z\", \"created_at\": \"2024-11-12T10:00:00Z\"}], \"total\": 23}"
+            }
+          ]
+        },
+        {
+          "name": "Approve Redemption",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/redemptions/1/approve",
+              "host": ["{{base_url}}"],
+              "path": ["redemptions", "1", "approve"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"message\": \"Redemption approved successfully\", \"redemption\": {\"id\": 1, \"status\": \"approved\"}}"
+            }
+          ]
+        },
+        {
+          "name": "Reject Redemption",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "reason",
+                  "value": "Reward no longer available",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/redemptions/1/reject",
+              "host": ["{{base_url}}"],
+              "path": ["redemptions", "1", "reject"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"message\": \"Redemption rejected\", \"redemption\": {\"id\": 1, \"status\": \"rejected\"}}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Discount Rewards",
+      "item": [
+        {
+          "name": "List Discount Rewards",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/discount-rewards",
+              "host": ["{{base_url}}"],
+              "path": ["discount-rewards"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"data\": [{\"id\": 1, \"name\": \"5% Birthday Discount\", \"discount_percentage\": 5, \"description\": \"Birthday special discount\", \"is_active\": true, \"created_at\": \"2024-10-01T10:00:00Z\"}], \"total\": 3}"
+            }
+          ]
+        },
+        {
+          "name": "Create Discount Reward Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/discount-rewards/create",
+              "host": ["{{base_url}}"],
+              "path": ["discount-rewards", "create"]
+            }
+          }
+        },
+        {
+          "name": "Store Discount Reward",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "10% Weekend Discount",
+                  "type": "text"
+                },
+                {
+                  "key": "discount_percentage",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Special weekend discount",
+                  "type": "text"
+                },
+                {
+                  "key": "is_active",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/discount-rewards",
+              "host": ["{{base_url}}"],
+              "path": ["discount-rewards"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Found",
+              "code": 302,
+              "body": "{\"message\": \"Discount reward created successfully\"}"
+            }
+          ]
+        },
+        {
+          "name": "Edit Discount Reward Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/discount-rewards/1/edit",
+              "host": ["{{base_url}}"],
+              "path": ["discount-rewards", "1", "edit"]
+            }
+          }
+        },
+        {
+          "name": "Update Discount Reward",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "5% Birthday Discount Updated",
+                  "type": "text"
+                },
+                {
+                  "key": "discount_percentage",
+                  "value": "7",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Updated birthday discount",
+                  "type": "text"
+                },
+                {
+                  "key": "is_active",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/discount-rewards/1",
+              "host": ["{{base_url}}"],
+              "path": ["discount-rewards", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Found",
+              "code": 302,
+              "body": "{\"message\": \"Discount reward updated successfully\"}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Discount Reward",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "DELETE",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/discount-rewards/1",
+              "host": ["{{base_url}}"],
+              "path": ["discount-rewards", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Found",
+              "code": 302,
+              "body": "{\"message\": \"Discount reward deleted successfully\"}"
+            }
+          ]
+        },
+        {
+          "name": "Toggle Discount Reward Active",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/discount-rewards/1/toggle-active",
+              "host": ["{{base_url}}"],
+              "path": ["discount-rewards", "1", "toggle-active"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"message\": \"Discount reward status updated\", \"is_active\": false}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Location Management",
+      "item": [
+        {
+          "name": "View Location",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/location",
+              "host": ["{{base_url}}"],
+              "path": ["location"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"address\": \"123 Manila Street, Philippines\", \"latitude\": \"14.5995\", \"longitude\": \"120.9842\", \"map_url\": \"https://maps.google.com/?q=14.5995,120.9842\"}"
+            }
+          ]
+        },
+        {
+          "name": "Edit Location Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/location/edit",
+              "host": ["{{base_url}}"],
+              "path": ["location", "edit"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "<!DOCTYPE html><html><head><title>Edit Location</title></head><body><form method=\"POST\"><input name=\"address\" /><input name=\"latitude\" /><input name=\"longitude\" /></form></body></html>"
+            }
+          ]
+        },
+        {
+          "name": "Update Location",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "address",
+                  "value": "456 Quezon City, Philippines",
+                  "type": "text"
+                },
+                {
+                  "key": "latitude",
+                  "value": "14.6091",
+                  "type": "text"
+                },
+                {
+                  "key": "longitude",
+                  "value": "121.0223",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/location/update",
+              "host": ["{{base_url}}"],
+              "path": ["location", "update"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Found",
+              "code": 302,
+              "body": "{\"message\": \"Location updated successfully\"}"
+            }
+          ]
+        },
+        {
+          "name": "Reverse Geocode",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"latitude\": 14.5995, \"longitude\": 120.9842}"
+            },
+            "url": {
+              "raw": "{{base_url}}/location/reverse-geocode",
+              "host": ["{{base_url}}"],
+              "path": ["location", "reverse-geocode"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"address\": \"123 Makati Ave, Manila, Metro Manila, Philippines\", \"latitude\": 14.5995, \"longitude\": 120.9842}"
+            }
+          ]
+        },
+        {
+          "name": "Search Address",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"Makati Manila\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/location/search-address",
+              "host": ["{{base_url}}"],
+              "path": ["location", "search-address"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"results\": [{\"address\": \"Makati, Metro Manila, Philippines\", \"latitude\": 14.5547, \"longitude\": 121.0244}, {\"address\": \"Ayala Avenue, Makati, Metro Manila\", \"latitude\": 14.5524, \"longitude\": 121.0231}]}"
+            }
+          ]
+        },
+        {
+          "name": "Get Approximate Location",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/location/approximate-location",
+              "host": ["{{base_url}}"],
+              "path": ["location", "approximate-location"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"latitude\": 14.5995, \"longitude\": 120.9842, \"accuracy\": \"approximate\"}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Seller Account & Profile",
+      "item": [
+        {
+          "name": "Account Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/account",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "account"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"seller\": {\"id\": 1, \"business_name\": \"EcoShop Downtown\", \"email\": \"seller@greencup.com\", \"phone_number\": \"+639171234567\", \"total_points\": 468, \"rank\": \"Gold\"}, \"recent_transactions\": [{\"id\": 1, \"consumer\": \"johndoe123\", \"points\": 2, \"created_at\": \"2024-11-13T08:30:00Z\"}], \"total_transactions\": 234}"
+            }
+          ]
+        },
+        {
+          "name": "Activity Log",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/activity",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "activity"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"activities\": [{\"type\": \"login\", \"description\": \"Logged in\", \"timestamp\": \"2024-11-13T08:00:00Z\"}, {\"type\": \"transaction\", \"description\": \"Awarded points to johndoe123\", \"timestamp\": \"2024-11-13T08:30:00Z\"}], \"total\": 145}"
+            }
+          ]
+        },
+        {
+          "name": "Get Transaction Detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/account/transaction/1",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "account", "transaction", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"id\": 1, \"consumer\": {\"id\": 5, \"username\": \"johndoe123\", \"email\": \"john@example.com\"}, \"items\": [{\"name\": \"Coffee\", \"points\": 2}], \"total_points\": 2, \"cups_saved\": 1, \"created_at\": \"2024-11-13T08:30:00Z\"}"
+            }
+          ]
+        },
+        {
+          "name": "Download Receipt",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/account/download-receipt/1",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "account", "download-receipt", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success - PDF Download",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/pdf"
+                },
+                {
+                  "key": "Content-Disposition",
+                  "value": "attachment; filename=receipt_1.pdf"
+                }
+              ],
+              "body": "PDF binary content"
+            }
+          ]
+        },
+        {
+          "name": "Export Transactions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/account/export?format=csv&date_from=2024-11-01&date_to=2024-11-13",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "account", "export"],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "csv"
+                },
+                {
+                  "key": "date_from",
+                  "value": "2024-11-01"
+                },
+                {
+                  "key": "date_to",
+                  "value": "2024-11-13"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success - CSV Download",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/csv"
+                },
+                {
+                  "key": "Content-Disposition",
+                  "value": "attachment; filename=transactions.csv"
+                }
+              ],
+              "body": "Date,Consumer,Items,Points,Cups Saved\\n2024-11-13,johndoe123,Coffee,2,1"
+            }
+          ]
+        },
+        {
+          "name": "View Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/profile",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "profile"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"id\": 1, \"business_name\": \"EcoShop Downtown\", \"email\": \"seller@greencup.com\", \"phone_number\": \"+639171234567\", \"address\": \"123 Manila Street, Philippines\", \"latitude\": \"14.5995\", \"longitude\": \"120.9842\", \"profile_photo\": \"/storage/sellers/profile.jpg\", \"business_permit\": \"/storage/permits/permit.pdf\", \"status\": \"approved\", \"is_active\": true, \"total_points\": 468, \"rank\": \"Gold\"}"
+            }
+          ]
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "business_name",
+                  "value": "EcoShop Downtown Updated",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "seller@greencup.com",
+                  "type": "text"
+                },
+                {
+                  "key": "phone_number",
+                  "value": "+639171234567",
+                  "type": "text"
+                },
+                {
+                  "key": "address",
+                  "value": "123 Manila Street, Philippines",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/profile",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "profile"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Found",
+              "code": 302,
+              "body": "{\"message\": \"Profile updated successfully\"}"
+            }
+          ]
+        },
+        {
+          "name": "Update Profile Photo",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "profile_photo",
+                  "type": "file",
+                  "src": "/path/to/photo.jpg"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/profile/photo",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "profile", "photo"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"message\": \"Profile photo updated successfully\", \"photo_url\": \"/storage/sellers/profile_new.jpg\"}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Photo Gallery",
+      "item": [
+        {
+          "name": "List Photos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/photos",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "photos"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"data\": [{\"id\": 1, \"photo_url\": \"/storage/gallery/photo1.jpg\", \"is_frozen\": false, \"order\": 1, \"created_at\": \"2024-10-15T10:00:00Z\"}, {\"id\": 2, \"photo_url\": \"/storage/gallery/photo2.jpg\", \"is_frozen\": false, \"order\": 2, \"created_at\": \"2024-10-16T11:00:00Z\"}], \"total\": 5}"
+            }
+          ]
+        },
+        {
+          "name": "Upload Photo",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "photo",
+                  "type": "file",
+                  "src": "/path/to/gallery-photo.jpg"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/photos",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "photos"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Created",
+              "code": 201,
+              "body": "{\"message\": \"Photo uploaded successfully\", \"photo\": {\"id\": 6, \"photo_url\": \"/storage/gallery/photo6.jpg\"}}"
+            }
+          ]
+        },
+        {
+          "name": "View Photo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/photos/1",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "photos", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"id\": 1, \"photo_url\": \"/storage/gallery/photo1.jpg\", \"is_frozen\": false, \"order\": 1, \"created_at\": \"2024-10-15T10:00:00Z\"}"
+            }
+          ]
+        },
+        {
+          "name": "Update Photo",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "photo",
+                  "type": "file",
+                  "src": "/path/to/updated-photo.jpg"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/photos/1",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "photos", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"message\": \"Photo updated successfully\", \"photo\": {\"id\": 1, \"photo_url\": \"/storage/gallery/photo1_updated.jpg\"}}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Photo",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "DELETE",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/photos/1",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "photos", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"message\": \"Photo deleted successfully\"}"
+            }
+          ]
+        },
+        {
+          "name": "Reorder Photos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"order\": [3, 1, 2, 5, 4]}"
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/photos/reorder",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "photos", "reorder"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"message\": \"Photos reordered successfully\"}"
+            }
+          ]
+        },
+        {
+          "name": "Get Photo Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/api/photo-stats",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "api", "photo-stats"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"total_photos\": 5, \"frozen_photos\": 0, \"max_photos\": 10, \"available_slots\": 5}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "QR Scanner & Transactions",
+      "item": [
+        {
+          "name": "Scanner Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/scanner",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "scanner"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "<!DOCTYPE html><html><head><title>QR Scanner</title></head><body><div id=\"qr-scanner\"></div></body></html>"
+            }
+          ]
+        },
+        {
+          "name": "Process Consumer QR",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"qr_code\": \"CONSUMER_QR_DATA_HERE\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/qr/process-consumer",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "qr", "process-consumer"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"success\": true, \"consumer\": {\"id\": 5, \"username\": \"johndoe123\", \"email\": \"john@example.com\", \"total_points\": 150, \"cups_saved\": 75}, \"message\": \"Consumer verified\"}"
+            },
+            {
+              "name": "Invalid QR Code",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\"success\": false, \"message\": \"Invalid QR code\"}"
+            }
+          ]
+        },
+        {
+          "name": "Award Points",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"consumer_id\": 5, \"items\": [{\"id\": 1, \"name\": \"Coffee\", \"points\": 2, \"quantity\": 2}], \"total_points\": 4, \"cups_saved\": 2}"
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/qr/award-points",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "qr", "award-points"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"success\": true, \"transaction\": {\"id\": 235, \"consumer_id\": 5, \"seller_id\": 1, \"points_awarded\": 4, \"cups_saved\": 2}, \"message\": \"Points awarded successfully\", \"consumer_new_total\": 154}"
+            }
+          ]
+        },
+        {
+          "name": "Process Redemption",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"consumer_id\": 5, \"reward_id\": 1, \"qr_code\": \"REDEMPTION_QR_CODE\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/qr/process-redemption",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "qr", "process-redemption"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"success\": true, \"redemption\": {\"id\": 24, \"consumer_id\": 5, \"reward_id\": 1, \"reward_name\": \"Free Coffee\", \"points_spent\": 50}, \"message\": \"Reward redeemed successfully\", \"consumer_remaining_points\": 100}"
+            }
+          ]
+        },
+        {
+          "name": "Recent Transactions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/qr/recent-transactions?limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "qr", "recent-transactions"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"data\": [{\"id\": 235, \"consumer\": {\"id\": 5, \"username\": \"johndoe123\"}, \"points\": 4, \"cups_saved\": 2, \"items\": [{\"name\": \"Coffee\", \"quantity\": 2}], \"created_at\": \"2024-11-13T09:15:00Z\"}], \"total\": 10}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Receipts",
+      "item": [
+        {
+          "name": "List Receipts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/receipts",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "receipts"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"data\": [{\"id\": 1, \"transaction_id\": 235, \"consumer\": \"johndoe123\", \"total_points\": 4, \"cups_saved\": 2, \"created_at\": \"2024-11-13T09:15:00Z\", \"qr_code_url\": \"/seller/receipts/1/qr\"}], \"total\": 234}"
+            }
+          ]
+        },
+        {
+          "name": "Create Receipt Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/receipts/create",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "receipts", "create"]
+            }
+          }
+        },
+        {
+          "name": "Store Receipt",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "transaction_id",
+                  "value": "235",
+                  "type": "text"
+                },
+                {
+                  "key": "notes",
+                  "value": "Customer was very satisfied",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/receipts",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "receipts"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Found",
+              "code": 302,
+              "body": "{\"message\": \"Receipt created successfully\", \"receipt_id\": 2}"
+            }
+          ]
+        },
+        {
+          "name": "View Receipt",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/receipts/1",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "receipts", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"id\": 1, \"transaction\": {\"id\": 235, \"consumer\": \"johndoe123\", \"items\": [{\"name\": \"Coffee\", \"quantity\": 2, \"points\": 2}], \"total_points\": 4, \"cups_saved\": 2}, \"qr_code\": \"QR_CODE_DATA\", \"created_at\": \"2024-11-13T09:15:00Z\"}"
+            }
+          ]
+        },
+        {
+          "name": "Print Receipt QR",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/receipts/1/qr",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "receipts", "1", "qr"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success - QR Code Image",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "image/png"
+                }
+              ],
+              "body": "QR code PNG image data"
+            }
+          ]
+        },
+        {
+          "name": "Export Receipts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/receipts/export?format=pdf&date_from=2024-11-01&date_to=2024-11-13",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "receipts", "export"],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "pdf"
+                },
+                {
+                  "key": "date_from",
+                  "value": "2024-11-01"
+                },
+                {
+                  "key": "date_to",
+                  "value": "2024-11-13"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success - PDF Export",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/pdf"
+                },
+                {
+                  "key": "Content-Disposition",
+                  "value": "attachment; filename=receipts_export.pdf"
+                }
+              ],
+              "body": "PDF binary content"
+            }
+          ]
+        },
+        {
+          "name": "Edit Receipt Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/receipts/1/edit",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "receipts", "1", "edit"]
+            }
+          }
+        },
+        {
+          "name": "Update Receipt",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "notes",
+                  "value": "Updated notes",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/receipts/1",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "receipts", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Found",
+              "code": 302,
+              "body": "{\"message\": \"Receipt updated successfully\"}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Receipt",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "DELETE",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/receipts/1",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "receipts", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Found",
+              "code": 302,
+              "body": "{\"message\": \"Receipt deleted successfully\"}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Consumers",
+      "item": [
+        {
+          "name": "List Consumers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seller/consumers",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "consumers"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"data\": [{\"id\": 5, \"username\": \"johndoe123\", \"email\": \"john@example.com\", \"phone_number\": \"+639171234567\", \"total_points\": 154, \"cups_saved\": 77, \"last_transaction\": \"2024-11-13T09:15:00Z\", \"total_transactions_with_seller\": 12}, {\"id\": 8, \"username\": \"janedoe456\", \"email\": \"jane@example.com\", \"total_points\": 220, \"cups_saved\": 110, \"last_transaction\": \"2024-11-12T14:30:00Z\", \"total_transactions_with_seller\": 8}], \"total\": 156}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "File Proxy",
+      "item": [
+        {
+          "name": "Proxy File",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/files/storage/sellers/profile.jpg",
+              "host": ["{{base_url}}"],
+              "path": ["files", "storage", "sellers", "profile.jpg"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success - Image",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "image/jpeg"
+                }
+              ],
+              "body": "Image binary data"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Test & Debug",
+      "item": [
+        {
+          "name": "Test JSON Endpoint",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"test_field\": \"test_value\", \"number\": 123}"
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/test-json",
+              "host": ["{{base_url}}"],
+              "path": ["seller", "test-json"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"success\": true, \"message\": \"JSON POST working correctly\", \"received_data\": {\"test_field\": \"test_value\", \"number\": 123}, \"timestamp\": \"2024-11-13 10:30:45\"}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Consumer API (Future)",
+      "item": [
+        {
+          "name": "Check Receipt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"receipt_code\": \"RECEIPT_QR_CODE\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/receipt/check",
+              "host": ["{{base_url}}"],
+              "path": ["api", "receipt", "check"]
+            }
+          },
+          "response": [
+            {
+              "name": "Not Implemented",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"message\": \"Consumer API not implemented yet\"}"
+            }
+          ]
+        },
+        {
+          "name": "Claim Receipt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"receipt_code\": \"RECEIPT_QR_CODE\", \"consumer_id\": 5}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/receipt/claim",
+              "host": ["{{base_url}}"],
+              "path": ["api", "receipt", "claim"]
+            }
+          },
+          "response": [
+            {
+              "name": "Not Implemented",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"message\": \"Consumer API not implemented yet\"}"
+            }
+          ]
+        },
+        {
+          "name": "Receipt History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/receipt/history?consumer_id=5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "receipt", "history"],
+              "query": [
+                {
+                  "key": "consumer_id",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Not Implemented",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"message\": \"Consumer API not implemented yet\"}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "csrf_token",
+      "value": "your_csrf_token_here",
+      "type": "string"
+    }
+  ]
+}
